@@ -1,0 +1,34 @@
+{
+  "name": "AMU",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.129",
+    "@iconify-json/simple-icons": "^1.2.94",
+    "@nuxt/fonts": "^0.14.0",
+    "@nuxt/image": "^2.1.0",
+    "@nuxt/ui": "^4.11.0",
+    "@nuxtjs/seo": "^5.3.14",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.3.0",
+    "nuxt": "^4.5.2",
+    "nuxt-vuefire": "^1.1.2",
+    "tailwindcss": "^4.3.3",
+    "vuefire": "^3.2.3"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.17.0",
+    "eslint": "^10.10.0",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.11"
+  },
+  "packageManager": "pnpm@12.3.4"
+}
