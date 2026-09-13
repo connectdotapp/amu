@@ -13,7 +13,7 @@ const year = new Date().getFullYear()
       <UButton
         to="https://instagram.com"
         target="_blank"
-        icon="i-simple-icons-instagram"
+        icon="i-lucide-instagram"
         color="neutral"
         variant="ghost"
         aria-label="Instagram"

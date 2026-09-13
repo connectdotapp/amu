@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
-
-const products = useLatestProducts(30) as unknown as Ref<Product[]>
+const { data: products } = useLatestProducts(30)
 
 useSeoMeta({
   title: '오늘의 아무',

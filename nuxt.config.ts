@@ -64,15 +64,18 @@ export default defineNuxtConfig({
       projectId: process.env.FIREBASE_PROJECT_ID,
       storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
       messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.FIREBASE_APP_ID
+      appId: process.env.FIREBASE_APP_ID,
+      measurementId: process.env.FIREBASE_MEASUREMENT_ID
     },
     auth: {
       enabled: true,
-      sessionCookie: true
+      // Enable when a service account is configured (see .env.example → GOOGLE_APPLICATION_CREDENTIALS).
+      // Without it, admin SDK cannot verify session cookies during SSR.
+      sessionCookie: !!process.env.GOOGLE_APPLICATION_CREDENTIALS
     },
-    admin: {
-      serviceAccount: process.env.GOOGLE_APPLICATION_CREDENTIALS
-    }
+    admin: process.env.GOOGLE_APPLICATION_CREDENTIALS
+      ? { serviceAccount: process.env.GOOGLE_APPLICATION_CREDENTIALS }
+      : undefined
   },
 
   image: {

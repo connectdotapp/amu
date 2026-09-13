@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const items = [
   { label: '둘러보기', to: '/' },
-  { label: '카테고리', to: '/categories' },
   { label: '등록하기', to: '/submit' }
 ]
 </script>

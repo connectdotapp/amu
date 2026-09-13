@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
-
 const route = useRoute()
 const id = String(route.params.id)
 
-const product = useProduct(id) as unknown as Ref<Product | undefined>
+const { data: product } = useProductById(id)
 
 const site = useSiteConfig()
 

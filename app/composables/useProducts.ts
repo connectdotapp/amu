@@ -1,18 +1,41 @@
-import { collection, query, where, orderBy, limit as fbLimit, doc } from 'firebase/firestore'
+import { collection, query, where, orderBy, limit as fbLimit, getDocs, doc, getDoc } from 'firebase/firestore'
 import type { Product } from '~/types/product'
 
 export function useLatestProducts(count = 20) {
-  const db = useFirestore()
-  const q = query(
-    collection(db, 'products'),
-    where('status', '==', 'published'),
-    orderBy('publishedAt', 'desc'),
-    fbLimit(count)
+  return useAsyncData<Product[]>(
+    `products:latest:${count}`,
+    async () => {
+      try {
+        const db = useFirestore()
+        const snap = await getDocs(query(
+          collection(db, 'products'),
+          where('status', '==', 'published'),
+          orderBy('publishedAt', 'desc'),
+          fbLimit(count)
+        ))
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+      } catch (e) {
+        console.warn('[useLatestProducts] fetch failed:', e)
+        return []
+      }
+    },
+    { default: () => [] }
   )
-  return useCollection<Product>(q, { ssrKey: `products:latest:${count}` })
 }
 
-export function useProduct(id: string) {
-  const db = useFirestore()
-  return useDocument<Product>(doc(db, 'products', id), { ssrKey: `products:${id}` })
+export function useProductById(id: string) {
+  return useAsyncData<Product | null>(
+    `products:${id}`,
+    async () => {
+      try {
+        const db = useFirestore()
+        const snap = await getDoc(doc(db, 'products', id))
+        return snap.exists() ? ({ id: snap.id, ...snap.data() } as Product) : null
+      } catch (e) {
+        console.warn('[useProductById] fetch failed:', e)
+        return null
+      }
+    },
+    { default: () => null }
+  )
 }
