@@ -19,10 +19,11 @@ service cloud.firestore {
     // Users can create with status='pending' only; admins gate transitions.
     match /products/{productId} {
       allow read: if resource.data.status == 'published' || isAdmin();
-      allow create: if isSignedIn()
-        && request.resource.data.status == 'pending'
-        && request.resource.data.submittedBy == request.auth.uid
-        && request.resource.data.source == 'user';
+      allow create: if isAdmin()
+        || (isSignedIn()
+          && request.resource.data.status == 'pending'
+          && request.resource.data.submittedBy == request.auth.uid
+          && request.resource.data.source == 'user');
       allow update: if isAdmin()
         || (isOwner(resource.data.submittedBy)
             && resource.data.status == 'pending'

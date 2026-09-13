@@ -1,4 +1,4 @@
-import { collection, query, where, orderBy, limit as fbLimit, getDocs, doc, getDoc } from 'firebase/firestore'
+import { collection, query, orderBy, limit as fbLimit, getDocs, doc, getDoc } from 'firebase/firestore'
 import type { Product } from '~/types/product'
 
 export function useLatestProducts(count = 20) {
@@ -7,13 +7,17 @@ export function useLatestProducts(count = 20) {
     async () => {
       try {
         const db = useFirestore()
+        // Single-field orderBy avoids the need for a composite index.
+        // Pending products have publishedAt=null and are excluded automatically;
+        // we also filter defensively in-memory in case of edge cases.
         const snap = await getDocs(query(
           collection(db, 'products'),
-          where('status', '==', 'published'),
           orderBy('publishedAt', 'desc'),
           fbLimit(count)
         ))
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+        return snap.docs
+          .map(d => ({ id: d.id, ...d.data() }) as Product)
+          .filter(p => p.status === 'published')
       } catch (e) {
         console.warn('[useLatestProducts] fetch failed:', e)
         return []
