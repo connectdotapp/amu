@@ -74,7 +74,7 @@ const pricingLabel: Record<string, string> = {
               <span v-if="product.maker">by {{ product.maker }}</span>
             </div>
 
-            <div class="mt-6 flex flex-wrap gap-2">
+            <div class="mt-6 flex flex-wrap items-center gap-2">
               <UButton
                 v-if="product.links?.[0]"
                 :to="product.links[0].url"
@@ -85,19 +85,8 @@ const pricingLabel: Record<string, string> = {
               >
                 {{ product.links[0].label || '방문하기' }}
               </UButton>
-              <UButton
-                color="neutral"
-                variant="outline"
-                icon="i-lucide-arrow-up"
-              >
-                {{ product.upvoteCount ?? 0 }}
-              </UButton>
-              <UButton
-                color="neutral"
-                variant="outline"
-                icon="i-lucide-bookmark"
-                aria-label="북마크"
-              />
+              <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
+              <ProductBookmarkButton :product-id="id" />
             </div>
           </div>
         </div>
@@ -139,15 +128,8 @@ const pricingLabel: Record<string, string> = {
         </ul>
       </section>
 
-      <!-- Comments placeholder -->
-      <section class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
-        <h2 class="text-sm font-semibold text-neutral-500">
-          댓글 {{ product.commentCount ?? 0 }}
-        </h2>
-        <p class="mt-3 text-sm text-neutral-500">
-          곧 열려요.
-        </p>
-      </section>
+      <!-- Comments -->
+      <ProductCommentSection :product-id="id" />
     </article>
 
     <div v-else class="mt-12 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">

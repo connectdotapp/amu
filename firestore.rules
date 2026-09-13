@@ -27,7 +27,10 @@ service cloud.firestore {
       allow update: if isAdmin()
         || (isOwner(resource.data.submittedBy)
             && resource.data.status == 'pending'
-            && request.resource.data.status == 'pending');
+            && request.resource.data.status == 'pending')
+        // Signed-in users may adjust the interaction counters only.
+        || (isSignedIn()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvoteCount', 'commentCount', 'bookmarkCount']));
       allow delete: if isAdmin();
 
       // Comments under a product
