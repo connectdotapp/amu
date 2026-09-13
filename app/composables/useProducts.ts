@@ -27,6 +27,29 @@ export function useLatestProducts(count = 20) {
   )
 }
 
+export function usePendingProducts() {
+  return useAsyncData<Product[]>(
+    'products:pending',
+    async () => {
+      try {
+        const db = useFirestore()
+        const snap = await getDocs(query(
+          collection(db, 'products'),
+          orderBy('submittedAt', 'desc'),
+          fbLimit(100)
+        ))
+        return snap.docs
+          .map(d => ({ id: d.id, ...d.data() }) as Product)
+          .filter(p => p.status === 'pending')
+      } catch (e) {
+        console.warn('[usePendingProducts] fetch failed:', e)
+        return []
+      }
+    },
+    { default: () => [] }
+  )
+}
+
 export function useProductById(id: string) {
   return useAsyncData<Product | null>(
     `products:${id}`,
