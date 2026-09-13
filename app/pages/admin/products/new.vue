@@ -15,14 +15,16 @@ function onSubmitted(id: string) {
 </script>
 
 <template>
-  <UContainer class="py-10">
-    <div class="mx-auto max-w-2xl">
-      <div class="mb-8">
-        <NuxtLink to="/admin" class="text-sm text-muted hover:text-default">← 관리자</NuxtLink>
-        <h1 class="mt-2 text-2xl font-semibold tracking-tight">큐레이션 등록</h1>
-        <p class="mt-1 text-muted">AMU Pick으로 즉시 게시됩니다.</p>
-      </div>
+  <div class="mx-auto max-w-2xl px-6 py-10">
+    <NuxtLink to="/admin" class="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+      <UIcon name="i-lucide-arrow-left" class="size-4" />
+      관리자
+    </NuxtLink>
 
+    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">큐레이션 등록</h1>
+    <p class="mt-2 text-neutral-500">AMU Pick으로 즉시 게시됩니다.</p>
+
+    <div class="mt-10 rounded-3xl bg-neutral-150 p-6 sm:p-8 dark:bg-neutral-800">
       <ProductForm
         source="curated"
         status="published"
@@ -30,5 +32,5 @@ function onSubmitted(id: string) {
         @submitted="onSubmitted"
       />
     </div>
-  </UContainer>
+  </div>
 </template>

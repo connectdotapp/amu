@@ -46,34 +46,34 @@ async function reject(p: Product) {
 </script>
 
 <template>
-  <UContainer class="py-10">
-    <div class="mb-8">
-      <NuxtLink to="/admin" class="text-sm text-muted hover:text-default">← 관리자</NuxtLink>
-      <h1 class="mt-2 text-2xl font-semibold tracking-tight">승인 대기</h1>
-      <p class="mt-1 text-muted">사용자가 등록한 프로덕트를 검토해요.</p>
-    </div>
+  <div class="mx-auto max-w-4xl px-6 py-10">
+    <NuxtLink to="/admin" class="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+      <UIcon name="i-lucide-arrow-left" class="size-4" />
+      관리자
+    </NuxtLink>
 
-    <section v-if="pending?.length" class="space-y-3">
+    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">승인 대기</h1>
+    <p class="mt-2 text-neutral-500">사용자가 등록한 프로덕트를 검토해요.</p>
+
+    <section v-if="pending?.length" class="mt-10 space-y-3">
       <article
         v-for="p in pending"
         :key="p.id"
-        class="flex flex-col gap-4 rounded-lg border border-default p-4 sm:flex-row sm:items-start"
+        class="flex flex-col gap-4 rounded-3xl bg-neutral-150 p-5 sm:flex-row sm:items-center dark:bg-neutral-800"
       >
         <img
           :src="p.thumbnailUrl"
           :alt="p.name"
-          width="80"
-          height="80"
-          class="size-20 shrink-0 rounded-md object-cover bg-neutral-100 dark:bg-neutral-800"
+          class="size-20 shrink-0 rounded-2xl object-cover bg-white"
         >
 
         <div class="min-w-0 flex-1">
-          <NuxtLink :to="`/products/${p.id}`" class="font-medium hover:underline">
+          <NuxtLink :to="`/products/${p.id}`" class="font-bold tracking-tight hover:underline">
             {{ p.name }}
           </NuxtLink>
-          <p class="mt-0.5 line-clamp-2 text-sm text-muted">{{ p.tagline }}</p>
-          <div class="mt-2 text-xs text-dimmed">
-            카테고리 · {{ p.category }} · 태그 {{ (p.tags || []).length }}개
+          <p class="mt-1 line-clamp-2 text-sm text-neutral-500">{{ p.tagline }}</p>
+          <div class="mt-2 text-xs text-neutral-400">
+            {{ p.category }} · 태그 {{ (p.tags || []).length }}개
           </div>
         </div>
 
@@ -102,8 +102,9 @@ async function reject(p: Product) {
       </article>
     </section>
 
-    <div v-else class="rounded-lg border border-dashed border-default p-10 text-center text-muted">
-      검토 대기 중인 프로덕트가 없어요.
+    <div v-else class="mt-10 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <UIcon name="i-lucide-inbox" class="mx-auto size-8 text-neutral-400" />
+      <p class="mt-4 text-neutral-500">검토 대기 중인 프로덕트가 없어요.</p>
     </div>
-  </UContainer>
+  </div>
 </template>

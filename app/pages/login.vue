@@ -28,24 +28,27 @@ async function loginGoogle() {
 </script>
 
 <template>
-  <UContainer class="py-16">
-    <div class="mx-auto max-w-sm text-center">
-      <h1 class="text-2xl font-semibold tracking-tight">로그인</h1>
-      <p class="mt-1 text-muted">아무의 큐레이션에 참여해요.</p>
+  <div class="mx-auto flex max-w-md flex-col items-center px-6 py-20 text-center">
+    <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">로그인</h1>
+    <p class="mt-2 text-neutral-500">아무의 큐레이션에 참여해요.</p>
 
-      <div class="mt-8 space-y-3">
-        <UButton
-          block
-          color="neutral"
-          variant="solid"
-          icon="i-simple-icons-google"
-          :loading="loading"
-          @click="loginGoogle"
-        >
-          Google로 계속하기
-        </UButton>
-        <p v-if="error" class="text-sm text-error">{{ error }}</p>
-      </div>
+    <div class="mt-10 w-full rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
+      <UButton
+        block
+        size="lg"
+        color="neutral"
+        variant="solid"
+        icon="i-lucide-log-in"
+        :loading="loading"
+        @click="loginGoogle"
+      >
+        Google로 계속하기
+      </UButton>
+      <p v-if="error" class="mt-3 text-sm text-error">{{ error }}</p>
     </div>
-  </UContainer>
+
+    <p class="mt-6 text-xs text-neutral-500">
+      계속 진행 시 이용약관과 개인정보처리방침에 동의하는 것으로 간주해요.
+    </p>
+  </div>
 </template>

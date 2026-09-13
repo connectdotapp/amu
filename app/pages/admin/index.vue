@@ -29,23 +29,25 @@ const actions = [
 </script>
 
 <template>
-  <UContainer class="py-10">
-    <header class="mb-8">
-      <h1 class="text-2xl font-semibold tracking-tight">관리자</h1>
-      <p class="mt-1 text-muted">아무의 큐레이션 워크스페이스.</p>
+  <div class="mx-auto max-w-[1280px] px-6 py-10">
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">관리자</h1>
+      <p class="mt-2 text-neutral-500">아무의 큐레이션 워크스페이스.</p>
     </header>
 
-    <div class="grid gap-3 sm:grid-cols-3">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <NuxtLink
         v-for="a in actions"
         :key="a.to"
         :to="a.to"
-        class="group rounded-lg border border-default p-5 transition hover:border-highlighted"
+        class="group flex flex-col rounded-3xl bg-neutral-150 p-6 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
       >
-        <UIcon :name="a.icon" class="size-5 text-muted transition group-hover:text-default" />
-        <div class="mt-3 font-medium">{{ a.title }}</div>
-        <div class="mt-0.5 text-sm text-muted">{{ a.description }}</div>
+        <div class="flex size-10 items-center justify-center rounded-full bg-white dark:bg-neutral-700">
+          <UIcon :name="a.icon" class="size-5" />
+        </div>
+        <div class="mt-6 font-bold tracking-tight">{{ a.title }}</div>
+        <div class="mt-1 text-sm text-neutral-500">{{ a.description }}</div>
       </NuxtLink>
     </div>
-  </UContainer>
+  </div>
 </template>
