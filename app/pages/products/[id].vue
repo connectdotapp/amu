@@ -32,13 +32,13 @@ useSchemaOrg([
   <UContainer class="py-10">
     <article v-if="product" class="space-y-8">
       <header class="flex items-start gap-4">
-        <NuxtImg
+        <img
           :src="product.thumbnailUrl"
           :alt="product.name"
           width="96"
           height="96"
-          class="size-24 rounded-lg object-cover bg-elevated"
-        />
+          class="size-24 rounded-lg object-cover bg-neutral-100 dark:bg-neutral-800"
+        >
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
             <h1 class="text-2xl font-semibold tracking-tight">{{ product.name }}</h1>

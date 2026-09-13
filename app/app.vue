@@ -17,9 +17,9 @@ useSchemaOrg([
 <template>
   <UApp>
     <TheHeader />
-    <UMain>
+    <main>
       <NuxtPage />
-    </UMain>
+    </main>
     <TheFooter />
   </UApp>
 </template>

@@ -59,13 +59,13 @@ async function reject(p: Product) {
         :key="p.id"
         class="flex flex-col gap-4 rounded-lg border border-default p-4 sm:flex-row sm:items-start"
       >
-        <NuxtImg
+        <img
           :src="p.thumbnailUrl"
           :alt="p.name"
           width="80"
           height="80"
-          class="size-20 shrink-0 rounded-md object-cover bg-elevated"
-        />
+          class="size-20 shrink-0 rounded-md object-cover bg-neutral-100 dark:bg-neutral-800"
+        >
 
         <div class="min-w-0 flex-1">
           <NuxtLink :to="`/products/${p.id}`" class="font-medium hover:underline">
