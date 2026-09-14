@@ -1,5 +1,13 @@
-import { collection, query, orderBy, limit as fbLimit, getDocs, doc, getDoc } from 'firebase/firestore'
+import { collection, query, where, limit as fbLimit, getDocs, doc, getDoc } from 'firebase/firestore'
 import type { Product } from '~/types/product'
+
+function sortByPublishedDesc(items: Product[]): Product[] {
+  return items.sort((a, b) => {
+    const bt = (b.publishedAt as any)?.toMillis?.() ?? 0
+    const at = (a.publishedAt as any)?.toMillis?.() ?? 0
+    return bt - at
+  })
+}
 
 export function useLatestProducts(count = 20) {
   return useAsyncData<Product[]>(
@@ -7,14 +15,15 @@ export function useLatestProducts(count = 20) {
     async () => {
       try {
         const db = useFirestore()
+        // where('status', '==', 'published') satisfies security rules for
+        // anonymous readers; sort client-side to skip the composite index.
         const snap = await getDocs(query(
           collection(db, 'products'),
-          orderBy('publishedAt', 'desc'),
-          fbLimit(count)
+          where('status', '==', 'published'),
+          fbLimit(count * 2)
         ))
-        return snap.docs
-          .map(d => ({ id: d.id, ...d.data() }) as Product)
-          .filter(p => p.status === 'published')
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+        return sortByPublishedDesc(items).slice(0, count)
       } catch (e) {
         console.warn('[useLatestProducts] fetch failed:', e)
         return []
@@ -24,11 +33,6 @@ export function useLatestProducts(count = 20) {
   )
 }
 
-/**
- * Fetch a superset of published products for client-side filter/sort.
- * MVP-friendly (single Firestore read, no composite index). Swap to a
- * server-side query with dedicated indexes once product count grows.
- */
 export function useAllPublishedProducts(count = 200) {
   return useAsyncData<Product[]>(
     `products:all-published:${count}`,
@@ -37,12 +41,11 @@ export function useAllPublishedProducts(count = 200) {
         const db = useFirestore()
         const snap = await getDocs(query(
           collection(db, 'products'),
-          orderBy('publishedAt', 'desc'),
+          where('status', '==', 'published'),
           fbLimit(count)
         ))
-        return snap.docs
-          .map(d => ({ id: d.id, ...d.data() }) as Product)
-          .filter(p => p.status === 'published')
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+        return sortByPublishedDesc(items)
       } catch (e) {
         console.warn('[useAllPublishedProducts] fetch failed:', e)
         return []
@@ -58,14 +61,20 @@ export function usePendingProducts() {
     async () => {
       try {
         const db = useFirestore()
+        // Admin-only page; unconstrained query is fine because admin has
+        // full read access via the security rules.
         const snap = await getDocs(query(
           collection(db, 'products'),
-          orderBy('submittedAt', 'desc'),
+          where('status', '==', 'pending'),
           fbLimit(100)
         ))
-        return snap.docs
-          .map(d => ({ id: d.id, ...d.data() }) as Product)
-          .filter(p => p.status === 'pending')
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+        items.sort((a, b) => {
+          const bt = (b.submittedAt as any)?.toMillis?.() ?? 0
+          const at = (a.submittedAt as any)?.toMillis?.() ?? 0
+          return bt - at
+        })
+        return items
       } catch (e) {
         console.warn('[usePendingProducts] fetch failed:', e)
         return []
@@ -132,7 +141,6 @@ export function filterAndSortProducts(products: Product[], filters: ProductFilte
   } else if (sort === 'pick') {
     result = result.filter(p => p.source === 'curated')
   }
-  // 'latest' keeps the default publishedAt-desc order from Firestore
 
   return result
 }
