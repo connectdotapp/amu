@@ -12,6 +12,7 @@ watch(() => route.query.q, (v) => { searchInput.value = (v as string) || '' })
 function submitSearch() {
   const q = searchInput.value.trim()
   router.push({ path: '/', query: { ...(route.path === '/' ? route.query : {}), q: q || undefined } })
+  mobileOpen.value = false
 }
 
 const auth = useFirebaseAuth()
@@ -51,6 +52,10 @@ async function logout() {
   await signOut(auth)
   await navigateTo('/')
 }
+
+// Mobile menu state
+const mobileOpen = ref(false)
+watch(() => route.fullPath, () => { mobileOpen.value = false })
 </script>
 
 <template>
@@ -79,7 +84,7 @@ async function logout() {
         </nav>
       </div>
 
-      <!-- Center: Search -->
+      <!-- Center: Search (desktop) -->
       <form class="mx-auto hidden w-full max-w-md md:block" @submit.prevent="submitSearch">
         <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 focus-within:ring-neutral-500 dark:bg-neutral-800 dark:ring-neutral-700">
           <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
@@ -131,10 +136,79 @@ async function logout() {
             color="neutral"
             variant="solid"
             size="sm"
+            class="hidden sm:inline-flex"
           >
             로그인
           </UButton>
         </template>
+
+        <!-- Mobile toggle -->
+        <button
+          class="ml-1 flex size-8 items-center justify-center rounded-full ring-1 ring-neutral-300 md:hidden dark:ring-neutral-700"
+          :aria-expanded="mobileOpen"
+          aria-label="메뉴"
+          @click="mobileOpen = !mobileOpen"
+        >
+          <UIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-4" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu panel -->
+    <div v-if="mobileOpen" class="md:hidden border-t border-neutral-200 dark:border-neutral-800">
+      <div class="mx-auto max-w-[1280px] space-y-4 px-6 py-4">
+        <form @submit.prevent="submitSearch">
+          <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:ring-neutral-700">
+            <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
+            <input
+              v-model="searchInput"
+              type="text"
+              placeholder="이름, 태그, 설명 검색"
+              class="flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
+            >
+          </div>
+        </form>
+
+        <nav class="flex flex-col gap-1 text-base font-semibold">
+          <NuxtLink to="/" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            둘러보기
+          </NuxtLink>
+          <NuxtLink to="/submit" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            등록하기
+          </NuxtLink>
+          <NuxtLink to="/about" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            About
+          </NuxtLink>
+          <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            내 북마크
+          </NuxtLink>
+          <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            관리자
+          </NuxtLink>
+        </nav>
+
+        <div class="border-t border-neutral-200 pt-4 dark:border-neutral-800">
+          <UButton
+            v-if="!user"
+            to="/login"
+            block
+            color="neutral"
+            variant="solid"
+            size="sm"
+          >
+            로그인
+          </UButton>
+          <UButton
+            v-else
+            block
+            color="neutral"
+            variant="outline"
+            size="sm"
+            @click="logout"
+          >
+            로그아웃
+          </UButton>
+        </div>
       </div>
     </div>
   </header>
