@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore'
-import type { PricingModel, ProductSource, ProductStatus } from '~/types/product'
+import { collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import type { PricingModel, Product, ProductSource, ProductStatus } from '~/types/product'
 
 const props = defineProps<{
-  source: ProductSource
-  status: ProductStatus
+  // Create mode: source + status required. Edit mode: pass product; source/status ignored.
+  product?: Product
+  source?: ProductSource
+  status?: ProductStatus
   submitLabel?: string
 }>()
 
@@ -12,25 +14,27 @@ const emit = defineEmits<{
   submitted: [productId: string]
 }>()
 
+const isEdit = computed(() => !!props.product)
+
 const { data: categories } = useCategories()
 const { uploadThumbnail } = useProductUpload()
 const db = useFirestore()
 const user = useCurrentUser()
 
 const form = reactive({
-  name: '',
-  tagline: '',
-  description: '',
-  category: '',
-  tags: '',
-  pricing: 'free' as PricingModel,
-  linkLabel: '웹사이트',
-  linkUrl: '',
-  maker: ''
+  name: props.product?.name ?? '',
+  tagline: props.product?.tagline ?? '',
+  description: props.product?.description ?? '',
+  category: props.product?.category ?? '',
+  tags: (props.product?.tags || []).join(', '),
+  pricing: (props.product?.pricing ?? 'free') as PricingModel,
+  linkLabel: props.product?.links?.[0]?.label ?? '웹사이트',
+  linkUrl: props.product?.links?.[0]?.url ?? '',
+  maker: props.product?.maker ?? ''
 })
 
 const thumbnailFile = ref<File | null>(null)
-const thumbnailPreview = ref<string | null>(null)
+const thumbnailPreview = ref<string | null>(props.product?.thumbnailUrl ?? null)
 const isSubmitting = ref(false)
 const errorMessage = ref<string | null>(null)
 
@@ -59,48 +63,74 @@ async function submit() {
     errorMessage.value = '로그인이 필요합니다.'
     return
   }
-  if (!form.name || !form.tagline || !form.category || !form.linkUrl || !thumbnailFile.value) {
-    errorMessage.value = '필수 항목을 모두 채워 주세요. (이름 · 한줄소개 · 카테고리 · 링크 · 대표 이미지)'
+  if (!form.name || !form.tagline || !form.category || !form.linkUrl) {
+    errorMessage.value = '필수 항목을 모두 채워 주세요.'
+    return
+  }
+  if (!isEdit.value && !thumbnailFile.value) {
+    errorMessage.value = '대표 이미지를 선택해 주세요.'
     return
   }
 
   isSubmitting.value = true
   try {
-    const productRef = doc(collection(db, 'products'))
-    const id = productRef.id
-
-    const thumbnailUrl = await uploadThumbnail(thumbnailFile.value, id)
-
     const tags = form.tags.split(',').map(t => t.trim()).filter(Boolean)
+    const linkArr = form.linkUrl
+      ? [{ label: form.linkLabel || '웹사이트', url: form.linkUrl.trim() }]
+      : []
 
-    await setDoc(productRef, {
-      slug: id,
-      name: form.name.trim(),
-      tagline: form.tagline.trim(),
-      description: form.description.trim(),
-      category: form.category,
-      tags,
-      platforms: [],
-      pricing: form.pricing,
-      links: form.linkUrl ? [{ label: form.linkLabel || '웹사이트', url: form.linkUrl.trim() }] : [],
-      thumbnailUrl,
-      screenshots: [],
-      maker: form.maker.trim() || null,
+    if (isEdit.value && props.product) {
+      let thumbnailUrl = props.product.thumbnailUrl
+      if (thumbnailFile.value) {
+        thumbnailUrl = await uploadThumbnail(thumbnailFile.value, props.product.id)
+      }
+      await updateDoc(doc(db, 'products', props.product.id), {
+        name: form.name.trim(),
+        tagline: form.tagline.trim(),
+        description: form.description.trim(),
+        category: form.category,
+        tags,
+        pricing: form.pricing,
+        links: linkArr,
+        thumbnailUrl,
+        maker: form.maker.trim() || null
+      })
+      emit('submitted', props.product.id)
+    } else {
+      const productRef = doc(collection(db, 'products'))
+      const id = productRef.id
 
-      status: props.status,
-      source: props.source,
-      submittedBy: user.value.uid,
-      submittedAt: serverTimestamp(),
-      publishedAt: props.status === 'published' ? serverTimestamp() : null,
+      const thumbnailUrl = await uploadThumbnail(thumbnailFile.value!, id)
 
-      upvoteCount: 0,
-      commentCount: 0,
-      bookmarkCount: 0
-    })
+      await setDoc(productRef, {
+        slug: id,
+        name: form.name.trim(),
+        tagline: form.tagline.trim(),
+        description: form.description.trim(),
+        category: form.category,
+        tags,
+        platforms: [],
+        pricing: form.pricing,
+        links: linkArr,
+        thumbnailUrl,
+        screenshots: [],
+        maker: form.maker.trim() || null,
 
-    emit('submitted', id)
+        status: props.status!,
+        source: props.source!,
+        submittedBy: user.value.uid,
+        submittedAt: serverTimestamp(),
+        publishedAt: props.status === 'published' ? serverTimestamp() : null,
+
+        upvoteCount: 0,
+        commentCount: 0,
+        bookmarkCount: 0
+      })
+
+      emit('submitted', id)
+    }
   } catch (e: any) {
-    errorMessage.value = e?.message || '등록 중 오류가 발생했어요.'
+    errorMessage.value = e?.message || '저장 중 오류가 발생했어요.'
     console.error('[ProductForm] submit failed:', e)
   } finally {
     isSubmitting.value = false
@@ -111,11 +141,14 @@ async function submit() {
 <template>
   <form class="space-y-6" @submit.prevent="submit">
     <div>
-      <label class="mb-1.5 block text-sm font-medium">대표 이미지 <span class="text-error">*</span></label>
+      <label class="mb-1.5 block text-sm font-medium">
+        대표 이미지 <span v-if="!isEdit" class="text-error">*</span>
+        <span v-else class="text-neutral-400 text-xs">(교체 시에만 선택)</span>
+      </label>
       <div class="flex items-start gap-4">
-        <div class="size-24 shrink-0 rounded-md border border-dashed border-default bg-elevated overflow-hidden">
+        <div class="size-24 shrink-0 rounded-md border border-dashed border-neutral-300 bg-white overflow-hidden dark:border-neutral-700 dark:bg-neutral-900">
           <img v-if="thumbnailPreview" :src="thumbnailPreview" class="size-full object-cover">
-          <div v-else class="flex size-full items-center justify-center text-dimmed">
+          <div v-else class="flex size-full items-center justify-center text-neutral-400">
             <UIcon name="i-lucide-image" class="size-6" />
           </div>
         </div>
@@ -137,7 +170,7 @@ async function submit() {
           >
             이미지 선택
           </UButton>
-          <p class="mt-1.5 text-xs text-dimmed">5MB 이하, 정사각형 권장</p>
+          <p class="mt-1.5 text-xs text-neutral-500">5MB 이하, 정사각형 권장</p>
         </div>
       </div>
     </div>
@@ -150,7 +183,7 @@ async function submit() {
       <UInput v-model="form.tagline" placeholder="어떤 프로덕트인지 한 줄로" size="lg" maxlength="80" />
     </UFormField>
 
-    <UFormField label="상세 설명" help="Markdown 지원 예정 · 지금은 일반 텍스트">
+    <UFormField label="상세 설명">
       <UTextarea v-model="form.description" :rows="6" placeholder="주요 기능, 만든 이유, 사용 팁 등" />
     </UFormField>
 
@@ -201,7 +234,7 @@ async function submit() {
         :loading="isSubmitting"
         icon="i-lucide-check"
       >
-        {{ submitLabel ?? '등록' }}
+        {{ submitLabel ?? (isEdit ? '저장' : '등록') }}
       </UButton>
     </div>
   </form>

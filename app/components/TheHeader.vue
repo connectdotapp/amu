@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
 
+const route = useRoute()
+const router = useRouter()
+
 const productType = ref<'web' | 'app'>('web')
-const searchQuery = ref('')
+
+const searchInput = ref((route.query.q as string) || '')
+watch(() => route.query.q, (v) => { searchInput.value = (v as string) || '' })
+
+function submitSearch() {
+  const q = searchInput.value.trim()
+  router.push({ path: '/', query: { ...(route.path === '/' ? route.query : {}), q: q || undefined } })
+}
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
@@ -70,20 +80,20 @@ async function logout() {
       </div>
 
       <!-- Center: Search -->
-      <div class="mx-auto hidden w-full max-w-md md:block">
-        <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:ring-neutral-700">
+      <form class="mx-auto hidden w-full max-w-md md:block" @submit.prevent="submitSearch">
+        <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 focus-within:ring-neutral-500 dark:bg-neutral-800 dark:ring-neutral-700">
           <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
           <input
-            v-model="searchQuery"
+            v-model="searchInput"
             type="text"
-            placeholder="Search on Web..."
+            placeholder="이름, 태그, 설명 검색"
             class="flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
           >
           <kbd class="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 dark:bg-neutral-700">
-            ⌘K
+            Enter
           </kbd>
         </div>
-      </div>
+      </form>
 
       <!-- Right: Actions -->
       <div class="ml-auto flex items-center gap-2">

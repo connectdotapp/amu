@@ -1,10 +1,37 @@
 <script setup lang="ts">
+import { deleteDoc, doc } from 'firebase/firestore'
+
 const route = useRoute()
 const id = String(route.params.id)
 
 const { data: product } = useProductById(id)
 
 const site = useSiteConfig()
+
+const user = useCurrentUser()
+const isAdmin = ref(false)
+watchEffect(async () => {
+  if (!user.value) { isAdmin.value = false; return }
+  try {
+    const token = await user.value.getIdTokenResult()
+    isAdmin.value = !!token.claims.admin
+  } catch { isAdmin.value = false }
+})
+
+const db = useFirestore()
+const toast = useToast()
+
+async function removeProduct() {
+  if (!product.value) return
+  if (!confirm(`"${product.value.name}" 프로덕트를 삭제할까요? 되돌릴 수 없어요.`)) return
+  try {
+    await deleteDoc(doc(db, 'products', id))
+    toast.add({ title: '삭제됐어요', color: 'success' })
+    await navigateTo('/')
+  } catch (e: any) {
+    toast.add({ title: '삭제 실패', description: e?.message, color: 'error' })
+  }
+}
 
 useSeoMeta({
   title: () => product.value?.name ?? '프로덕트',
@@ -41,6 +68,20 @@ const pricingLabel: Record<string, string> = {
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       둘러보기
     </NuxtLink>
+
+    <!-- Admin actions -->
+    <div v-if="isAdmin && product" class="mt-4 flex items-center gap-2 rounded-2xl bg-neutral-150 p-3 dark:bg-neutral-800">
+      <UIcon name="i-lucide-shield" class="size-4 text-neutral-500" />
+      <span class="text-xs text-neutral-500">관리자 액션</span>
+      <div class="ml-auto flex gap-2">
+        <UButton :to="`/admin/products/${id}/edit`" size="xs" color="neutral" variant="outline" icon="i-lucide-pencil">
+          수정
+        </UButton>
+        <UButton size="xs" color="neutral" variant="ghost" icon="i-lucide-trash-2" @click="removeProduct">
+          삭제
+        </UButton>
+      </div>
+    </div>
 
     <article v-if="product" class="mt-6 space-y-6">
       <!-- Hero card -->

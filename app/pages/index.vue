@@ -1,31 +1,50 @@
 <script setup lang="ts">
-const { data: products } = useLatestProducts(30)
+import type { ProductFilters } from '~/composables/useProducts'
 
 useSeoMeta({
   title: '오늘의 아무',
   description: '오늘의 앱·웹·프로그램. 아무거나 소개하지 않아요.'
 })
 
-const platform = ref<'web' | 'app'>('web')
-const sort = ref<'latest' | 'popular' | 'pick'>('latest')
+const route = useRoute()
+const router = useRouter()
 
-const columns = [
-  {
-    label: '카테고리',
-    items: ['AI', '생산성', '디자인', '개발도구', '마케팅']
-  },
-  {
-    label: '플랫폼',
-    items: ['웹', 'iOS', 'Android', 'macOS', 'Windows']
-  },
-  {
-    label: '가격',
-    items: ['무료', '프리미엄', '유료', '구독', '오픈소스']
-  },
-  {
-    label: '컬렉션',
-    items: ['AMU Pick', '오늘의 아무', '이번 주 픽', '최근 등록', '인기순']
-  }
+const { data: allProducts } = useAllPublishedProducts(200)
+const { data: categories } = useCategories()
+
+const filters = computed<ProductFilters>(() => ({
+  q: (route.query.q as string) || '',
+  category: (route.query.category as string) || '',
+  pricing: (route.query.pricing as string) || '',
+  collection: (route.query.collection as string) || '',
+  sort: ((route.query.sort as string) || 'latest') as ProductFilters['sort']
+}))
+
+const products = computed(() => filterAndSortProducts(allProducts.value || [], filters.value))
+
+const hasActiveFilter = computed(() =>
+  !!(filters.value.q || filters.value.category || filters.value.pricing || filters.value.collection)
+)
+
+function setFilter(key: keyof ProductFilters, value: string | undefined) {
+  const current = filters.value[key]
+  const next = current === value ? undefined : value
+  router.push({ query: { ...route.query, [key]: next || undefined } })
+}
+
+function clearAll() {
+  router.push({ query: {} })
+}
+
+const pricingOptions = [
+  { label: '무료', value: 'free' },
+  { label: '프리미엄', value: 'freemium' },
+  { label: '유료', value: 'paid' },
+  { label: '구독', value: 'subscription' }
+]
+
+const collectionOptions = [
+  { label: 'AMU Pick', value: 'pick' }
 ]
 
 const sortTabs = [
@@ -39,66 +58,130 @@ const sortTabs = [
   <div class="mx-auto max-w-[1280px] px-6">
     <!-- Four-column taxonomy grid -->
     <section class="grid grid-cols-2 gap-x-6 gap-y-10 pt-4 pb-16 md:grid-cols-4">
-      <div v-for="col in columns" :key="col.label">
-        <div class="text-sm text-neutral-500">{{ col.label }}</div>
+      <div>
+        <div class="text-sm text-neutral-500">카테고리</div>
         <ul class="mt-4 space-y-2.5">
-          <li v-for="item in col.items" :key="item">
-            <NuxtLink
-              to="#"
-              class="text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50"
+          <li v-for="c in categories" :key="c.id">
+            <button
+              class="text-lg font-bold tracking-tight text-neutral-950 transition hover:opacity-60 dark:text-neutral-50"
+              :class="filters.category === c.slug && 'underline underline-offset-4 decoration-2'"
+              @click="setFilter('category', c.slug)"
             >
-              {{ item }}
+              {{ c.name }}
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-sm text-neutral-500">가격</div>
+        <ul class="mt-4 space-y-2.5">
+          <li v-for="p in pricingOptions" :key="p.value">
+            <button
+              class="text-lg font-bold tracking-tight text-neutral-950 transition hover:opacity-60 dark:text-neutral-50"
+              :class="filters.pricing === p.value && 'underline underline-offset-4 decoration-2'"
+              @click="setFilter('pricing', p.value)"
+            >
+              {{ p.label }}
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-sm text-neutral-500">컬렉션</div>
+        <ul class="mt-4 space-y-2.5">
+          <li v-for="c in collectionOptions" :key="c.value">
+            <button
+              class="text-lg font-bold tracking-tight text-neutral-950 transition hover:opacity-60 dark:text-neutral-50"
+              :class="filters.collection === c.value && 'underline underline-offset-4 decoration-2'"
+              @click="setFilter('collection', c.value)"
+            >
+              {{ c.label }}
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-sm text-neutral-500">단축</div>
+        <ul class="mt-4 space-y-2.5">
+          <li>
+            <NuxtLink to="/submit" class="text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50">
+              프로덕트 등록
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/me/bookmarks" class="text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50">
+              내 북마크
             </NuxtLink>
           </li>
         </ul>
       </div>
     </section>
 
-    <!-- Filter row -->
-    <div class="flex items-center justify-between gap-4 pb-8">
-      <div class="flex items-center gap-6">
-        <!-- Platform toggle (pill container with 2 segments) -->
-        <div class="relative flex items-center rounded-full bg-neutral-200 p-0.5 dark:bg-neutral-800">
-          <button
-            class="relative rounded-full px-3 py-1 text-xs font-semibold transition"
-            :class="platform === 'web' ? 'bg-white text-neutral-950 shadow-sm ring-1 ring-neutral-300 dark:bg-neutral-950 dark:text-neutral-50 dark:ring-neutral-600' : 'text-neutral-500'"
-            @click="platform = 'web'"
-          >
-            웹
-          </button>
-          <button
-            class="relative rounded-full px-3 py-1 text-xs font-semibold transition"
-            :class="platform === 'app' ? 'bg-white text-neutral-950 shadow-sm ring-1 ring-neutral-300 dark:bg-neutral-950 dark:text-neutral-50 dark:ring-neutral-600' : 'text-neutral-500'"
-            @click="platform = 'app'"
-          >
-            앱
-          </button>
-        </div>
-
-        <div class="h-5 w-px bg-neutral-300 dark:bg-neutral-700" />
-
-        <!-- Sort tabs (underline active) -->
-        <nav class="flex items-center gap-6 text-sm font-semibold">
-          <button
-            v-for="tab in sortTabs"
-            :key="tab.value"
-            class="transition"
-            :class="sort === tab.value ? 'text-neutral-950 underline underline-offset-8 decoration-2 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-            @click="sort = tab.value"
-          >
-            {{ tab.label }}
-          </button>
-        </nav>
-      </div>
-
-      <button class="flex items-center gap-1.5 text-sm font-semibold text-neutral-950 dark:text-neutral-50">
-        <UIcon name="i-lucide-sliders-horizontal" class="size-4" />
-        필터
+    <!-- Active filter chips -->
+    <div v-if="hasActiveFilter" class="mb-4 flex flex-wrap items-center gap-2">
+      <span class="text-xs text-neutral-500">필터:</span>
+      <button
+        v-if="filters.q"
+        class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+        @click="router.push({ query: { ...route.query, q: undefined } })"
+      >
+        "{{ filters.q }}"
+        <UIcon name="i-lucide-x" class="size-3" />
+      </button>
+      <button
+        v-if="filters.category"
+        class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+        @click="setFilter('category', filters.category)"
+      >
+        {{ categories?.find(c => c.slug === filters.category)?.name || filters.category }}
+        <UIcon name="i-lucide-x" class="size-3" />
+      </button>
+      <button
+        v-if="filters.pricing"
+        class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+        @click="setFilter('pricing', filters.pricing)"
+      >
+        {{ pricingOptions.find(p => p.value === filters.pricing)?.label || filters.pricing }}
+        <UIcon name="i-lucide-x" class="size-3" />
+      </button>
+      <button
+        v-if="filters.collection"
+        class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+        @click="setFilter('collection', filters.collection)"
+      >
+        {{ collectionOptions.find(c => c.value === filters.collection)?.label || filters.collection }}
+        <UIcon name="i-lucide-x" class="size-3" />
+      </button>
+      <button
+        class="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-950 dark:hover:text-neutral-50"
+        @click="clearAll"
+      >
+        모두 지우기
       </button>
     </div>
 
-    <!-- Cards grid — 4 cols on desktop makes each card ~3/4 of the previous width -->
-    <section v-if="products?.length" class="grid grid-cols-1 gap-4 pb-24 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <!-- Sort tabs -->
+    <div class="flex items-center justify-between gap-4 pb-8">
+      <nav class="flex items-center gap-6 text-sm font-semibold">
+        <button
+          v-for="tab in sortTabs"
+          :key="tab.value"
+          class="transition"
+          :class="filters.sort === tab.value ? 'text-neutral-950 underline underline-offset-8 decoration-2 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+          @click="router.push({ query: { ...route.query, sort: tab.value === 'latest' ? undefined : tab.value } })"
+        >
+          {{ tab.label }}
+        </button>
+      </nav>
+
+      <span class="text-xs text-neutral-500">{{ products.length }}개</span>
+    </div>
+
+    <!-- Cards grid -->
+    <section v-if="products.length" class="grid grid-cols-1 gap-4 pb-24 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <ProductCard
         v-for="p in products"
         :key="p.id"
@@ -106,13 +189,20 @@ const sortTabs = [
       />
     </section>
 
-    <!-- Empty placeholder cards to mirror the browse layout even without data -->
-    <section v-else class="grid grid-cols-1 gap-4 pb-24 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <div
-        v-for="i in 8"
-        :key="i"
-        class="aspect-[6/5] rounded-3xl bg-neutral-150 dark:bg-neutral-800"
-      />
-    </section>
+    <div v-else-if="hasActiveFilter" class="mx-auto max-w-xl rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <UIcon name="i-lucide-search-x" class="mx-auto size-8 text-neutral-400" />
+      <p class="mt-4 text-neutral-500">일치하는 프로덕트가 없어요.</p>
+      <button
+        class="mt-6 text-sm text-neutral-950 underline underline-offset-4 dark:text-neutral-50"
+        @click="clearAll"
+      >
+        필터 지우기
+      </button>
+    </div>
+
+    <div v-else class="mx-auto max-w-xl rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <UIcon name="i-lucide-search" class="mx-auto size-8 text-neutral-400" />
+      <p class="mt-4 text-neutral-500">아직 등록된 프로덕트가 없어요.</p>
+    </div>
   </div>
 </template>
