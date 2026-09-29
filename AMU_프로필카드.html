@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>AMU · 프로필 카드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #ececec;
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    -webkit-font-smoothing: antialiased;
+  }
+  .print-hint {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    background: #fef9c3;
+    border-radius: 20px;
+    font-size: 11pt;
+    color: #713f12;
+    z-index: 10;
+  }
+  .card {
+    width: 480px;
+    background: #F5F5F5;
+    border-radius: 32px;
+    padding: 56px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    ring: 1px solid #e5e5e5;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .mascot {
+    width: 180px;
+    height: 180px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 24px;
+  }
+  .mascot img {
+    width: 78%;
+    height: 78%;
+    object-fit: contain;
+  }
+  .mascot-placeholder {
+    color: #a3a3a3;
+    font-size: 10pt;
+    text-align: center;
+    padding: 12px;
+    line-height: 1.5;
+  }
+
+  .wordmark {
+    font-size: 44pt;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: #0a0a0a;
+  }
+  .name-kr {
+    font-size: 12pt;
+    font-weight: 600;
+    color: #525252;
+    margin-top: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .divider {
+    width: 32px;
+    height: 1px;
+    background: #262626;
+    margin: 24px 0;
+  }
+
+  .tagline {
+    font-size: 13pt;
+    color: #0a0a0a;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .role {
+    font-size: 11pt;
+    color: #737373;
+    margin-top: 10px;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+  }
+
+  .meta {
+    width: 100%;
+    border-top: 1px solid #d4d4d4;
+    margin-top: 36px;
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    color: #737373;
+  }
+  .meta strong {
+    color: #262626;
+    font-weight: 500;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .print-hint { display: none; }
+    .card { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="print-hint">
+    💡 저장: 카드 위에서 우클릭 → "이미지로 저장" · 또는 Win+Shift+S 로 캡처
+  </div>
+
+  <div class="card">
+    <div class="mascot">
+      <img
+        src="amu-mascot.png"
+        alt="아무"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+      >
+      <div class="mascot-placeholder" style="display:none">
+        이 폴더에<br><strong style="color:#525252">amu-mascot.png</strong><br>파일을 넣으세요
+      </div>
+    </div>
+
+    <div class="wordmark">AMU</div>
+    <div class="name-kr">아무</div>
+
+    <div class="divider"></div>
+
+    <div class="tagline">아무거나 먹지 않는 새</div>
+    <div class="role">
+      오늘의 앱·웹·프로그램을<br>골라 소개해요
+    </div>
+
+    <div class="meta">
+      <span><strong>@amu.official</strong></span>
+      <span>amu.kr</span>
+    </div>
+  </div>
+</body>
+</html>
