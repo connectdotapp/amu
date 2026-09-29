@@ -11,6 +11,7 @@ const router = useRouter()
 
 const { data: allProducts } = useAllPublishedProducts(200)
 const { data: categories } = useCategories()
+const { data: collections } = usePublishedCollections(6)
 
 const filters = computed<ProductFilters>(() => ({
   q: (route.query.q as string) || '',
@@ -43,15 +44,13 @@ const pricingOptions = [
   { label: '구독', value: 'subscription' }
 ]
 
-const collectionOptions = [
-  { label: 'AMU Pick', value: 'pick' }
-]
-
 const sortTabs = [
   { value: 'latest', label: '최신' },
   { value: 'popular', label: '인기' },
   { value: 'pick', label: 'AMU Pick' }
 ] as const
+
+const featuredCollections = computed(() => (collections.value || []).slice(0, 3))
 </script>
 
 <template>
@@ -89,18 +88,25 @@ const sortTabs = [
       </div>
 
       <div>
-        <div class="text-sm text-neutral-500">컬렉션</div>
-        <ul class="mt-4 space-y-2.5">
-          <li v-for="c in collectionOptions" :key="c.value">
-            <button
-              class="text-lg font-bold tracking-tight text-neutral-950 transition hover:opacity-60 dark:text-neutral-50"
-              :class="filters.collection === c.value && 'underline underline-offset-4 decoration-2'"
-              @click="setFilter('collection', c.value)"
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-neutral-500">컬렉션</div>
+          <NuxtLink v-if="collections?.length" to="/collections" class="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50">
+            전체
+          </NuxtLink>
+        </div>
+        <ul v-if="collections?.length" class="mt-4 space-y-2.5">
+          <li v-for="c in collections.slice(0, 5)" :key="c.id">
+            <NuxtLink
+              :to="`/collections/${c.slug}`"
+              class="line-clamp-1 text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50"
             >
-              {{ c.label }}
-            </button>
+              {{ c.title }}
+            </NuxtLink>
           </li>
         </ul>
+        <p v-else class="mt-4 text-sm text-neutral-400">
+          곧 열려요.
+        </p>
       </div>
 
       <div>
@@ -117,6 +123,23 @@ const sortTabs = [
             </NuxtLink>
           </li>
         </ul>
+      </div>
+    </section>
+
+    <!-- Featured collections block -->
+    <section v-if="featuredCollections.length" class="mb-16">
+      <div class="mb-6 flex items-baseline justify-between">
+        <h2 class="text-xl font-bold tracking-tight sm:text-2xl">이번의 컬렉션</h2>
+        <NuxtLink to="/collections" class="text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+          전체 보기 →
+        </NuxtLink>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <CollectionCard
+          v-for="c in featuredCollections"
+          :key="c.id"
+          :collection="c"
+        />
       </div>
     </section>
 
@@ -145,14 +168,6 @@ const sortTabs = [
         @click="setFilter('pricing', filters.pricing)"
       >
         {{ pricingOptions.find(p => p.value === filters.pricing)?.label || filters.pricing }}
-        <UIcon name="i-lucide-x" class="size-3" />
-      </button>
-      <button
-        v-if="filters.collection"
-        class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-        @click="setFilter('collection', filters.collection)"
-      >
-        {{ collectionOptions.find(c => c.value === filters.collection)?.label || filters.collection }}
         <UIcon name="i-lucide-x" class="size-3" />
       </button>
       <button

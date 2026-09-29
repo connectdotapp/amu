@@ -14,6 +14,12 @@ const actions = [
     description: 'AMU Pick으로 즉시 게시'
   },
   {
+    to: '/admin/collections',
+    icon: 'i-lucide-layers',
+    title: '컬렉션 관리',
+    description: '주제별 프로덕트 묶음 편집'
+  },
+  {
     to: '/admin/queue',
     icon: 'i-lucide-inbox',
     title: '승인 대기',
@@ -35,7 +41,7 @@ const actions = [
       <p class="mt-2 text-neutral-500">아무의 큐레이션 워크스페이스.</p>
     </header>
 
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <NuxtLink
         v-for="a in actions"
         :key="a.to"

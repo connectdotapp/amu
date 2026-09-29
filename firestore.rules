@@ -64,5 +64,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Collections (curated groupings): published are public, drafts admin-only.
+    // Only admins can create/update/delete.
+    match /collections/{collectionId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow list: if isAdmin() || request.query.limit <= 100;
+      allow create, update, delete: if isAdmin();
+    }
   }
 }
