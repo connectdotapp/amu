@@ -1,16 +1,9 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
 
-const props = defineProps<{
+defineProps<{
   product: Product
 }>()
-
-// Mark as NEW when published within the last 24h
-const isNew = computed(() => {
-  const t = (props.product.publishedAt as any)?.toMillis?.()
-  if (!t) return false
-  return Date.now() - t < 24 * 60 * 60 * 1000
-})
 </script>
 
 <template>
@@ -18,19 +11,10 @@ const isNew = computed(() => {
     :to="`/products/${product.slug || product.id}`"
     class="group relative flex aspect-[6/5] flex-col overflow-hidden rounded-3xl bg-neutral-150 p-4 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
   >
-    <!-- Top-left badge stack -->
-    <div class="absolute left-4 top-4 z-10 flex flex-col items-start gap-1">
-      <span
-        v-if="product.source === 'curated'"
-        class="rounded-full bg-[var(--color-amu-pink)] px-2.5 py-1 text-[11px] font-semibold text-white"
-      >
+    <!-- Top-left badge -->
+    <div v-if="product.source === 'curated'" class="absolute left-4 top-4 z-10">
+      <span class="rounded-full bg-neutral-900/80 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
         AMU Pick
-      </span>
-      <span
-        v-if="isNew"
-        class="rounded-full bg-neutral-950/85 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur"
-      >
-        New
       </span>
     </div>
 

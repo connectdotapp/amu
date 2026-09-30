@@ -55,10 +55,7 @@ const stats = computed(() => {
       <span class="text-xs text-neutral-400">메이커 제공 정보</span>
     </div>
 
-    <p
-      v-if="showroom.investorPitch"
-      class="mt-4 border-l-[3px] border-[var(--color-amu-pink)] pl-4 text-lg font-semibold tracking-tight sm:text-xl"
-    >
+    <p v-if="showroom.investorPitch" class="mt-4 text-lg font-semibold tracking-tight sm:text-xl">
       {{ showroom.investorPitch }}
     </p>
 

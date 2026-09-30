@@ -86,12 +86,9 @@ const hasAnyShowroom = computed(() =>
                   <NuxtLink :to="`/products/${p.slug || p.id}`" class="truncate font-bold tracking-tight hover:underline">
                     {{ p.name }}
                   </NuxtLink>
-                  <span
-                    v-if="p.source === 'curated'"
-                    class="rounded-full bg-[var(--color-amu-pink)] px-2 py-0.5 text-[10px] font-semibold text-white"
-                  >
+                  <UBadge v-if="p.source === 'curated'" size="xs" color="neutral" variant="solid">
                     Pick
-                  </span>
+                  </UBadge>
                 </div>
                 <p class="mt-1 line-clamp-2 text-xs text-neutral-500">{{ p.tagline }}</p>
               </div>

@@ -18,11 +18,6 @@
   --color-neutral-800: #262626;
   --color-neutral-900: #171717;
   --color-neutral-950: #0A0A0A;
-
-  /* AMU point color — used very locally. See AMU_디자인계획.html for rules. */
-  --color-amu-pink: #FF3C7D;
-  --color-amu-pink-dark: #E01D5F;
-  --color-amu-pink-tint: #FFE5EE;
 }
 
 html,
