@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>AMU 디자인 계획 v2.0</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', sans-serif;
+    color: #0a0a0a;
+    background: #ececec;
+    margin: 0; padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 820px; margin: 0 auto; padding: 24px 16px 48px; }
+  .page {
+    background: #fff;
+    padding: 44px 48px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border-radius: 4px;
+  }
+  @media print {
+    body { background: #fff; }
+    main { padding: 0; }
+    .page { box-shadow: none; padding: 0; margin: 0; border-radius: 0; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+  }
+
+  .cover {
+    min-height: calc(297mm - 36mm);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 48px;
+  }
+  .cover .topbar {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 10.5pt; color: #737373;
+  }
+  .cover .brand img {
+    display: block;
+    height: 68px;
+    width: auto;
+  }
+  .cover h1 {
+    font-size: 30pt; font-weight: 800;
+    letter-spacing: -0.04em; line-height: 1.2;
+    margin: 24px 0 12px;
+  }
+  .cover .subtitle {
+    font-size: 13pt; color: #525252; margin: 0;
+  }
+  .cover .meta {
+    margin-top: auto;
+    border-top: 1px solid #d4d4d4;
+    padding-top: 24px;
+    font-size: 10.5pt; color: #525252;
+  }
+
+  h2 { font-size: 18pt; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 8px; }
+  h2 .num { display: inline-block; width: 1.4em; color: #a3a3a3; font-variant-numeric: tabular-nums; }
+  .section-lede { font-size: 10.5pt; color: #737373; margin: 0 0 20px; padding-left: 1.4em; }
+  h3 { font-size: 12pt; font-weight: 700; letter-spacing: -0.02em; margin: 24px 0 8px; }
+  h4 { font-size: 10.5pt; font-weight: 700; margin: 16px 0 4px; color: #262626; }
+  p, li { font-size: 10.5pt; line-height: 1.65; }
+  p { margin: 0 0 10px; }
+  ul, ol { margin: 0 0 10px; padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  strong { color: #0a0a0a; }
+  em { color: #525252; font-style: normal; font-weight: 600; }
+  .accent { color: #FF3C7D; font-weight: 700; }
+  code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 9.5pt; font-family: 'SF Mono', ui-monospace, monospace; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 10pt; margin: 12px 0 16px;
+  }
+  th, td {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid #e5e5e5; vertical-align: top;
+  }
+  th {
+    color: #525252; font-weight: 600;
+    border-bottom: 1.5px solid #262626;
+    font-size: 9.5pt;
+  }
+
+  /* Color swatches */
+  .swatches {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin: 16px 0;
+  }
+  .swatch {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+  }
+  .swatch .fill {
+    height: 60px;
+    display: flex; align-items: flex-end;
+    padding: 8px;
+    color: #fff;
+    font-size: 8.5pt;
+    font-weight: 600;
+  }
+  .swatch .info {
+    padding: 8px;
+    font-size: 9pt;
+  }
+  .swatch .info .name { font-weight: 700; }
+  .swatch .info .use { color: #737373; font-size: 8.5pt; margin-top: 2px; }
+
+  /* Do/Don't cards */
+  .compare {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin: 12px 0;
+  }
+  .compare .card {
+    padding: 14px 16px; border-radius: 10px;
+    font-size: 10pt;
+  }
+  .compare .card.bad {
+    background: #f7f7f5;
+    border-left: 3px solid #a3a3a3;
+  }
+  .compare .card.good {
+    background: #fff0f5;
+    border-left: 3px solid #FF3C7D;
+  }
+  .compare .card .label {
+    display: block; font-size: 8.5pt;
+    color: #737373; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .compare .card.good .label { color: #FF3C7D; }
+
+  /* Sample components */
+  .demo {
+    background: #F5F5F5;
+    padding: 24px;
+    border-radius: 12px;
+    margin: 12px 0;
+  }
+  .demo-label {
+    font-size: 8.5pt;
+    color: #737373;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  /* Point color rules */
+  .rule {
+    background: #fff0f5;
+    border-left: 3px solid #FF3C7D;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 10pt;
+    border-radius: 0 8px 8px 0;
+  }
+  .rule.strict {
+    background: #fef3c7;
+    border-left-color: #d97706;
+  }
+
+  /* Badge examples */
+  .badge-pink {
+    display: inline-block;
+    background: #FF3C7D; color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 9pt; font-weight: 600;
+  }
+  .badge-black {
+    display: inline-block;
+    background: #0a0a0a; color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 9pt; font-weight: 600;
+  }
+  .badge-outline {
+    display: inline-block;
+    background: #fff; color: #0a0a0a;
+    border: 1px solid #d4d4d4;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 9pt; font-weight: 600;
+  }
+
+  .print-hint {
+    max-width: 820px; margin: 0 auto 12px;
+    padding: 10px 16px; background: #fef9c3;
+    border-radius: 8px; font-size: 10pt; color: #713f12;
+  }
+  @media print { .print-hint { display: none; } }
+</style>
+</head>
+<body>
+<main>
+
+<div class="print-hint">
+  💡 PDF 저장: Ctrl+P → PDF로 저장 → 배경 그래픽 켜기 · 여백 기본
+</div>
+
+<!-- ===== COVER ===== -->
+<section class="page cover">
+  <div class="topbar">
+    <span>디자인 계획 · Design Plan v2.0</span>
+    <span>2026.09.30</span>
+  </div>
+
+  <div>
+    <div class="brand"><img src="sources/logo_amu.png" alt="AMU"></div>
+    <h1>차갑고 미니멀하되<br>죽지 않게</h1>
+    <p class="subtitle">Mobbin 톤 유지 · 포인트 컬러 <span class="accent">#FF3C7D</span> · 세부 요소 차별화</p>
+  </div>
+
+  <div class="meta">
+    문서 목적: 지금 코드에 반영할 디자인 방향 확정<br>
+    다음 개발 세션에서 이 문서 기준으로 컴포넌트 리터치
+  </div>
+</section>
+
+<!-- ===== 1. 원칙 ===== -->
+<section class="page">
+  <h2><span class="num">1.</span> 디자인 원칙</h2>
+  <p class="section-lede">유지할 것 · 바꿀 것 · 절대 안 할 것.</p>
+
+  <h3>유지 (Mobbin 톤에서 가져갈 것)</h3>
+  <ul>
+    <li><strong>Near-neutral 오프화이트 배경</strong> (<code>#F5F5F5</code>) — 크림/베이지 절대 지양</li>
+    <li><strong>순검정 텍스트</strong> (<code>#0A0A0A</code>) — 회색 톤 다운 지양</li>
+    <li><strong>Pretendard Variable</strong> 한글 최적화 폰트</li>
+    <li>큰 디스플레이 타이포 + <code>tracking-tighter</code></li>
+    <li><code>rounded-3xl</code> 카드 라운드</li>
+    <li>넉넉한 여백 · 정보 밀도 우선</li>
+    <li>그라데이션·글로우·과한 애니메이션 금지</li>
+  </ul>
+
+  <h3>바꿀 것 (Mobbin과 차별화)</h3>
+  <ul>
+    <li>헤더 검색바를 중앙 pill에서 다른 위치·형태로</li>
+    <li>로고에 미세한 마스코트 액센트 추가 (텍스트-only 지양)</li>
+    <li>4열 taxonomy grid를 3열로 축소 + 다른 위계</li>
+    <li><span class="accent">#FF3C7D</span> 포인트 컬러를 국소적으로 배치</li>
+    <li>활성 상태 표시를 밑줄에서 밑줄+짧은 pink 액센트로</li>
+  </ul>
+
+  <h3>절대 하지 않을 것</h3>
+  <ul>
+    <li>포인트 컬러를 배경·큰 면적에 사용 (아이덴티티 흐려짐)</li>
+    <li>그라데이션 형태의 pink → violet 등 유행 컬러 조합</li>
+    <li>둥근 그림자·글로우로 pink 강조 (미니멀 톤 훼손)</li>
+    <li>화려한 애니메이션이나 파티클 효과</li>
+    <li>다크모드 우선 설계 (라이트가 브랜드 기본값)</li>
+  </ul>
+</section>
+
+<!-- ===== 2. 컬러 시스템 ===== -->
+<section class="page">
+  <h2><span class="num">2.</span> 컬러 시스템</h2>
+  <p class="section-lede">모노크롬 기반 + 국소 포인트.</p>
+
+  <h3>기본 팔레트 (Neutral · 유지)</h3>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="fill" style="background:#FFFFFF; color:#0a0a0a; border-bottom: 1px solid #e5e5e5">#FFFFFF</div>
+      <div class="info"><div class="name">neutral-50</div><div class="use">카드 표면·순백</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#F5F5F5; color:#525252">#F5F5F5</div>
+      <div class="info"><div class="name">neutral-100</div><div class="use">페이지 배경</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#EDEDED; color:#525252">#EDEDED</div>
+      <div class="info"><div class="name">neutral-150</div><div class="use">카드 기본</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#E5E5E5; color:#525252">#E5E5E5</div>
+      <div class="info"><div class="name">neutral-200</div><div class="use">호버·구분선</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#A3A3A3">#A3A3A3</div>
+      <div class="info"><div class="name">neutral-400</div><div class="use">dimmed 텍스트</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#737373">#737373</div>
+      <div class="info"><div class="name">neutral-500</div><div class="use">muted 텍스트</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#262626">#262626</div>
+      <div class="info"><div class="name">neutral-800</div><div class="use">보조 텍스트</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#0A0A0A">#0A0A0A</div>
+      <div class="info"><div class="name">neutral-950</div><div class="use">기본 텍스트·pill</div></div>
+    </div>
+  </div>
+
+  <h3>포인트 컬러 (신규)</h3>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="fill" style="background:#FF3C7D">#FF3C7D</div>
+      <div class="info"><div class="name">amu-pink</div><div class="use">AMU 시그니처 액센트</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#FF3C7D; opacity:0.15; color:#FF3C7D">#FFE5EE</div>
+      <div class="info"><div class="name">amu-pink-tint</div><div class="use">배경·박스 강조</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#E01D5F">#E01D5F</div>
+      <div class="info"><div class="name">amu-pink-dark</div><div class="use">hover·pressed 상태</div></div>
+    </div>
+    <div class="swatch">
+      <div class="fill" style="background:#FF6B9E">#FF6B9E</div>
+      <div class="info"><div class="name">amu-pink-light</div><div class="use">disabled·subtle 강조</div></div>
+    </div>
+  </div>
+
+  <div class="rule strict">
+    ⚠️ <strong>포인트 컬러 사용 최대 총면적: 전체 UI의 3% 이내.</strong>
+    한 화면에 pink 요소가 5개 이상 보이면 이미 과도한 상태입니다.
+  </div>
+</section>
+
+<!-- ===== 3. 포인트 컬러 사용처 ===== -->
+<section class="page">
+  <h2><span class="num">3.</span> 포인트 컬러 사용처</h2>
+  <p class="section-lede">허용 · 제한 · 금지 리스트.</p>
+
+  <h3>✅ 허용 (핑크 사용 OK)</h3>
+  <table>
+    <tr><th style="width:200px">위치</th><th>이유</th></tr>
+    <tr><td><strong>AMU Pick 뱃지</strong></td><td>브랜드 시그니처. 사이트에서 유일하게 색이 있는 뱃지</td></tr>
+    <tr><td><strong>활성 업보트 버튼</strong></td><td>사용자가 지금 좋아하는 프로덕트임을 명확히 신호</td></tr>
+    <tr><td><strong>NEW 태그</strong></td><td>등록 24시간 이내 프로덕트 카드에 소량 pink 표시</td></tr>
+    <tr><td><strong>활성 정렬 탭 밑줄</strong></td><td>검정 밑줄 → pink 밑줄로 미묘한 활력</td></tr>
+    <tr><td><strong>입력 포커스 링</strong></td><td>회색 링 → pink 링. 인터랙션 순간에만 노출</td></tr>
+    <tr><td><strong>알림 도트</strong></td><td>아바타 우상단 알림 표시 등 매우 작은 도트</td></tr>
+    <tr><td><strong>로고의 마침표 도트</strong></td><td>AMU 워드마크 옆 작은 원형 액센트</td></tr>
+    <tr><td><strong>강조 언더라인 (본문 링크)</strong></td><td>기본 검정 언더라인, hover 시에만 pink로 전환</td></tr>
+  </table>
+
+  <h3>⚠️ 제한 (조건부 허용)</h3>
+  <ul>
+    <li>주요 CTA 버튼 → 기본은 검정 pill, <em>특수 액션(구독·회원가입 등)만</em> pink</li>
+    <li>필터 칩(activeFilter) → 배경 검정 유지, 텍스트만 pink 고려</li>
+    <li>차트·데이터 시각화 → pink는 하이라이트 시리즈에만</li>
+  </ul>
+
+  <h3>🚫 금지</h3>
+  <ul>
+    <li><strong>카드 배경</strong>을 pink 계열로 (미니멀 톤 파괴)</li>
+    <li><strong>페이지 배경</strong>이나 큰 섹션 배경에 pink</li>
+    <li><strong>텍스트 본문</strong>을 pink로 (긴 글에 사용 시 피로)</li>
+    <li><strong>아이콘 전체</strong>를 pink로 (아이콘은 기본 검정)</li>
+    <li>pink → 다른 컬러 <strong>그라데이션</strong>
+    <li><strong>애니메이션</strong>으로 pink 강조 (반짝임·펄스 등)</li>
+  </ul>
+
+  <h3>시각 예시</h3>
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Don't</span>
+      <div style="margin-bottom:8px">주요 버튼을 모두 pink로:</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap">
+        <span class="badge-pink">로그인</span>
+        <span class="badge-pink">등록하기</span>
+        <span class="badge-pink">방문하기</span>
+      </div>
+      <p style="font-size:9pt; color:#525252; margin-top:8px; margin-bottom:0">
+        → pink가 정보성 신호로서의 힘을 잃음. 아이덴티티도 흐려짐.
+      </p>
+    </div>
+    <div class="card good">
+      <span class="label">Do</span>
+      <div style="margin-bottom:8px">기본은 검정, 핵심 하나에만 pink:</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap">
+        <span class="badge-black">로그인</span>
+        <span class="badge-outline">등록하기</span>
+        <span class="badge-pink">AMU Pick</span>
+      </div>
+      <p style="font-size:9pt; color:#525252; margin-top:8px; margin-bottom:0">
+        → pink는 브랜드 시그니처로만 사용. 나머지는 위계 유지.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 차별화 요소 ===== -->
+<section class="page">
+  <h2><span class="num">4.</span> Mobbin 차별화 요소</h2>
+  <p class="section-lede">따라한 티가 나지 않도록 세부 재설계.</p>
+
+  <h3>1. 로고</h3>
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Before</span>
+      <div style="font-size: 22pt; font-weight:900; letter-spacing:-0.05em">AMU</div>
+      <p style="font-size:9pt; color:#525252; margin-top:6px; margin-bottom:0">
+        시스템 폰트 기반 텍스트 워드마크. 어느 사이트든 흔한 표기.
+      </p>
+    </div>
+    <div class="card good">
+      <span class="label">After</span>
+      <div style="display:flex; align-items:center; height:40px">
+        <img src="sources/logo_amu.png" alt="AMU" style="height:36px; width:auto">
+      </div>
+      <p style="font-size:9pt; color:#525252; margin-top:6px; margin-bottom:0">
+        오너 직접 디자인한 커스텀 워드마크. 순검정 유지, 라운드가 강한 서체로 아무 마스코트의 부드러운 형태와 결이 맞음.
+      </p>
+    </div>
+  </div>
+  <div class="rule">
+    로고는 <code>public/logo_amu.png</code> 에 배치. 헤더에서는 높이 <code>~24px</code>, 커버·큰 랜딩에서는 높이 <code>~48~68px</code> 로 사용. 색 조작 금지 (순검정 그대로).
+  </div>
+
+  <h3>2. 헤더 검색바 위치·형태</h3>
+  <p>
+    지금 Mobbin처럼 헤더 중앙에 pill 검색바. 이를 두 가지 방향 중 하나로 변경:
+  </p>
+  <ul>
+    <li><strong>A안</strong> — 헤더에서 검색 제거. 홈 히어로에 큰 검색바 앵커. 다른 페이지에서는 우상단 <span style="display:inline-block; width:24px; height:24px; border-radius:999px; background:#EDEDED; text-align:center; vertical-align:middle; font-size:14pt">🔍</span> 아이콘 버튼만 노출 → 클릭 시 모달·오버레이 검색</li>
+    <li><strong>B안</strong> — 헤더에 유지하되 pill이 아닌 <em>둥근 사각형</em>(<code>rounded-2xl</code>) + 왼쪽 앵커. 중앙 정렬 안 함. 폭 좁게 (300px)</li>
+  </ul>
+  <div class="rule">
+    <strong>추천: A안.</strong> 검색을 히어로에 앵커하면 홈에서의 정보 우선순위(검색 → 카테고리 브라우징 → 카드)가 명확해지고, 헤더가 훨씬 가벼워져서 Mobbin과 확실히 구별됨.
+  </div>
+
+  <h3>3. Taxonomy Grid 축소</h3>
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Before (4열)</span>
+      <p style="font-size:9pt; margin:0"><strong>카테고리 · 가격 · 컬렉션 · 단축</strong> — Mobbin의 Categories/Screens/UI Elements/Flows 구조와 유사</p>
+    </div>
+    <div class="card good">
+      <span class="label">After (3열)</span>
+      <p style="font-size:9pt; margin:0"><strong>카테고리 · 컬렉션 · 단축</strong> — 가격은 필터 chip으로 이동. 3열이 되어 시각적으로 가벼워지고 Mobbin과 확연히 구별됨</p>
+    </div>
+  </div>
+
+  <h3>4. 컬럼 헤딩 스타일</h3>
+  <p>
+    지금 <code>text-sm text-neutral-500</code>. 이를 <strong>uppercase micro-label</strong>로 변경:
+  </p>
+  <div class="demo">
+    <div class="demo-label" style="font-size:9pt">Category</div>
+    <div style="font-size:16pt; font-weight:700">AI</div>
+    <div style="font-size:14pt; margin-top:4px">디자인</div>
+    <div style="font-size:14pt; margin-top:4px">개발도구</div>
+  </div>
+  <p style="font-size:9pt; color:#525252">
+    작은 캡션이 영문 대문자 스타일로 바뀌면 편집자적 톤이 강해지고 Mobbin의 한글 캡션과 다른 결이 됨.
+  </p>
+
+  <h3>5. 활성 상태 표시</h3>
+  <p>Sort tab 활성 상태를 밑줄만이 아니라 pink 짧은 밑줄로:</p>
+  <div class="demo">
+    <div style="display: flex; gap: 24px; font-size: 12pt; font-weight: 700">
+      <span style="border-bottom: 3px solid #FF3C7D; padding-bottom: 4px">최신</span>
+      <span style="color: #a3a3a3">인기</span>
+      <span style="color: #a3a3a3">AMU Pick</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. 컴포넌트별 변경 ===== -->
+<section class="page">
+  <h2><span class="num">5.</span> 컴포넌트별 변경</h2>
+  <p class="section-lede">현재 코드 기준으로 어디를 어떻게 바꿀지.</p>
+
+  <table>
+    <tr><th style="width:200px">컴포넌트</th><th>변경</th></tr>
+    <tr>
+      <td><strong>TheHeader.vue</strong></td>
+      <td>
+        · 로고를 <code>&lt;img src="/logo_amu.png"&gt;</code> 로 교체 (텍스트 → 이미지)<br>
+        · 중앙 검색 pill 제거 (홈 히어로로 이동)<br>
+        · 다른 페이지엔 우측 검색 <em>아이콘 버튼</em>만
+      </td>
+    </tr>
+    <tr>
+      <td><strong>ProductCard.vue</strong></td>
+      <td>
+        · AMU Pick 뱃지: 검정 → <span class="badge-pink">AMU Pick</span><br>
+        · 24시간 이내 등록 프로덕트에 <span class="badge-pink" style="font-size:8pt">NEW</span> 태그
+      </td>
+    </tr>
+    <tr>
+      <td><strong>index.vue</strong></td>
+      <td>
+        · 히어로 섹션 추가 (검색바 앵커)<br>
+        · 4열 → 3열 taxonomy grid<br>
+        · Sort tab active 밑줄 pink<br>
+        · 컬럼 헤딩을 uppercase micro-label로
+      </td>
+    </tr>
+    <tr>
+      <td><strong>ProductUpvoteButton</strong></td>
+      <td>활성 상태: 검정 pill → pink pill (<code>bg-[#FF3C7D]</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>ProductShowroomSection</strong></td>
+      <td>투자자 pitch 라인을 pink 텍스트 or pink 짧은 마커로 강조</td>
+    </tr>
+    <tr>
+      <td><strong>Input 포커스</strong></td>
+      <td>포커스 링을 뉴트럴 → pink로 (Nuxt UI 테마 오버라이드)</td>
+    </tr>
+    <tr>
+      <td><strong>main.css</strong></td>
+      <td>
+        · <code>--color-primary</code> 계열에 pink 등록<br>
+        · CSS 변수 <code>--amu-accent: #FF3C7D</code> 추가
+      </td>
+    </tr>
+    <tr>
+      <td><strong>app.config.ts</strong></td>
+      <td>Nuxt UI의 <code>primary: 'neutral'</code>은 유지. Pink는 semantic 컬러로 별도 등록 (버튼 <code>color="pink"</code> 사용 가능하게)</td>
+    </tr>
+  </table>
+
+  <h3>구현 우선순위</h3>
+  <ol>
+    <li><strong>1순위</strong> — 로고 이미지 반영 · AMU Pick 뱃지 pink화 · 활성 sort 밑줄 pink</li>
+    <li><strong>2순위</strong> — 헤더 검색 재배치 · 홈 히어로 검색바 · 4→3열 grid</li>
+    <li><strong>3순위</strong> — NEW 태그 · 업보트 pink · 포커스 링 pink</li>
+    <li><strong>4순위</strong> — Uppercase micro-label · showroom pink 액센트</li>
+  </ol>
+</section>
+
+<!-- ===== 6. 검증 체크리스트 ===== -->
+<section class="page">
+  <h2><span class="num">6.</span> 검증 체크리스트</h2>
+  <p class="section-lede">각 변경 반영 후 스스로 확인할 것.</p>
+
+  <h3>브랜드 정체성</h3>
+  <ul>
+    <li>☐ 첫 방문에서 "이건 어디서 본 사이트인데?" 느낌이 안 남</li>
+    <li>☐ AMU 로고가 Mobbin의 순수 텍스트 워드마크와 구분됨</li>
+    <li>☐ AMU Pick 뱃지가 브랜드 시그니처로 기억됨</li>
+  </ul>
+
+  <h3>색 사용</h3>
+  <ul>
+    <li>☐ 한 화면에 pink 요소가 5개 이하</li>
+    <li>☐ pink가 배경·큰 면적에 쓰이지 않음</li>
+    <li>☐ 스크린샷을 흑백으로 변환해도 정보 위계가 그대로 유지됨</li>
+  </ul>
+
+  <h3>Mobbin 차별화</h3>
+  <ul>
+    <li>☐ 헤더 구조가 Mobbin과 명백히 다름</li>
+    <li>☐ Taxonomy 컬럼 수·헤딩 스타일이 다름</li>
+    <li>☐ 사이트를 Mobbin과 나란히 놓고 봐도 "따라했다"는 인상 없음</li>
+  </ul>
+
+  <h3>미니멀 톤 유지</h3>
+  <ul>
+    <li>☐ 그라데이션·글로우·과한 애니메이션 없음</li>
+    <li>☐ 배경이 여전히 near-neutral 오프화이트</li>
+    <li>☐ 정보 밀도가 유지됨 (여백 낭비 아닌 의도적 배치)</li>
+  </ul>
+
+  <h3>인터랙션</h3>
+  <ul>
+    <li>☐ 활성 상태(현재 필터·정렬·페이지) 한눈에 보임</li>
+    <li>☐ 포커스 링이 키보드 사용자에게 명확히 보임</li>
+    <li>☐ hover 상태가 지나치게 화려하지 않음</li>
+  </ul>
+
+  <div class="rule strict">
+    <strong>최종 관문</strong>: 이 문서의 원칙을 다 따랐는데도 "너무 밋밋"하다는 느낌이 든다면, pink의 <em>채도</em>가 아니라 <em>배치</em>가 잘못된 것. 색을 더 넣지 말고 위치를 재검토.
+  </div>
+</section>
+
+</main>
+</body>
+</html>

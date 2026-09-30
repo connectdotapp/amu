@@ -6,6 +6,7 @@ const router = useRouter()
 
 const productType = ref<'web' | 'app'>('web')
 
+// Mobile-only search input (desktop search lives on the home hero)
 const searchInput = ref((route.query.q as string) || '')
 watch(() => route.query.q, (v) => { searchInput.value = (v as string) || '' })
 
@@ -53,9 +54,14 @@ async function logout() {
   await navigateTo('/')
 }
 
-// Mobile menu state
 const mobileOpen = ref(false)
 watch(() => route.fullPath, () => { mobileOpen.value = false })
+
+const isHome = computed(() => route.path === '/')
+
+function goHomeSearch() {
+  router.push({ path: '/', query: { ...route.query, focus: 'search' } })
+}
 </script>
 
 <template>
@@ -63,8 +69,8 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
     <div class="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-4">
       <!-- Left: Logo + type tabs -->
       <div class="flex items-center gap-6">
-        <NuxtLink to="/" class="text-xl font-black tracking-tighter">
-          AMU
+        <NuxtLink to="/" class="block" aria-label="AMU 홈">
+          <img src="/logo_amu.png" alt="AMU" class="h-6 w-auto">
         </NuxtLink>
         <nav class="hidden sm:flex items-center gap-4 text-sm font-semibold">
           <button
@@ -84,24 +90,19 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
         </nav>
       </div>
 
-      <!-- Center: Search (desktop) -->
-      <form class="mx-auto hidden w-full max-w-md md:block" @submit.prevent="submitSearch">
-        <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 focus-within:ring-neutral-500 dark:bg-neutral-800 dark:ring-neutral-700">
-          <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
-          <input
-            v-model="searchInput"
-            type="text"
-            placeholder="이름, 태그, 설명 검색"
-            class="flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
-          >
-          <kbd class="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 dark:bg-neutral-700">
-            Enter
-          </kbd>
-        </div>
-      </form>
-
       <!-- Right: Actions -->
       <div class="ml-auto flex items-center gap-2">
+        <!-- Search icon (only on non-home pages) — leads to home hero search -->
+        <button
+          v-if="!isHome"
+          type="button"
+          class="hidden sm:flex size-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-950 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+          aria-label="검색"
+          @click="goHomeSearch"
+        >
+          <UIcon name="i-lucide-search" class="size-4" />
+        </button>
+
         <UButton
           to="/submit"
           color="neutral"
@@ -158,7 +159,7 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
     <div v-if="mobileOpen" class="md:hidden border-t border-neutral-200 dark:border-neutral-800">
       <div class="mx-auto max-w-[1280px] space-y-4 px-6 py-4">
         <form @submit.prevent="submitSearch">
-          <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:ring-neutral-700">
+          <div class="flex items-center gap-2 rounded-2xl bg-white px-4 py-2 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:ring-neutral-700">
             <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
             <input
               v-model="searchInput"
@@ -172,6 +173,12 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
         <nav class="flex flex-col gap-1 text-base font-semibold">
           <NuxtLink to="/" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
             둘러보기
+          </NuxtLink>
+          <NuxtLink to="/collections" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            컬렉션
+          </NuxtLink>
+          <NuxtLink to="/compare" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+            비교하기
           </NuxtLink>
           <NuxtLink to="/submit" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
             등록하기
