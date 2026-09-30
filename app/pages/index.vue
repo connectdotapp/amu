@@ -118,6 +118,11 @@ const featuredCollections = computed(() => (collections.value || []).slice(0, 3)
             </NuxtLink>
           </li>
           <li>
+            <NuxtLink to="/compare" class="text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50">
+              비교하기
+            </NuxtLink>
+          </li>
+          <li>
             <NuxtLink to="/me/bookmarks" class="text-lg font-bold tracking-tight text-neutral-950 hover:opacity-60 dark:text-neutral-50">
               내 북마크
             </NuxtLink>

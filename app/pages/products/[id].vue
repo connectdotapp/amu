@@ -128,6 +128,15 @@ const pricingLabel: Record<string, string> = {
               </UButton>
               <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
               <ProductBookmarkButton :product-id="id" />
+              <UButton
+                :to="`/compare?ids=${id}`"
+                color="neutral"
+                variant="outline"
+                icon="i-lucide-scale"
+                aria-label="다른 프로덕트와 비교"
+              >
+                비교
+              </UButton>
             </div>
           </div>
         </div>

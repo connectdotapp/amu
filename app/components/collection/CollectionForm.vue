@@ -40,19 +40,16 @@ function slugify(v: string) {
   return v
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-가-힣]/g, '')
+    .replace(/[^\w\s\-가-힣]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .slice(0, 60)
 }
 
-// Auto-fill slug from title (only when creating and slug hasn't been manually set)
-watch(() => form.title, (v) => {
-  if (isEdit.value) return
-  if (!form.slug || slugify(form.slug) === form.slug) {
-    form.slug = slugify(v)
-  }
-})
+function generateSlugFromTitle() {
+  if (!form.title.trim()) return
+  form.slug = slugify(form.title)
+}
 
 const selectedProducts = computed<Product[]>(() => {
   const map = new Map((pool.value || []).map(p => [p.id, p]))
@@ -198,8 +195,21 @@ async function submit() {
       <UFormField label="제목" required>
         <UInput v-model="form.title" placeholder="예: 1인 개발자 필수 도구 10선" size="lg" />
       </UFormField>
-      <UFormField label="슬러그 (URL)" required help="영문/숫자/하이픈만">
-        <UInput v-model="form.slug" placeholder="indie-dev-essentials" />
+      <UFormField label="슬러그 (URL)" required help="영문/한글/숫자/하이픈. URL에 그대로 노출돼요">
+        <div class="flex gap-2">
+          <UInput v-model="form.slug" placeholder="indie-dev-essentials" class="flex-1" />
+          <UButton
+            v-if="!isEdit"
+            type="button"
+            color="neutral"
+            variant="outline"
+            size="md"
+            :disabled="!form.title.trim()"
+            @click="generateSlugFromTitle"
+          >
+            제목에서 생성
+          </UButton>
+        </div>
       </UFormField>
     </div>
 
