@@ -63,9 +63,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const lookupUrl = `https://itunes.apple.com/lookup?id=${id}&country=${country}`
+  // iTunes는 Content-Type을 text/javascript 로 반환해서 $fetch 가 JSON 자동 파싱 안 함 → 강제.
   const res = await $fetch<{ resultCount: number, results: ItunesEntry[] }>(lookupUrl, {
-    // iTunes는 가끔 오래 걸림. 15초로 넉넉히.
-    timeout: 15_000
+    timeout: 15_000,
+    parseResponse: JSON.parse
   }).catch((e) => {
     throw createError({ statusCode: 502, statusMessage: `iTunes 조회 실패: ${e.message}` })
   })
