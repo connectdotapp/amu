@@ -67,6 +67,69 @@ const thumbnailPreview = ref<string | null>(props.product?.thumbnailUrl ?? null)
 const isSubmitting = ref(false)
 const errorMessage = ref<string | null>(null)
 
+// iTunes 자동 채우기
+const itunesInput = ref('')
+const itunesFetching = ref(false)
+const itunesGenreHint = ref('')
+const itunesError = ref<string | null>(null)
+
+type ItunesResult = {
+  id: string
+  name: string
+  tagline: string
+  description: string
+  maker: string
+  genreName: string
+  tags: string[]
+  pricing: 'free' | 'paid' | 'freemium'
+  linkUrl: string
+  thumbnailUrl: string
+  screenshotUrls: string[]
+}
+
+async function fillFromItunes() {
+  itunesError.value = null
+  const raw = itunesInput.value.trim()
+  if (!raw) {
+    itunesError.value = 'App Store URL 또는 앱 ID를 입력해주세요'
+    return
+  }
+  itunesFetching.value = true
+  try {
+    const data = await $fetch<ItunesResult>('/api/itunes', { query: { url: raw } })
+
+    form.name = data.name
+    form.tagline = data.tagline
+    form.description = data.description
+    form.maker = data.maker
+    form.pricing = data.pricing
+    form.linkUrl = data.linkUrl
+    form.linkLabel = 'App Store'
+    if (data.tags.length) {
+      form.tags = data.tags.join(', ')
+    }
+    itunesGenreHint.value = data.genreName
+
+    // 썸네일: 서버 프록시로 받아 File 로 변환 → 폼 업로드 파이프라인에 그대로 태움
+    if (data.thumbnailUrl) {
+      try {
+        const proxied = `/api/itunes-image?url=${encodeURIComponent(data.thumbnailUrl)}`
+        const res = await fetch(proxied)
+        const blob = await res.blob()
+        const file = new File([blob], `itunes-${data.id}.jpg`, { type: blob.type || 'image/jpeg' })
+        thumbnailFile.value = file
+        thumbnailPreview.value = URL.createObjectURL(file)
+      } catch {
+        thumbnailPreview.value = data.thumbnailUrl
+      }
+    }
+  } catch (e: any) {
+    itunesError.value = e?.data?.statusMessage || e?.statusMessage || '조회 실패'
+  } finally {
+    itunesFetching.value = false
+  }
+}
+
 const pricingOptions: Array<{ label: string, value: PricingModel }> = [
   { label: '무료', value: 'free' },
   { label: '프리미엄', value: 'freemium' },
@@ -205,6 +268,41 @@ async function submit() {
 
 <template>
   <form class="space-y-6" @submit.prevent="submit">
+    <!-- iTunes 자동 채우기 -->
+    <section v-if="!isEdit" class="rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800">
+      <label class="mb-2 flex items-center gap-2 text-sm font-semibold">
+        <UIcon name="i-lucide-wand-2" class="size-4 text-[var(--color-amu-pink)]" />
+        App Store 링크로 자동 채우기
+      </label>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <UInput
+          v-model="itunesInput"
+          placeholder="https://apps.apple.com/kr/app/.../id123456789"
+          class="flex-1"
+          @keydown.enter.prevent="fillFromItunes"
+        />
+        <UButton
+          color="neutral"
+          variant="solid"
+          :loading="itunesFetching"
+          :disabled="itunesFetching"
+          icon="i-lucide-download"
+          @click="fillFromItunes"
+        >
+          가져오기
+        </UButton>
+      </div>
+      <p v-if="itunesError" class="mt-2 text-xs text-error">
+        {{ itunesError }}
+      </p>
+      <p v-else-if="itunesGenreHint" class="mt-2 text-xs text-neutral-500">
+        App Store 장르: <span class="font-semibold">{{ itunesGenreHint }}</span> — 아래 카테고리에서 맞춰 골라주세요.
+      </p>
+      <p v-else class="mt-2 text-xs text-neutral-500">
+        iOS/Mac 앱만 가능해요. 채워진 내용은 아래에서 자유롭게 수정하세요.
+      </p>
+    </section>
+
     <div>
       <label class="mb-1.5 block text-sm font-medium">
         대표 이미지 <span v-if="!isEdit" class="text-error">*</span>
