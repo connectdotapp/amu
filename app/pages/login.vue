@@ -32,7 +32,7 @@ async function loginGoogle() {
     <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">로그인</h1>
     <p class="mt-2 text-neutral-500">아무의 큐레이션에 참여해요.</p>
 
-    <div class="mt-10 w-full rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
+    <div class="mt-10 w-full rounded-3xl bg-neutral-100 p-8 dark:bg-neutral-800">
       <UButton
         block
         size="lg"

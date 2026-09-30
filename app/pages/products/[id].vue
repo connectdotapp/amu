@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { deleteDoc, doc } from 'firebase/firestore'
+import type { Platform } from '~/types/product'
 
 const route = useRoute()
 const id = String(route.params.id)
@@ -60,17 +61,61 @@ const pricingLabel: Record<string, string> = {
   paid: '유료',
   subscription: '구독'
 }
+
+const platformLabel: Record<Platform, string> = {
+  web: '웹',
+  ios: 'iOS',
+  android: 'Android',
+  macos: 'macOS',
+  windows: 'Windows',
+  linux: 'Linux'
+}
+
+const hasShowroom = computed(() => {
+  const s = product.value?.showroom
+  if (!s) return false
+  return !!(
+    s.investorPitch
+    || s.monthlyUsersRange
+    || s.monthlyRevenueRange
+    || s.teamSize
+    || s.foundedAt
+    || s.location
+  )
+})
+
+type Tab = 'overview' | 'showroom' | 'links' | 'comments'
+const activeTab = ref<Tab>('overview')
+
+const tabs = computed(() => {
+  const list: Array<{ value: Tab, label: string, visible: boolean }> = [
+    { value: 'overview', label: '소개', visible: !!product.value?.description },
+    { value: 'showroom', label: '쇼룸', visible: hasShowroom.value },
+    { value: 'links', label: '링크', visible: !!(product.value?.links?.length) },
+    { value: 'comments', label: `댓글${product.value?.commentCount ? ` · ${product.value.commentCount}` : ''}`, visible: true }
+  ]
+  return list.filter(t => t.visible)
+})
+
+// If the initially selected tab isn't visible for this product, fall back to
+// the first available tab.
+watchEffect(() => {
+  if (!tabs.value.length) return
+  if (!tabs.value.some(t => t.value === activeTab.value)) {
+    activeTab.value = tabs.value[0]!.value
+  }
+})
 </script>
 
 <template>
-  <div class="mx-auto max-w-4xl px-6 py-8">
-    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+  <div class="mx-auto max-w-[900px] px-6 pb-24 pt-2">
+    <NuxtLink to="/" class="mb-6 inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-neutral-950 dark:hover:text-neutral-50">
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       둘러보기
     </NuxtLink>
 
     <!-- Admin actions -->
-    <div v-if="isAdmin && product" class="mt-4 flex items-center gap-2 rounded-2xl bg-neutral-150 p-3 dark:bg-neutral-800">
+    <div v-if="isAdmin && product" class="mb-6 flex items-center gap-2 rounded-2xl bg-neutral-100 p-3 dark:bg-neutral-800">
       <UIcon name="i-lucide-shield" class="size-4 text-neutral-500" />
       <span class="text-xs text-neutral-500">관리자 액션</span>
       <div class="ml-auto flex gap-2">
@@ -83,109 +128,177 @@ const pricingLabel: Record<string, string> = {
       </div>
     </div>
 
-    <article v-if="product" class="mt-6 space-y-6">
-      <!-- Hero card -->
-      <div class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+    <article v-if="product">
+      <!-- HERO — content-first, no card wrapper -->
+      <section class="pb-8">
+        <div class="flex flex-col items-start gap-6 sm:flex-row sm:gap-8">
           <img
             :src="product.thumbnailUrl"
             :alt="product.name"
-            class="size-32 shrink-0 rounded-2xl object-cover bg-white"
+            class="size-24 shrink-0 rounded-3xl bg-neutral-100 object-cover sm:size-[120px] dark:bg-neutral-800"
           >
-
-          <div class="min-w-0 flex-1">
-            <div v-if="product.source === 'curated'" class="mb-2">
-              <span class="inline-block rounded-full bg-neutral-900 px-2.5 py-1 text-[11px] font-semibold text-white">
-                AMU Pick
-              </span>
-            </div>
-
-            <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">
+          <div class="min-w-0 flex-1 pt-1">
+            <span
+              v-if="product.source === 'curated'"
+              class="mb-3 inline-block rounded-full bg-[var(--color-amu-pink)] px-2.5 py-1 text-[11px] font-semibold text-white"
+            >
+              AMU Pick
+            </span>
+            <h1 class="text-3xl font-extrabold leading-[1.05] tracking-tighter sm:text-[40px]">
               {{ product.name }}
             </h1>
-            <p class="mt-2 text-base text-neutral-500 sm:text-lg">
+            <p class="mt-2.5 max-w-[480px] text-base leading-snug text-neutral-500 sm:text-[17px]">
               {{ product.tagline }}
             </p>
-
-            <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-500">
-              <span v-if="product.category">{{ product.category }}</span>
-              <span v-if="product.pricing" class="text-neutral-400">·</span>
-              <span v-if="product.pricing">{{ pricingLabel[product.pricing] || product.pricing }}</span>
-              <span v-if="product.maker" class="text-neutral-400">·</span>
-              <span v-if="product.maker">by {{ product.maker }}</span>
-            </div>
-
-            <div class="mt-6 flex flex-wrap items-center gap-2">
-              <UButton
-                v-if="product.links?.[0]"
-                :to="product.links[0].url"
-                target="_blank"
-                color="neutral"
-                variant="solid"
-                trailing-icon="i-lucide-arrow-up-right"
-              >
-                {{ product.links[0].label || '방문하기' }}
-              </UButton>
-              <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
-              <ProductBookmarkButton :product-id="id" />
-              <UButton
-                :to="`/compare?ids=${id}`"
-                color="neutral"
-                variant="outline"
-                icon="i-lucide-scale"
-                aria-label="다른 프로덕트와 비교"
-              >
-                비교
-              </UButton>
-            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Tags -->
-      <div v-if="product.tags?.length" class="flex flex-wrap gap-2">
-        <span
-          v-for="t in product.tags"
-          :key="t"
-          class="rounded-full bg-neutral-150 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
+        <!-- Chip meta -->
+        <div class="mt-6 flex flex-wrap gap-1.5">
+          <span
+            v-if="product.category"
+            class="rounded-full bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
+          >
+            {{ product.category }}
+          </span>
+          <span
+            v-if="product.pricing"
+            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            {{ pricingLabel[product.pricing] || product.pricing }}
+          </span>
+          <span
+            v-for="pf in product.platforms || []"
+            :key="pf"
+            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            {{ platformLabel[pf] || pf }}
+          </span>
+          <span
+            v-for="t in (product.tags || []).slice(0, 6)"
+            :key="t"
+            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            {{ t }}
+          </span>
+          <span
+            v-if="product.maker"
+            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            by {{ product.maker }}
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-6 flex flex-wrap items-center gap-2">
+          <UButton
+            v-if="product.links?.[0]"
+            :to="product.links[0].url"
+            target="_blank"
+            color="neutral"
+            variant="solid"
+            trailing-icon="i-lucide-arrow-up-right"
+          >
+            {{ product.links[0].label || '방문하기' }}
+          </UButton>
+          <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
+          <ProductBookmarkButton :product-id="id" />
+          <UButton
+            :to="`/compare?ids=${id}`"
+            color="neutral"
+            variant="outline"
+            icon="i-lucide-scale"
+            aria-label="다른 프로덕트와 비교"
+          >
+            비교
+          </UButton>
+        </div>
+      </section>
+
+      <!-- TABS -->
+      <nav
+        class="sticky top-0 z-10 -mx-6 mt-0 flex gap-7 bg-white px-6 pt-4 dark:bg-neutral-950"
+      >
+        <button
+          v-for="tab in tabs"
+          :key="tab.value"
+          type="button"
+          class="relative pb-2.5 text-sm font-bold transition"
+          :class="activeTab === tab.value
+            ? 'text-neutral-950 dark:text-neutral-50'
+            : 'text-neutral-400 hover:text-neutral-600'"
+          @click="activeTab = tab.value"
         >
-          #{{ t }}
-        </span>
-      </div>
+          {{ tab.label }}
+          <span
+            v-if="activeTab === tab.value"
+            class="absolute inset-x-0 -bottom-px h-0.5 bg-neutral-950 dark:bg-neutral-50"
+          />
+        </button>
+      </nav>
 
-      <!-- Showroom (maker-disclosed info) -->
-      <ProductShowroomSection v-if="product.showroom" :showroom="product.showroom" />
-
-      <!-- Description -->
-      <section v-if="product.description" class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
-        <h2 class="text-sm font-semibold text-neutral-500">소개</h2>
-        <p class="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed">
+      <!-- Overview -->
+      <section v-if="activeTab === 'overview'" class="pt-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Overview</div>
+        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+          어떤 프로덕트인가요
+        </h2>
+        <p class="mt-4 max-w-[680px] whitespace-pre-wrap text-[15px] leading-[1.7] text-neutral-700 dark:text-neutral-300">
           {{ product.description }}
         </p>
       </section>
 
-      <!-- Extra links -->
-      <section v-if="product.links && product.links.length > 1" class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
-        <h2 class="text-sm font-semibold text-neutral-500">링크</h2>
-        <ul class="mt-3 space-y-2">
-          <li v-for="link in product.links" :key="link.url">
-            <a
-              :href="link.url"
-              target="_blank"
-              class="inline-flex items-center gap-1.5 font-medium hover:underline"
-            >
-              {{ link.label }}
-              <UIcon name="i-lucide-arrow-up-right" class="size-4" />
-            </a>
-          </li>
-        </ul>
+      <!-- Showroom -->
+      <section v-else-if="activeTab === 'showroom' && product.showroom" class="pt-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Showroom</div>
+        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+          메이커가 알려주는 지표
+        </h2>
+        <div class="mt-5">
+          <ProductShowroomSection :showroom="product.showroom" :maker="product.maker" />
+        </div>
+      </section>
+
+      <!-- Links -->
+      <section v-else-if="activeTab === 'links' && product.links?.length" class="pt-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Links</div>
+        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+          더 살펴보기
+        </h2>
+        <div class="mt-5 flex flex-col gap-1">
+          <a
+            v-for="link in product.links"
+            :key="link.url"
+            :href="link.url"
+            target="_blank"
+            class="group flex items-center gap-4 rounded-2xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+          >
+            <div class="h-10 w-1 shrink-0 rounded bg-neutral-300 transition group-hover:bg-[var(--color-amu-pink)] dark:bg-neutral-700" />
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-sm font-bold">{{ link.label || link.url }}</div>
+              <div class="mt-0.5 truncate text-xs text-neutral-500">{{ link.url }}</div>
+            </div>
+            <span class="flex items-center gap-1 text-xs font-medium text-neutral-500">
+              방문
+              <UIcon name="i-lucide-arrow-up-right" class="size-3.5" />
+            </span>
+          </a>
+        </div>
       </section>
 
       <!-- Comments -->
-      <ProductCommentSection :product-id="id" />
+      <section v-else-if="activeTab === 'comments'" class="pt-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Discussion</div>
+        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+          사람들의 이야기
+        </h2>
+        <div class="mt-5">
+          <ProductCommentSection :product-id="id" />
+        </div>
+      </section>
     </article>
 
-    <div v-else class="mt-12 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+    <div v-else class="mt-12 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
       <UIcon name="i-lucide-search" class="mx-auto size-8 text-neutral-400" />
       <p class="mt-4 text-neutral-500">프로덕트를 불러오는 중이거나 존재하지 않아요.</p>
     </div>

@@ -12,7 +12,7 @@ const updated = '2026-09-15'
     <p class="text-sm text-neutral-500">최종 업데이트 · {{ updated }}</p>
     <h1 class="mt-2 text-3xl font-bold tracking-tighter sm:text-4xl">개인정보처리방침</h1>
 
-    <p class="mt-6 rounded-2xl bg-neutral-150 p-4 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+    <p class="mt-6 rounded-2xl bg-neutral-100 p-4 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
       본 방침은 초안입니다. 실서비스 오픈 전 개인정보 보호법 준수 여부에 대한 전문가 검토가 필요합니다.
     </p>
 

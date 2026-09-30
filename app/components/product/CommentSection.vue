@@ -32,14 +32,14 @@ function formatDate(ts?: Timestamp) {
 </script>
 
 <template>
-  <section class="rounded-3xl bg-neutral-150 p-6 sm:p-8 dark:bg-neutral-800">
+  <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8 dark:bg-neutral-800">
     <h2 class="text-sm font-semibold text-neutral-500">
       댓글 {{ comments.length }}
     </h2>
 
     <!-- Compose -->
     <div v-if="user" class="mt-4 flex gap-3">
-      <div class="size-9 shrink-0 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+      <div class="size-9 shrink-0 overflow-hidden rounded-full bg-neutral-150 dark:bg-neutral-700">
         <img
           v-if="user.photoURL"
           :src="user.photoURL"
@@ -52,7 +52,7 @@ function formatDate(ts?: Timestamp) {
           v-model="body"
           rows="2"
           placeholder="아무의 관점을 남겨보세요"
-          class="w-full resize-none rounded-2xl bg-white p-3 text-sm outline-none ring-1 ring-neutral-200 focus:ring-neutral-500 dark:bg-neutral-900 dark:ring-neutral-700"
+          class="w-full resize-none rounded-2xl bg-white p-3 text-sm outline-none dark:bg-neutral-900"
         />
         <div class="mt-2 flex justify-end">
           <UButton
@@ -77,7 +77,7 @@ function formatDate(ts?: Timestamp) {
     <!-- List -->
     <ul v-if="comments.length" class="mt-6 space-y-4">
       <li v-for="c in comments" :key="c.id" class="flex gap-3">
-        <div class="size-9 shrink-0 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+        <div class="size-9 shrink-0 overflow-hidden rounded-full bg-neutral-150 dark:bg-neutral-700">
           <img
             v-if="c.authorPhotoURL"
             :src="c.authorPhotoURL"

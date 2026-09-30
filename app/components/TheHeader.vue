@@ -4,8 +4,6 @@ import { signOut } from 'firebase/auth'
 const route = useRoute()
 const router = useRouter()
 
-const productType = ref<'web' | 'app'>('web')
-
 const searchInput = ref((route.query.q as string) || '')
 watch(() => route.query.q, (v) => { searchInput.value = (v as string) || '' })
 
@@ -20,16 +18,11 @@ const user = useCurrentUser()
 const isAdmin = ref(false)
 
 watchEffect(async () => {
-  if (!user.value) {
-    isAdmin.value = false
-    return
-  }
+  if (!user.value) { isAdmin.value = false; return }
   try {
     const token = await user.value.getIdTokenResult()
     isAdmin.value = !!token.claims.admin
-  } catch {
-    isAdmin.value = false
-  }
+  } catch { isAdmin.value = false }
 })
 
 const userMenuItems = computed(() => {
@@ -53,55 +46,57 @@ async function logout() {
   await navigateTo('/')
 }
 
-// Mobile menu state
 const mobileOpen = ref(false)
 watch(() => route.fullPath, () => { mobileOpen.value = false })
+
+const isHome = computed(() => route.path === '/')
+
+function goHomeSearch() {
+  router.push({ path: '/', query: { ...(route.path === '/' ? route.query : {}), focus: 'search' } })
+}
+
+function isActive(to: string) {
+  return to === '/' ? route.path === '/' : route.path.startsWith(to)
+}
+
+const nav = [
+  { label: '둘러보기', to: '/' },
+  { label: '컬렉션', to: '/collections' },
+  { label: '비교하기', to: '/compare' },
+  { label: 'About', to: '/about' }
+]
 </script>
 
 <template>
   <header class="w-full">
     <div class="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-4">
-      <!-- Left: Logo + type tabs -->
-      <div class="flex items-center gap-6">
-        <NuxtLink to="/" class="text-xl font-black tracking-tighter">
-          AMU
+      <NuxtLink to="/" class="block shrink-0 text-xl font-bold tracking-tighter" aria-label="AMU 홈">
+        AMU
+      </NuxtLink>
+
+      <nav class="hidden md:flex items-center gap-4 text-sm font-semibold">
+        <NuxtLink
+          v-for="item in nav"
+          :key="item.to"
+          :to="item.to"
+          class="transition"
+          :class="isActive(item.to) ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+        >
+          {{ item.label }}
         </NuxtLink>
-        <nav class="hidden sm:flex items-center gap-4 text-sm font-semibold">
-          <button
-            class="transition"
-            :class="productType === 'web' ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-            @click="productType = 'web'"
-          >
-            웹
-          </button>
-          <button
-            class="transition"
-            :class="productType === 'app' ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-            @click="productType = 'app'"
-          >
-            앱
-          </button>
-        </nav>
-      </div>
+      </nav>
 
-      <!-- Center: Search (desktop) -->
-      <form class="mx-auto hidden w-full max-w-md md:block" @submit.prevent="submitSearch">
-        <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 focus-within:ring-neutral-500 dark:bg-neutral-800 dark:ring-neutral-700">
-          <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
-          <input
-            v-model="searchInput"
-            type="text"
-            placeholder="이름, 태그, 설명 검색"
-            class="flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
-          >
-          <kbd class="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 dark:bg-neutral-700">
-            Enter
-          </kbd>
-        </div>
-      </form>
-
-      <!-- Right: Actions -->
       <div class="ml-auto flex items-center gap-2">
+        <button
+          v-if="!isHome"
+          type="button"
+          class="hidden sm:flex size-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-950 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+          aria-label="검색"
+          @click="goHomeSearch"
+        >
+          <UIcon name="i-lucide-search" class="size-4" />
+        </button>
+
         <UButton
           to="/submit"
           color="neutral"
@@ -115,7 +110,7 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
         <template v-if="user">
           <UDropdownMenu :items="userMenuItems" :content="{ align: 'end' }">
             <button
-              class="flex size-8 items-center justify-center overflow-hidden rounded-full bg-neutral-200 ring-1 ring-neutral-300 dark:bg-neutral-700 dark:ring-neutral-600"
+              class="flex size-8 items-center justify-center overflow-hidden rounded-full bg-neutral-150 dark:bg-neutral-700"
               aria-label="계정 메뉴"
             >
               <img
@@ -142,9 +137,8 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
           </UButton>
         </template>
 
-        <!-- Mobile toggle -->
         <button
-          class="ml-1 flex size-8 items-center justify-center rounded-full ring-1 ring-neutral-300 md:hidden dark:ring-neutral-700"
+          class="ml-1 flex size-8 items-center justify-center rounded-full bg-neutral-100 md:hidden dark:bg-neutral-800"
           :aria-expanded="mobileOpen"
           aria-label="메뉴"
           @click="mobileOpen = !mobileOpen"
@@ -154,11 +148,10 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
       </div>
     </div>
 
-    <!-- Mobile menu panel -->
-    <div v-if="mobileOpen" class="md:hidden border-t border-neutral-200 dark:border-neutral-800">
+    <div v-if="mobileOpen" class="md:hidden">
       <div class="mx-auto max-w-[1280px] space-y-4 px-6 py-4">
         <form @submit.prevent="submitSearch">
-          <div class="flex items-center gap-2 rounded-full bg-white px-4 py-2 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:ring-neutral-700">
+          <div class="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-2 dark:bg-neutral-800">
             <UIcon name="i-lucide-search" class="size-4 text-neutral-400" />
             <input
               v-model="searchInput"
@@ -170,24 +163,26 @@ watch(() => route.fullPath, () => { mobileOpen.value = false })
         </form>
 
         <nav class="flex flex-col gap-1 text-base font-semibold">
-          <NuxtLink to="/" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
-            둘러보기
+          <NuxtLink
+            v-for="item in nav"
+            :key="item.to"
+            :to="item.to"
+            class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          >
+            {{ item.label }}
           </NuxtLink>
-          <NuxtLink to="/submit" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+          <NuxtLink to="/submit" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             등록하기
           </NuxtLink>
-          <NuxtLink to="/about" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
-            About
-          </NuxtLink>
-          <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+          <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             내 북마크
           </NuxtLink>
-          <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-150 dark:hover:bg-neutral-800">
+          <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             관리자
           </NuxtLink>
         </nav>
 
-        <div class="border-t border-neutral-200 pt-4 dark:border-neutral-800">
+        <div class="pt-2">
           <UButton
             v-if="!user"
             to="/login"

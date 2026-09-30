@@ -95,7 +95,7 @@ useSchemaOrg([
           v-for="(p, idx) in orderedProducts"
           :key="p.id"
           :to="`/products/${p.slug || p.id}`"
-          class="flex items-center gap-4 rounded-3xl bg-neutral-150 p-4 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+          class="flex items-center gap-4 rounded-3xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
         >
           <span class="w-8 text-lg font-bold tabular-nums text-neutral-400">
             {{ String(idx + 1).padStart(2, '0') }}
@@ -103,7 +103,7 @@ useSchemaOrg([
           <img
             :src="p.thumbnailUrl"
             :alt="p.name"
-            class="size-16 shrink-0 rounded-2xl bg-white object-cover"
+            class="size-16 shrink-0 rounded-2xl bg-neutral-50 object-cover"
           >
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
@@ -123,12 +123,12 @@ useSchemaOrg([
         </NuxtLink>
       </section>
 
-      <div v-else class="rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <div v-else class="rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
         <p class="text-neutral-500">이 컬렉션에 아직 프로덕트가 없어요.</p>
       </div>
     </article>
 
-    <div v-else class="mt-10 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+    <div v-else class="mt-10 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
       <UIcon name="i-lucide-search-x" class="mx-auto size-8 text-neutral-400" />
       <p class="mt-4 text-neutral-500">컬렉션을 찾을 수 없어요.</p>
     </div>

@@ -37,7 +37,7 @@ useSchemaOrg([
       />
     </section>
 
-    <div v-else class="mx-auto mt-16 max-w-xl rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+    <div v-else class="mx-auto mt-16 max-w-xl rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
       <UIcon name="i-lucide-layers" class="mx-auto size-8 text-neutral-400" />
       <p class="mt-4 text-neutral-500">아직 준비된 컬렉션이 없어요.</p>
     </div>

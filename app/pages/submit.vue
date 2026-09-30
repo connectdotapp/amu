@@ -28,7 +28,7 @@ function onSubmitted(id: string) {
         등록 후 아무의 검토를 거쳐 공개돼요.
       </p>
 
-      <div class="mt-10 rounded-3xl bg-neutral-150 p-6 sm:p-8 dark:bg-neutral-800">
+      <div class="mt-10 rounded-3xl bg-neutral-100 p-6 sm:p-8 dark:bg-neutral-800">
         <ProductForm
           source="user"
           status="pending"
@@ -40,7 +40,7 @@ function onSubmitted(id: string) {
 
     <div
       v-else
-      class="mt-10 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800"
+      class="mt-10 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800"
     >
       <UIcon name="i-lucide-check-circle-2" class="mx-auto size-10" />
       <h2 class="mt-4 text-lg font-bold tracking-tight">등록 요청 완료</h2>

@@ -9,9 +9,9 @@ defineProps<{
 <template>
   <NuxtLink
     :to="`/collections/${collection.slug}`"
-    class="group flex flex-col overflow-hidden rounded-3xl bg-neutral-150 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+    class="group flex flex-col overflow-hidden rounded-3xl bg-neutral-100 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
   >
-    <div class="relative aspect-[16/9] w-full overflow-hidden bg-white dark:bg-neutral-900">
+    <div class="relative aspect-[16/9] w-full overflow-hidden bg-neutral-50 dark:bg-neutral-900">
       <img
         v-if="collection.coverImageUrl"
         :src="collection.coverImageUrl"

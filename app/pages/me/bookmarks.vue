@@ -48,12 +48,12 @@ const { data: bookmarks } = await useAsyncData<BookmarkDoc[]>(
         v-for="b in bookmarks"
         :key="b.productId"
         :to="`/products/${b.productSlug || b.productId}`"
-        class="group flex gap-4 rounded-3xl bg-neutral-150 p-4 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+        class="group flex gap-4 rounded-3xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
       >
         <img
           :src="b.productThumbnail"
           :alt="b.productName"
-          class="size-20 shrink-0 rounded-2xl object-cover bg-white"
+          class="size-20 shrink-0 rounded-2xl object-cover bg-neutral-50"
         >
         <div class="min-w-0 flex-1">
           <h3 class="truncate text-base font-bold tracking-tight">{{ b.productName }}</h3>
@@ -62,7 +62,7 @@ const { data: bookmarks } = await useAsyncData<BookmarkDoc[]>(
       </NuxtLink>
     </section>
 
-    <div v-else class="mt-10 rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+    <div v-else class="mt-10 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
       <UIcon name="i-lucide-bookmark" class="mx-auto size-8 text-neutral-400" />
       <p class="mt-4 text-neutral-500">아직 북마크한 프로덕트가 없어요.</p>
       <UButton to="/" color="neutral" variant="solid" class="mt-6">

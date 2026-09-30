@@ -53,12 +53,12 @@ const hasAnyShowroom = computed(() =>
 </script>
 
 <template>
-  <div class="overflow-x-auto rounded-3xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+  <div class="overflow-x-auto rounded-3xl bg-neutral-100 dark:bg-neutral-900">
     <table class="w-full min-w-[720px] border-collapse text-left text-sm">
       <!-- Product headers -->
       <thead>
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <th class="sticky left-0 z-10 w-32 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">항목</th>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <th class="sticky left-0 z-10 w-32 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">항목</th>
           <th
             v-for="p in products"
             :key="p.id"
@@ -70,7 +70,7 @@ const hasAnyShowroom = computed(() =>
                 <img
                   :src="p.thumbnailUrl"
                   :alt="p.name"
-                  class="size-14 rounded-2xl object-cover bg-neutral-100 dark:bg-neutral-800"
+                  class="size-14 rounded-2xl object-cover bg-neutral-50 dark:bg-neutral-800"
                 >
                 <button
                   type="button"
@@ -86,9 +86,12 @@ const hasAnyShowroom = computed(() =>
                   <NuxtLink :to="`/products/${p.slug || p.id}`" class="truncate font-bold tracking-tight hover:underline">
                     {{ p.name }}
                   </NuxtLink>
-                  <UBadge v-if="p.source === 'curated'" size="xs" color="neutral" variant="solid">
+                  <span
+                    v-if="p.source === 'curated'"
+                    class="rounded-full bg-[var(--color-amu-pink)] px-2 py-0.5 text-[10px] font-semibold text-white"
+                  >
                     Pick
-                  </UBadge>
+                  </span>
                 </div>
                 <p class="mt-1 line-clamp-2 text-xs text-neutral-500">{{ p.tagline }}</p>
               </div>
@@ -99,32 +102,32 @@ const hasAnyShowroom = computed(() =>
 
       <tbody>
         <!-- Category -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">카테고리</td>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">카테고리</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.category || '—' }}
           </td>
         </tr>
 
         <!-- Pricing -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">가격</td>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">가격</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ pricingLabel[p.pricing] || p.pricing || '—' }}
           </td>
         </tr>
 
         <!-- Maker -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">메이커</td>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">메이커</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.maker || '—' }}
           </td>
         </tr>
 
         <!-- Tags -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">태그</td>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">태그</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             <div v-if="p.tags?.length" class="flex flex-wrap gap-1">
               <span
@@ -140,58 +143,58 @@ const hasAnyShowroom = computed(() =>
         </tr>
 
         <!-- Platforms -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">플랫폼</td>
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">플랫폼</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.platforms?.length ? p.platforms.join(', ') : '—' }}
           </td>
         </tr>
 
         <!-- Showroom section header (visible only when at least one product discloses something) -->
-        <tr v-if="hasAnyShowroom" class="border-b border-neutral-200 bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950/40">
+        <tr v-if="hasAnyShowroom" class="border-b border-neutral-100 bg-neutral-150 dark:border-neutral-800 dark:bg-neutral-950/40">
           <td :colspan="products.length + 1" class="sticky left-0 px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
             쇼룸 · 메이커 제공 정보
           </td>
         </tr>
 
-        <tr v-if="hasMonthlyUsers" class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월간 사용자</td>
+        <tr v-if="hasMonthlyUsers" class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월간 사용자</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.showroom?.monthlyUsersRange ? monthlyUsersLabel[p.showroom.monthlyUsersRange] : '비공개' }}
           </td>
         </tr>
 
-        <tr v-if="hasMonthlyRevenue" class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월 매출</td>
+        <tr v-if="hasMonthlyRevenue" class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월 매출</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.showroom?.monthlyRevenueRange ? monthlyRevenueLabel[p.showroom.monthlyRevenueRange] : '비공개' }}
           </td>
         </tr>
 
-        <tr v-if="hasTeamSize" class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">팀 규모</td>
+        <tr v-if="hasTeamSize" class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">팀 규모</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm tabular-nums">
             {{ p.showroom?.teamSize ? `${p.showroom.teamSize}명` : '비공개' }}
           </td>
         </tr>
 
-        <tr v-if="hasFoundedAt" class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">시작</td>
+        <tr v-if="hasFoundedAt" class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">시작</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.showroom?.foundedAt || '비공개' }}
           </td>
         </tr>
 
-        <tr v-if="hasLocation" class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">위치</td>
+        <tr v-if="hasLocation" class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">위치</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.showroom?.location || '비공개' }}
           </td>
         </tr>
 
         <!-- Metrics -->
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
             <UIcon name="i-lucide-arrow-up" class="mr-1 inline size-3.5" />업보트
           </td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm tabular-nums">
@@ -199,8 +202,8 @@ const hasAnyShowroom = computed(() =>
           </td>
         </tr>
 
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
             <UIcon name="i-lucide-message-square" class="mr-1 inline size-3.5" />댓글
           </td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm tabular-nums">
@@ -208,8 +211,8 @@ const hasAnyShowroom = computed(() =>
           </td>
         </tr>
 
-        <tr class="border-b border-neutral-200 dark:border-neutral-800">
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
+        <tr class="border-b border-neutral-100 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">
             <UIcon name="i-lucide-bookmark" class="mr-1 inline size-3.5" />북마크
           </td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm tabular-nums">
@@ -219,7 +222,7 @@ const hasAnyShowroom = computed(() =>
 
         <!-- Visit link -->
         <tr>
-          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">방문</td>
+          <td class="sticky left-0 z-10 bg-neutral-100 p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">방문</td>
           <td v-for="p in products" :key="p.id" class="p-4">
             <UButton
               v-if="primaryLink(p)"

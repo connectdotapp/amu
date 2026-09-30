@@ -3,6 +3,7 @@ import type { MonthlyRevenueRange, MonthlyUsersRange, ProductShowroom } from '~/
 
 const props = defineProps<{
   showroom: ProductShowroom
+  maker?: string
 }>()
 
 const monthlyUsersLabel: Record<MonthlyUsersRange, string> = {
@@ -24,49 +25,52 @@ const monthlyRevenueLabel: Record<MonthlyRevenueRange, string> = {
   '1억+': '월 1억원 이상'
 }
 
-const hasAny = computed(() => {
+type Stat = { label: string, value: string, sub?: string }
+const stats = computed<Stat[]>(() => {
   const s = props.showroom
-  return !!(
-    s.investorPitch
-    || s.monthlyUsersRange
-    || s.monthlyRevenueRange
-    || s.teamSize
-    || s.foundedAt
-    || s.location
-  )
-})
-
-const stats = computed(() => {
-  const s = props.showroom
-  const items: Array<{ label: string, value: string }> = []
-  if (s.monthlyUsersRange) items.push({ label: '월간 사용자', value: monthlyUsersLabel[s.monthlyUsersRange] })
-  if (s.monthlyRevenueRange) items.push({ label: '월 매출', value: monthlyRevenueLabel[s.monthlyRevenueRange] })
-  if (s.teamSize) items.push({ label: '팀 규모', value: `${s.teamSize}명` })
-  if (s.foundedAt) items.push({ label: '시작', value: s.foundedAt })
-  if (s.location) items.push({ label: '위치', value: s.location })
+  const items: Stat[] = []
+  if (s.monthlyUsersRange) items.push({ label: 'Monthly Users', value: monthlyUsersLabel[s.monthlyUsersRange], sub: 'MAU 기준' })
+  if (s.monthlyRevenueRange) items.push({ label: 'Revenue', value: monthlyRevenueLabel[s.monthlyRevenueRange] })
+  if (s.teamSize) items.push({ label: 'Team', value: `${s.teamSize}명` })
+  if (s.foundedAt) items.push({ label: 'Founded', value: s.foundedAt })
+  if (s.location) items.push({ label: 'Location', value: s.location })
   return items
 })
 </script>
 
 <template>
-  <section v-if="hasAny" class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
-    <div class="flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-neutral-500">쇼룸</h2>
-      <span class="text-xs text-neutral-400">메이커 제공 정보</span>
+  <div>
+    <div
+      v-if="showroom.investorPitch"
+      class="rounded-2xl border-l-[3px] border-[var(--color-amu-pink)] bg-neutral-100 px-8 py-7 dark:bg-neutral-900"
+    >
+      <p class="text-lg font-bold leading-snug tracking-tight sm:text-[18px]">
+        {{ showroom.investorPitch }}
+      </p>
+      <p v-if="maker" class="mt-2.5 text-xs text-neutral-500">
+        by {{ maker }}
+      </p>
     </div>
 
-    <p v-if="showroom.investorPitch" class="mt-4 text-lg font-semibold tracking-tight sm:text-xl">
-      {{ showroom.investorPitch }}
-    </p>
-
-    <dl
+    <div
       v-if="stats.length"
-      class="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
+      class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
     >
-      <div v-for="s in stats" :key="s.label">
-        <dt class="text-xs text-neutral-500">{{ s.label }}</dt>
-        <dd class="mt-1 text-base font-semibold tracking-tight">{{ s.value }}</dd>
+      <div
+        v-for="s in stats"
+        :key="s.label"
+        class="rounded-2xl bg-neutral-100 px-6 py-5 dark:bg-neutral-900"
+      >
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500">
+          {{ s.label }}
+        </div>
+        <div class="mt-1.5 text-xl font-extrabold leading-tight tracking-tight">
+          {{ s.value }}
+        </div>
+        <div v-if="s.sub" class="mt-1 text-xs text-neutral-500">
+          {{ s.sub }}
+        </div>
       </div>
-    </dl>
-  </section>
+    </div>
+  </div>
 </template>

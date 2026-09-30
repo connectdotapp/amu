@@ -72,7 +72,7 @@ const remainingSlots = computed(() => MAX_COMPARE - selectedIds.value.length)
 
     <!-- Picker -->
     <section class="mx-auto mt-10 max-w-2xl">
-      <div class="rounded-3xl bg-neutral-150 p-5 dark:bg-neutral-800">
+      <div class="rounded-3xl bg-neutral-100 p-5 dark:bg-neutral-800">
         <div class="mb-3 flex items-center justify-between">
           <div class="text-sm font-semibold">
             {{ selectedIds.length }}/{{ MAX_COMPARE }}개 선택됨
@@ -96,12 +96,12 @@ const remainingSlots = computed(() => MAX_COMPARE - selectedIds.value.length)
           />
           <ul
             v-if="search && searchResults.length"
-            class="absolute left-0 right-0 top-full z-10 mt-1 max-h-72 overflow-auto rounded-xl border border-neutral-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+            class="absolute left-0 right-0 top-full z-10 mt-1 max-h-72 overflow-auto rounded-xl bg-neutral-50 shadow-lg dark:bg-neutral-900"
           >
             <li
               v-for="p in searchResults"
               :key="p.id"
-              class="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              class="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-neutral-150 dark:hover:bg-neutral-800"
               @click="addProduct(p.id)"
             >
               <img :src="p.thumbnailUrl" :alt="p.name" class="size-8 rounded-md bg-neutral-100 object-cover">
@@ -121,12 +121,12 @@ const remainingSlots = computed(() => MAX_COMPARE - selectedIds.value.length)
         @remove="removeProduct"
       />
 
-      <div v-else-if="(products?.length ?? 0) === 1" class="mx-auto max-w-xl rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <div v-else-if="(products?.length ?? 0) === 1" class="mx-auto max-w-xl rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
         <UIcon name="i-lucide-scale" class="mx-auto size-8 text-neutral-400" />
         <p class="mt-4 text-neutral-500">하나 더 골라주세요. 최소 2개부터 비교할 수 있어요.</p>
       </div>
 
-      <div v-else class="mx-auto max-w-xl rounded-3xl bg-neutral-150 p-16 text-center dark:bg-neutral-800">
+      <div v-else class="mx-auto max-w-xl rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
         <UIcon name="i-lucide-scale" class="mx-auto size-8 text-neutral-400" />
         <p class="mt-4 text-neutral-500">
           비교하고 싶은 프로덕트를 위 검색창에서 골라주세요.
