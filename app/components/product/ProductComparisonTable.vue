@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
+import type { MonthlyRevenueRange, MonthlyUsersRange, Product } from '~/types/product'
 
-defineProps<{
+const props = defineProps<{
   products: Product[]
 }>()
 
@@ -16,9 +16,40 @@ const pricingLabel: Record<string, string> = {
   subscription: '구독'
 }
 
+const monthlyUsersLabel: Record<MonthlyUsersRange, string> = {
+  '~100': '100명 미만',
+  '100~1K': '100~1K',
+  '1K~10K': '1K~10K',
+  '10K~100K': '1만~10만',
+  '100K~1M': '10만~100만',
+  '1M+': '100만+'
+}
+
+const monthlyRevenueLabel: Record<MonthlyRevenueRange, string> = {
+  '없음': '없음',
+  '~100만': '100만 미만',
+  '100~500만': '100~500만',
+  '500만~1천만': '500~1천만',
+  '1천~5천만': '1천~5천만',
+  '5천만~1억': '5천만~1억',
+  '1억+': '1억+'
+}
+
 function primaryLink(p: Product): string | undefined {
   return p.links?.[0]?.url
 }
+
+// Showroom rows are hidden when no product in the comparison has disclosed
+// the corresponding field, so the table stays compact when all makers stay
+// private.
+const hasMonthlyUsers = computed(() => props.products.some(p => !!p.showroom?.monthlyUsersRange))
+const hasMonthlyRevenue = computed(() => props.products.some(p => !!p.showroom?.monthlyRevenueRange))
+const hasTeamSize = computed(() => props.products.some(p => !!p.showroom?.teamSize))
+const hasFoundedAt = computed(() => props.products.some(p => !!p.showroom?.foundedAt))
+const hasLocation = computed(() => props.products.some(p => !!p.showroom?.location))
+const hasAnyShowroom = computed(() =>
+  hasMonthlyUsers.value || hasMonthlyRevenue.value || hasTeamSize.value || hasFoundedAt.value || hasLocation.value
+)
 </script>
 
 <template>
@@ -113,6 +144,48 @@ function primaryLink(p: Product): string | undefined {
           <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">플랫폼</td>
           <td v-for="p in products" :key="p.id" class="p-4 text-sm">
             {{ p.platforms?.length ? p.platforms.join(', ') : '—' }}
+          </td>
+        </tr>
+
+        <!-- Showroom section header (visible only when at least one product discloses something) -->
+        <tr v-if="hasAnyShowroom" class="border-b border-neutral-200 bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950/40">
+          <td :colspan="products.length + 1" class="sticky left-0 px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+            쇼룸 · 메이커 제공 정보
+          </td>
+        </tr>
+
+        <tr v-if="hasMonthlyUsers" class="border-b border-neutral-200 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월간 사용자</td>
+          <td v-for="p in products" :key="p.id" class="p-4 text-sm">
+            {{ p.showroom?.monthlyUsersRange ? monthlyUsersLabel[p.showroom.monthlyUsersRange] : '비공개' }}
+          </td>
+        </tr>
+
+        <tr v-if="hasMonthlyRevenue" class="border-b border-neutral-200 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">월 매출</td>
+          <td v-for="p in products" :key="p.id" class="p-4 text-sm">
+            {{ p.showroom?.monthlyRevenueRange ? monthlyRevenueLabel[p.showroom.monthlyRevenueRange] : '비공개' }}
+          </td>
+        </tr>
+
+        <tr v-if="hasTeamSize" class="border-b border-neutral-200 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">팀 규모</td>
+          <td v-for="p in products" :key="p.id" class="p-4 text-sm tabular-nums">
+            {{ p.showroom?.teamSize ? `${p.showroom.teamSize}명` : '비공개' }}
+          </td>
+        </tr>
+
+        <tr v-if="hasFoundedAt" class="border-b border-neutral-200 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">시작</td>
+          <td v-for="p in products" :key="p.id" class="p-4 text-sm">
+            {{ p.showroom?.foundedAt || '비공개' }}
+          </td>
+        </tr>
+
+        <tr v-if="hasLocation" class="border-b border-neutral-200 dark:border-neutral-800">
+          <td class="sticky left-0 z-10 bg-white p-4 text-xs font-semibold text-neutral-500 dark:bg-neutral-900">위치</td>
+          <td v-for="p in products" :key="p.id" class="p-4 text-sm">
+            {{ p.showroom?.location || '비공개' }}
           </td>
         </tr>
 

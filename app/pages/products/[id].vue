@@ -153,6 +153,9 @@ const pricingLabel: Record<string, string> = {
         </span>
       </div>
 
+      <!-- Showroom (maker-disclosed info) -->
+      <ProductShowroomSection v-if="product.showroom" :showroom="product.showroom" />
+
       <!-- Description -->
       <section v-if="product.description" class="rounded-3xl bg-neutral-150 p-8 dark:bg-neutral-800">
         <h2 class="text-sm font-semibold text-neutral-500">소개</h2>

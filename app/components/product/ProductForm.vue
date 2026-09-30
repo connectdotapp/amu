@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
-import type { PricingModel, Product, ProductSource, ProductStatus } from '~/types/product'
+import type {
+  MonthlyRevenueRange,
+  MonthlyUsersRange,
+  PricingModel,
+  Product,
+  ProductShowroom,
+  ProductSource,
+  ProductStatus
+} from '~/types/product'
 
 const props = defineProps<{
   // Create mode: source + status required. Edit mode: pass product; source/status ignored.
@@ -33,6 +41,27 @@ const form = reactive({
   maker: props.product?.maker ?? ''
 })
 
+// Showroom section — every field optional
+const showroom = reactive({
+  monthlyUsersRange: (props.product?.showroom?.monthlyUsersRange ?? '') as MonthlyUsersRange | '',
+  monthlyRevenueRange: (props.product?.showroom?.monthlyRevenueRange ?? '') as MonthlyRevenueRange | '',
+  teamSize: props.product?.showroom?.teamSize ?? null as number | null,
+  foundedAt: props.product?.showroom?.foundedAt ?? '',
+  location: props.product?.showroom?.location ?? '',
+  investorPitch: props.product?.showroom?.investorPitch ?? ''
+})
+
+const showroomOpen = ref(
+  !!(
+    props.product?.showroom?.monthlyUsersRange
+    || props.product?.showroom?.monthlyRevenueRange
+    || props.product?.showroom?.teamSize
+    || props.product?.showroom?.foundedAt
+    || props.product?.showroom?.location
+    || props.product?.showroom?.investorPitch
+  )
+)
+
 const thumbnailFile = ref<File | null>(null)
 const thumbnailPreview = ref<string | null>(props.product?.thumbnailUrl ?? null)
 const isSubmitting = ref(false)
@@ -45,6 +74,27 @@ const pricingOptions: Array<{ label: string, value: PricingModel }> = [
   { label: '구독', value: 'subscription' }
 ]
 
+const monthlyUsersOptions: Array<{ label: string, value: MonthlyUsersRange | '' }> = [
+  { label: '비공개', value: '' },
+  { label: '100명 미만', value: '~100' },
+  { label: '100~1,000명', value: '100~1K' },
+  { label: '1,000~10,000명', value: '1K~10K' },
+  { label: '10,000~100,000명', value: '10K~100K' },
+  { label: '100,000~1,000,000명', value: '100K~1M' },
+  { label: '1,000,000명 이상', value: '1M+' }
+]
+
+const monthlyRevenueOptions: Array<{ label: string, value: MonthlyRevenueRange | '' }> = [
+  { label: '비공개', value: '' },
+  { label: '아직 없음', value: '없음' },
+  { label: '월 100만원 미만', value: '~100만' },
+  { label: '월 100~500만원', value: '100~500만' },
+  { label: '월 500~1,000만원', value: '500만~1천만' },
+  { label: '월 1,000~5,000만원', value: '1천~5천만' },
+  { label: '월 5,000만~1억원', value: '5천만~1억' },
+  { label: '월 1억원 이상', value: '1억+' }
+]
+
 const categoryOptions = computed(() =>
   (categories.value || []).map(c => ({ label: c.name, value: c.slug }))
 )
@@ -55,6 +105,18 @@ function onFilePick(e: Event) {
   if (!file) return
   thumbnailFile.value = file
   thumbnailPreview.value = URL.createObjectURL(file)
+}
+
+/** Strip empty fields so Firestore doesn't store 'undefined'/'' noise. */
+function buildShowroomPayload(): ProductShowroom | null {
+  const s: ProductShowroom = {}
+  if (showroom.monthlyUsersRange) s.monthlyUsersRange = showroom.monthlyUsersRange
+  if (showroom.monthlyRevenueRange) s.monthlyRevenueRange = showroom.monthlyRevenueRange
+  if (showroom.teamSize != null && !Number.isNaN(Number(showroom.teamSize))) s.teamSize = Number(showroom.teamSize)
+  if (showroom.foundedAt.trim()) s.foundedAt = showroom.foundedAt.trim()
+  if (showroom.location.trim()) s.location = showroom.location.trim()
+  if (showroom.investorPitch.trim()) s.investorPitch = showroom.investorPitch.trim()
+  return Object.keys(s).length > 0 ? s : null
 }
 
 async function submit() {
@@ -78,6 +140,7 @@ async function submit() {
     const linkArr = form.linkUrl
       ? [{ label: form.linkLabel || '웹사이트', url: form.linkUrl.trim() }]
       : []
+    const showroomPayload = buildShowroomPayload()
 
     if (isEdit.value && props.product) {
       let thumbnailUrl = props.product.thumbnailUrl
@@ -93,7 +156,8 @@ async function submit() {
         pricing: form.pricing,
         links: linkArr,
         thumbnailUrl,
-        maker: form.maker.trim() || null
+        maker: form.maker.trim() || null,
+        showroom: showroomPayload
       })
       emit('submitted', props.product.id)
     } else {
@@ -115,6 +179,7 @@ async function submit() {
         thumbnailUrl,
         screenshots: [],
         maker: form.maker.trim() || null,
+        showroom: showroomPayload,
 
         status: props.status!,
         source: props.source!,
@@ -221,6 +286,71 @@ async function submit() {
     <UFormField label="메이커 (선택)">
       <UInput v-model="form.maker" placeholder="예: OpenAI, 홍길동" />
     </UFormField>
+
+    <!-- Showroom section (collapsible, optional) -->
+    <section class="rounded-3xl border border-neutral-200 dark:border-neutral-700">
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-3 rounded-3xl px-5 py-4 text-left transition hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        @click="showroomOpen = !showroomOpen"
+      >
+        <div>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-building-2" class="size-4 text-neutral-500" />
+            <span class="text-sm font-semibold">쇼룸 정보</span>
+            <span class="rounded-full bg-neutral-150 px-2 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800">선택</span>
+          </div>
+          <p class="mt-1 text-xs text-neutral-500">
+            메이커가 원하는 만큼만 공개해요. 채운 항목만 상세 페이지 쇼룸에 표시됩니다.
+          </p>
+        </div>
+        <UIcon
+          :name="showroomOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+          class="size-4 shrink-0 text-neutral-500"
+        />
+      </button>
+
+      <div v-if="showroomOpen" class="space-y-4 px-5 pb-5">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <UFormField label="월간 활성 사용자" help="정확한 수치 대신 구간을 골라요">
+            <USelectMenu
+              v-model="showroom.monthlyUsersRange"
+              :items="monthlyUsersOptions"
+              value-key="value"
+              placeholder="비공개"
+            />
+          </UFormField>
+          <UFormField label="월 매출" help="아직 없거나 비공개도 가능">
+            <USelectMenu
+              v-model="showroom.monthlyRevenueRange"
+              :items="monthlyRevenueOptions"
+              value-key="value"
+              placeholder="비공개"
+            />
+          </UFormField>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+          <UFormField label="팀 규모 (명)">
+            <UInput v-model.number="showroom.teamSize" type="number" min="1" placeholder="예: 3" />
+          </UFormField>
+          <UFormField label="시작 시점">
+            <UInput v-model="showroom.foundedAt" placeholder="예: 2025-03" />
+          </UFormField>
+          <UFormField label="위치">
+            <UInput v-model="showroom.location" placeholder="예: 서울, 리모트" />
+          </UFormField>
+        </div>
+
+        <UFormField label="투자자를 위한 한 줄" help="쇼룸 상단에 크게 노출돼요">
+          <UInput
+            v-model="showroom.investorPitch"
+            placeholder="예: 2024년 시작, 월 1,500명 활성, 흑자 전환"
+            maxlength="120"
+          />
+        </UFormField>
+      </div>
+    </section>
 
     <div v-if="errorMessage" class="rounded-md bg-error/10 p-3 text-sm text-error">
       {{ errorMessage }}
