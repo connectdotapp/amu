@@ -36,7 +36,7 @@ function extractIdFromUrl(input: string): string | null {
 function firstSentence(text: string): string {
   const clean = text.replace(/\s+/g, ' ').trim()
   const m = clean.match(/^(.+?[.!?。！？\n])/)
-  return (m ? m[1]! : clean).slice(0, 80).trim()
+  return (m ? m[1]! : clean).slice(0, 30).trim()
 }
 
 function derivePricing(entry: ItunesEntry): 'free' | 'paid' | 'freemium' {

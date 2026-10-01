@@ -342,8 +342,8 @@ async function submit() {
       <UInput v-model="form.name" placeholder="프로덕트 이름" size="lg" />
     </UFormField>
 
-    <UFormField label="한줄 소개" required help="검색 결과와 카드에 보여져요">
-      <UInput v-model="form.tagline" placeholder="어떤 프로덕트인지 한 줄로" size="lg" maxlength="80" />
+    <UFormField label="한줄 소개" required :help="`최대 30자 · ${form.tagline.length}/30`">
+      <UInput v-model="form.tagline" placeholder="어떤 프로덕트인지 한 줄로" size="lg" maxlength="30" />
     </UFormField>
 
     <UFormField label="상세 설명">
