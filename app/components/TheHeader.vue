@@ -69,12 +69,12 @@ const nav = [
 
 <template>
   <header class="w-full">
-    <div class="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-4">
+    <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-5">
       <NuxtLink to="/" class="block shrink-0 text-xl font-bold tracking-tight" aria-label="AMU 홈">
         AMU
       </NuxtLink>
 
-      <nav class="hidden md:flex items-center gap-4 text-sm font-semibold">
+      <nav class="hidden md:flex items-center gap-10 text-[15px] font-bold">
         <NuxtLink
           v-for="item in nav"
           :key="item.to"
