@@ -41,7 +41,6 @@ const { data: bookmarks } = await useAsyncData<BookmarkDoc[]>(
 <template>
   <div class="mx-auto max-w-4xl px-6 py-10">
     <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">북마크</h1>
-    <p class="mt-2 text-neutral-500">저장해둔 프로덕트들.</p>
 
     <section v-if="bookmarks?.length" class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
       <NuxtLink

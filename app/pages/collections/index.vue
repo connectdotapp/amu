@@ -23,10 +23,6 @@ useSchemaOrg([
       <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
         컬렉션
       </h1>
-      <p class="mx-auto mt-4 max-w-xl text-base text-neutral-500 sm:text-lg">
-        비슷한 결의 프로덕트를 하나의 이야기로 묶었어요.<br class="hidden sm:block">
-        관점이 있는 편집 단위.
-      </p>
     </header>
 
     <section v-if="collections?.length" class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

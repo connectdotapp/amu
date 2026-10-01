@@ -40,9 +40,6 @@ const pricingLabel: Record<string, string> = {
       <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         이번 주 순위
       </h1>
-      <p class="mt-3 max-w-lg text-[15px] leading-relaxed text-neutral-500">
-        이번 주 아무의 관심이 모인 프로덕트. 업보트가 많은 순으로 정렬돼요.
-      </p>
     </header>
 
     <ol v-if="ranked.length" class="mt-4 flex flex-col gap-2">

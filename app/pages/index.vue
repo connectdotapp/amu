@@ -138,9 +138,6 @@ onMounted(() => {
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
             오늘의 새로운 발견
           </h1>
-          <p class="mt-2 max-w-xl text-base text-neutral-500 sm:text-lg">
-            내 일상을 함께할 아무를 찾아보아요
-          </p>
 
           <form class="mt-8 max-w-xl" @submit.prevent="submitHeroSearch">
             <div class="flex items-center gap-3 rounded-full bg-neutral-100 px-5 py-3.5 dark:bg-neutral-800">
