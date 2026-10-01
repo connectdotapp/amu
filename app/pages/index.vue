@@ -56,6 +56,22 @@ const pricingLabelKR: Record<string, string> = {
   free: '무료', freemium: '프리미엄', paid: '유료', subscription: '구독'
 }
 
+// 사이드바 배경 프리뷰. ?sidebar=pink|blue|lavender 쿼리로 즉시 전환.
+const sidebarBg = computed(() => {
+  const key = route.query.sidebar as string | undefined
+  if (key === 'pink') return 'bg-[#FBECF0]'
+  if (key === 'blue') return 'bg-[#EDF2FB]'
+  if (key === 'lavender') return 'bg-[#EAEAFB]'
+  return 'bg-neutral-100'
+})
+const sidebarHoverBg = computed(() => {
+  const key = route.query.sidebar as string | undefined
+  if (key === 'pink') return 'hover:bg-[#F5DDE3]'
+  if (key === 'blue') return 'hover:bg-[#DFE7F6]'
+  if (key === 'lavender') return 'hover:bg-[#DADAF4]'
+  return 'hover:bg-neutral-150'
+})
+
 // Weekly ranking — top 7 by upvoteCount
 const rankedProducts = computed(() =>
   [...(allProducts.value || [])]
@@ -345,7 +361,7 @@ onMounted(() => {
       <aside class="lg:pt-[86px]">
         <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
-          <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
+          <div class="rounded-3xl p-6 dark:bg-neutral-900" :class="sidebarBg">
             <h3 class="text-lg font-bold tracking-tight">이번 주 순위</h3>
             <div class="mt-1 text-xs text-neutral-400">{{ currentWeekLabel }}</div>
 
@@ -354,7 +370,8 @@ onMounted(() => {
                 v-for="(p, i) in rankedProducts"
                 :key="p.id"
                 :to="`/products/${p.slug || p.id}`"
-                class="flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-neutral-150 dark:hover:bg-neutral-800"
+                class="flex items-center gap-3 rounded-xl px-2 py-2 transition dark:hover:bg-neutral-800"
+                :class="sidebarHoverBg"
               >
                 <div
                   class="w-5 shrink-0 text-left text-[17px] font-bold leading-none tracking-tight"
@@ -391,7 +408,7 @@ onMounted(() => {
           </div>
 
           <!-- Collections quick list -->
-          <div v-if="collections?.length" class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
+          <div v-if="collections?.length" class="rounded-3xl p-6 dark:bg-neutral-900" :class="sidebarBg">
             <div class="flex items-center justify-between">
               <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Collection</div>
               <NuxtLink to="/collections" class="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50">
@@ -412,7 +429,7 @@ onMounted(() => {
           </div>
 
           <!-- Quick links -->
-          <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
+          <div class="rounded-3xl p-6 dark:bg-neutral-900" :class="sidebarBg">
             <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Quick</div>
             <ul class="mt-4 space-y-2.5 text-[15px] font-bold tracking-tight">
               <li><NuxtLink to="/submit" class="hover:text-neutral-500">프로덕트 등록</NuxtLink></li>
