@@ -26,7 +26,11 @@ watchEffect(async () => {
 })
 
 const userMenuItems = computed(() => {
-  const items: any[][] = [[{ label: user.value?.email ?? '', type: 'label' as const }]]
+  // 로그아웃 상태: 로그인 하나만 노출. 9-dot 아이콘이 로그인/프로필 공통 진입점.
+  if (!user.value) {
+    return [[{ label: '로그인', to: '/login', icon: 'i-lucide-log-in' }]]
+  }
+  const items: any[][] = [[{ label: user.value.email ?? '', type: 'label' as const }]]
   const main: any[] = [
     { label: '북마크', to: '/me/bookmarks', icon: 'i-lucide-bookmark' }
   ]
@@ -69,8 +73,8 @@ const nav = [
 
 <template>
   <header class="w-full">
-    <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-5">
-      <NuxtLink to="/" class="block shrink-0 text-xl font-bold tracking-tight text-[#FD0E35]" aria-label="AMU 홈">
+    <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-7">
+      <NuxtLink to="/" class="block shrink-0 text-2xl font-bold tracking-tight" aria-label="AMU 홈">
         AMU
       </NuxtLink>
 
@@ -86,56 +90,45 @@ const nav = [
         </NuxtLink>
       </nav>
 
-      <div class="ml-auto flex items-center gap-2">
+      <div class="ml-auto flex items-center gap-3">
         <button
           v-if="!isHome"
           type="button"
-          class="hidden sm:flex size-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-950 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+          class="hidden sm:flex size-10 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-950 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
           aria-label="검색"
           @click="goHomeSearch"
         >
-          <UIcon name="i-lucide-search" class="size-4" />
+          <UIcon name="i-lucide-search" class="size-5" />
         </button>
 
         <NuxtLink
           to="/submit"
-          class="hidden sm:inline-flex items-center rounded-full bg-[#FD0E35] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#D40D2C]"
+          class="hidden sm:inline-flex items-center justify-center rounded-full bg-[#F2293A] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#D81A2E]"
         >
           등록하기
         </NuxtLink>
 
-        <template v-if="user">
-          <UDropdownMenu :items="userMenuItems" :content="{ align: 'end' }">
-            <button
-              class="flex size-8 items-center justify-center overflow-hidden rounded-full bg-neutral-150 dark:bg-neutral-700"
-              aria-label="계정 메뉴"
-            >
-              <img
-                v-if="user.photoURL"
-                :src="user.photoURL"
-                :alt="user.displayName || 'user'"
-                class="size-full object-cover"
-                referrerpolicy="no-referrer"
-              >
-              <UIcon v-else name="i-lucide-user" class="size-4 text-neutral-500" />
-            </button>
-          </UDropdownMenu>
-        </template>
-
-        <template v-else>
-          <UButton
-            to="/login"
-            color="neutral"
-            variant="solid"
-            size="sm"
-            class="hidden sm:inline-flex"
+        <UDropdownMenu :items="userMenuItems" :content="{ align: 'end' }">
+          <button
+            class="hidden sm:flex size-10 items-center justify-center rounded-full text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+            aria-label="메뉴"
           >
-            로그인
-          </UButton>
-        </template>
+            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+              <circle cx="4" cy="4" r="1.6" />
+              <circle cx="10" cy="4" r="1.6" />
+              <circle cx="16" cy="4" r="1.6" />
+              <circle cx="4" cy="10" r="1.6" />
+              <circle cx="10" cy="10" r="1.6" />
+              <circle cx="16" cy="10" r="1.6" />
+              <circle cx="4" cy="16" r="1.6" />
+              <circle cx="10" cy="16" r="1.6" />
+              <circle cx="16" cy="16" r="1.6" />
+            </svg>
+          </button>
+        </UDropdownMenu>
 
         <button
-          class="ml-1 flex size-8 items-center justify-center rounded-full bg-neutral-100 md:hidden dark:bg-neutral-800"
+          class="ml-1 flex size-9 items-center justify-center rounded-full bg-neutral-100 md:hidden dark:bg-neutral-800"
           :aria-expanded="mobileOpen"
           aria-label="메뉴"
           @click="mobileOpen = !mobileOpen"

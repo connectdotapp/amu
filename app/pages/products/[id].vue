@@ -140,7 +140,7 @@ watchEffect(() => {
           <div class="min-w-0 flex-1 pt-1">
             <span
               v-if="product.source === 'curated'"
-              class="mb-3 inline-block rounded-full bg-[#FD0E35] px-2.5 py-1 text-[11px] font-semibold text-white"
+              class="mb-3 inline-block rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-semibold text-white"
             >
               AMU Pick
             </span>
