@@ -68,13 +68,11 @@ export default defineNuxtConfig({
     },
     auth: {
       enabled: true,
-      // Enable when a service account is configured (see .env.example → GOOGLE_APPLICATION_CREDENTIALS).
-      // Without it, admin SDK cannot verify session cookies during SSR.
-      sessionCookie: !!process.env.GOOGLE_APPLICATION_CREDENTIALS
-    },
-    admin: process.env.GOOGLE_APPLICATION_CREDENTIALS
-      ? { serviceAccount: process.env.GOOGLE_APPLICATION_CREDENTIALS }
-      : undefined
+      // 세션 쿠키는 서버에 service account 가 있어야 토큰 검증이 가능.
+      // Cloud Functions ADC 로는 VueFire 가 자동 초기화를 못 해서 /api/__session 이 401 을 뱉고 로그인 흐름이 실패했음.
+      // 현재는 모든 auth 체크를 클라이언트 사이드로 돌림 (admin 페이지는 하이드레이션 이후 가드).
+      sessionCookie: false
+    }
   },
 
   eslint: {
