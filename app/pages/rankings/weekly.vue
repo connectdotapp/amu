@@ -69,7 +69,7 @@ const pricingLabel: Record<string, string> = {
               </h2>
               <span
                 v-if="p.source === 'curated'"
-                class="shrink-0 rounded-full bg-[var(--color-amu-pink)] px-2 py-0.5 text-[10px] font-semibold text-white"
+                class="shrink-0 rounded-full bg-[#FD0E35] px-2 py-0.5 text-[10px] font-semibold text-white"
               >
                 Pick
               </span>

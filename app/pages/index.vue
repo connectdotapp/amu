@@ -188,7 +188,7 @@ onMounted(() => {
                 class="size-28 shrink-0 rounded-3xl bg-neutral-50 object-cover sm:size-32"
               >
               <div class="min-w-0 flex-1">
-                <span class="inline-block rounded-full bg-[var(--color-amu-pink)] px-2.5 py-1 text-[11px] font-semibold text-white">
+                <span class="inline-block rounded-full bg-[#FD0E35] px-2.5 py-1 text-[11px] font-semibold text-white">
                   AMU Pick
                 </span>
                 <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">

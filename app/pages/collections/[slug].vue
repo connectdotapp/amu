@@ -108,14 +108,12 @@ useSchemaOrg([
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
               <h3 class="truncate font-bold tracking-tight">{{ p.name }}</h3>
-              <UBadge
+              <span
                 v-if="p.source === 'curated'"
-                size="xs"
-                color="neutral"
-                variant="solid"
+                class="shrink-0 rounded-full bg-[#FD0E35] px-2 py-0.5 text-[10px] font-semibold text-white"
               >
                 AMU Pick
-              </UBadge>
+              </span>
             </div>
             <p class="mt-1 line-clamp-1 text-sm text-neutral-500">{{ p.tagline }}</p>
           </div>

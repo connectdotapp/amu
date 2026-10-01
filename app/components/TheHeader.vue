@@ -70,7 +70,7 @@ const nav = [
 <template>
   <header class="w-full">
     <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-5">
-      <NuxtLink to="/" class="block shrink-0 text-xl font-bold tracking-tight" aria-label="AMU 홈">
+      <NuxtLink to="/" class="block shrink-0 text-xl font-bold tracking-tight text-[#FD0E35]" aria-label="AMU 홈">
         AMU
       </NuxtLink>
 
@@ -97,15 +97,12 @@ const nav = [
           <UIcon name="i-lucide-search" class="size-4" />
         </button>
 
-        <UButton
+        <NuxtLink
           to="/submit"
-          color="neutral"
-          variant="outline"
-          size="sm"
-          class="hidden sm:inline-flex"
+          class="hidden sm:inline-flex items-center rounded-full bg-[#FD0E35] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#D40D2C]"
         >
           등록하기
-        </UButton>
+        </NuxtLink>
 
         <template v-if="user">
           <UDropdownMenu :items="userMenuItems" :content="{ align: 'end' }">
