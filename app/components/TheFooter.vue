@@ -7,7 +7,7 @@ const year = new Date().getFullYear()
     <div class="mx-auto max-w-[1280px] px-6 py-12">
       <div class="flex flex-col gap-8 sm:flex-row sm:justify-between">
         <div>
-          <div class="text-lg font-black tracking-tighter">AMU</div>
+          <div class="text-lg font-black tracking-tight">AMU</div>
           <p class="mt-1 text-sm text-neutral-500">
             아무거나 먹지 않는 새
           </p>

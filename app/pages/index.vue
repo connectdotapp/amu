@@ -71,7 +71,7 @@ const homeThemes: HomeTheme[] = [
   { key: 'game', eyebrow: 'Games', title: '게임', keywords: ['게임', 'game'] },
   { key: 'service', eyebrow: 'Lifestyle Services', title: '생활 서비스', keywords: ['서비스', 'service', '예약', '매칭', '배달'] },
   { key: 'hobby', eyebrow: 'Hobby', title: '취미', keywords: ['취미', 'hobby', '사진', '음악', '그림'] },
-  { key: 'diary', eyebrow: 'Diary', title: '다이어리', keywords: ['다이어리', 'diary', '일기', 'journal'] },
+  { key: 'life', eyebrow: 'Life', title: '라이프', keywords: ['라이프', 'life', '일상', 'lifestyle', '일기', '다이어리'] },
   { key: 'health', eyebrow: 'Health', title: '헬스', keywords: ['헬스', 'health', '운동', '피트니스', 'fitness'] }
 ]
 
@@ -124,7 +124,7 @@ onMounted(() => {
       <div class="min-w-0">
         <!-- Hero -->
         <section class="pt-12 pb-10 sm:pt-16">
-          <h1 class="text-4xl font-extrabold tracking-tighter sm:text-5xl">
+          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
             오늘의 새로운 발견
           </h1>
           <p class="mt-2 max-w-xl text-base text-neutral-500 sm:text-lg">
@@ -183,7 +183,7 @@ onMounted(() => {
                 <span class="inline-block rounded-full bg-[var(--color-amu-pink)] px-2.5 py-1 text-[11px] font-semibold text-white">
                   AMU Pick
                 </span>
-                <h3 class="mt-3 text-2xl font-extrabold tracking-tight sm:text-[26px]">
+                <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">
                   {{ featuredPick.name }}
                 </h3>
                 <p class="mt-2 text-[15px] leading-relaxed text-neutral-500">
@@ -338,7 +338,7 @@ onMounted(() => {
         <div class="sticky top-6 space-y-4">
           <!-- Ranking card -->
           <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
-            <h3 class="text-lg font-extrabold tracking-tight">이번 주 순위</h3>
+            <h3 class="text-lg font-bold tracking-tight">이번 주 순위</h3>
             <div class="mt-1 text-xs text-neutral-400">{{ currentWeekLabel }}</div>
 
             <div v-if="rankedProducts.length" class="mt-4 flex flex-col gap-1">
@@ -349,7 +349,7 @@ onMounted(() => {
                 class="flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-neutral-150 dark:hover:bg-neutral-800"
               >
                 <div
-                  class="w-5 shrink-0 text-left text-[17px] font-extrabold leading-none tracking-tight"
+                  class="w-5 shrink-0 text-left text-[17px] font-bold leading-none tracking-tight"
                   :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
                 >
                   {{ i + 1 }}

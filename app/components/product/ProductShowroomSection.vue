@@ -64,7 +64,7 @@ const stats = computed<Stat[]>(() => {
         <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500">
           {{ s.label }}
         </div>
-        <div class="mt-1.5 text-xl font-extrabold leading-tight tracking-tight">
+        <div class="mt-1.5 text-xl font-bold leading-tight tracking-tight">
           {{ s.value }}
         </div>
         <div v-if="s.sub" class="mt-1 text-xs text-neutral-500">

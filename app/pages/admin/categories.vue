@@ -126,7 +126,7 @@ async function remove(c: Category) {
       관리자
     </NuxtLink>
 
-    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">카테고리 관리</h1>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">카테고리 관리</h1>
     <p class="mt-2 text-neutral-500">홈의 카테고리 컬럼에 노출돼요. 순서 값이 작을수록 위로.</p>
 
     <!-- Add form -->

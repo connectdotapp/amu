@@ -20,7 +20,7 @@ useSchemaOrg([
 <template>
   <div class="mx-auto max-w-[1280px] px-6 py-16 sm:py-24">
     <header class="mx-auto max-w-2xl text-center">
-      <h1 class="text-4xl font-bold tracking-tighter sm:text-6xl">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
         컬렉션
       </h1>
       <p class="mx-auto mt-4 max-w-xl text-base text-neutral-500 sm:text-lg">

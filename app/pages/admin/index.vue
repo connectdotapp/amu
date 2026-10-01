@@ -37,7 +37,7 @@ const actions = [
 <template>
   <div class="mx-auto max-w-[1280px] px-6 py-10">
     <header class="mb-10">
-      <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">관리자</h1>
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">관리자</h1>
       <p class="mt-2 text-neutral-500">아무의 큐레이션 워크스페이스.</p>
     </header>
 

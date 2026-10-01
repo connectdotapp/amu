@@ -23,7 +23,7 @@ function onSubmitted(id: string) {
 <template>
   <div class="mx-auto max-w-2xl px-6 py-10">
     <template v-if="!submittedId">
-      <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">프로덕트 등록</h1>
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">프로덕트 등록</h1>
       <p class="mt-2 text-neutral-500">
         등록 후 아무의 검토를 거쳐 공개돼요.
       </p>

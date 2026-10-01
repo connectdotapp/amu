@@ -59,7 +59,7 @@ async function removeCollection(c: Collection) {
 
     <header class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl">컬렉션 관리</h1>
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">컬렉션 관리</h1>
         <p class="mt-2 text-neutral-500">주제별로 프로덕트를 묶어 소개하는 편집 단위.</p>
       </div>
       <UButton to="/admin/collections/new" color="neutral" variant="solid" icon="i-lucide-plus">

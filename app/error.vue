@@ -24,7 +24,7 @@ function goHome() {
   <div class="min-h-dvh bg-neutral-100 dark:bg-neutral-950">
     <div class="mx-auto flex min-h-dvh max-w-lg flex-col items-center justify-center px-6 py-16 text-center">
       <p class="text-sm font-semibold text-neutral-500">{{ code }}</p>
-      <h1 class="mt-3 text-4xl font-bold tracking-tighter sm:text-6xl">
+      <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-6xl">
         {{ title }}
       </h1>
       <p class="mt-4 text-neutral-500">{{ description }}</p>

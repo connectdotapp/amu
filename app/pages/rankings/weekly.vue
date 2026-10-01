@@ -37,7 +37,7 @@ const pricingLabel: Record<string, string> = {
       <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">
         Ranking · {{ currentWeekLabel }}
       </div>
-      <h1 class="mt-2 text-3xl font-extrabold tracking-tighter sm:text-4xl">
+      <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         이번 주 순위
       </h1>
       <p class="mt-3 max-w-lg text-[15px] leading-relaxed text-neutral-500">
@@ -52,7 +52,7 @@ const pricingLabel: Record<string, string> = {
           class="flex items-center gap-5 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
         >
           <div
-            class="w-8 shrink-0 text-left text-2xl font-extrabold leading-none tracking-tight tabular-nums sm:text-3xl"
+            class="w-8 shrink-0 text-left text-2xl font-bold leading-none tracking-tight tabular-nums sm:text-3xl"
             :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
           >
             {{ i + 1 }}

@@ -42,7 +42,7 @@ function onSubmitted() {
       컬렉션 관리
     </NuxtLink>
 
-    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">컬렉션 수정</h1>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">컬렉션 수정</h1>
     <p v-if="collectionDoc" class="mt-2 text-neutral-500">{{ collectionDoc.title }}</p>
 
     <div v-if="collectionDoc" class="mt-10 rounded-3xl bg-neutral-150 p-6 sm:p-8 dark:bg-neutral-800">

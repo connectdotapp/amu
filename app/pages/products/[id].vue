@@ -144,7 +144,7 @@ watchEffect(() => {
             >
               AMU Pick
             </span>
-            <h1 class="text-3xl font-extrabold leading-[1.05] tracking-tighter sm:text-[40px]">
+            <h1 class="text-3xl font-bold leading-[1.05] tracking-tight sm:text-[40px]">
               {{ product.name }}
             </h1>
             <p class="mt-2.5 max-w-[480px] text-base leading-snug text-neutral-500 sm:text-[17px]">
@@ -240,7 +240,7 @@ watchEffect(() => {
       <!-- Overview -->
       <section v-if="activeTab === 'overview'" class="pt-8">
         <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Overview</div>
-        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+        <h2 class="mt-3.5 text-xl font-bold tracking-tight sm:text-[22px]">
           어떤 프로덕트인가요
         </h2>
         <p class="mt-4 max-w-[680px] whitespace-pre-wrap text-[15px] leading-[1.7] text-neutral-700 dark:text-neutral-300">
@@ -251,7 +251,7 @@ watchEffect(() => {
       <!-- Showroom -->
       <section v-else-if="activeTab === 'showroom' && product.showroom" class="pt-8">
         <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Showroom</div>
-        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+        <h2 class="mt-3.5 text-xl font-bold tracking-tight sm:text-[22px]">
           메이커가 알려주는 지표
         </h2>
         <div class="mt-5">
@@ -262,7 +262,7 @@ watchEffect(() => {
       <!-- Links -->
       <section v-else-if="activeTab === 'links' && product.links?.length" class="pt-8">
         <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Links</div>
-        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+        <h2 class="mt-3.5 text-xl font-bold tracking-tight sm:text-[22px]">
           더 살펴보기
         </h2>
         <div class="mt-5 flex flex-col gap-1">
@@ -289,7 +289,7 @@ watchEffect(() => {
       <!-- Comments -->
       <section v-else-if="activeTab === 'comments'" class="pt-8">
         <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Discussion</div>
-        <h2 class="mt-3.5 text-xl font-extrabold tracking-tight sm:text-[22px]">
+        <h2 class="mt-3.5 text-xl font-bold tracking-tight sm:text-[22px]">
           사람들의 이야기
         </h2>
         <div class="mt-5">

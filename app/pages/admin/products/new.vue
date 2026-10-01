@@ -21,7 +21,7 @@ function onSubmitted(id: string) {
       관리자
     </NuxtLink>
 
-    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">큐레이션 등록</h1>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">큐레이션 등록</h1>
     <p class="mt-2 text-neutral-500">AMU Pick으로 즉시 게시됩니다.</p>
 
     <div class="mt-10 rounded-3xl bg-neutral-150 p-6 sm:p-8 dark:bg-neutral-800">

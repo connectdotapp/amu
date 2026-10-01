@@ -52,7 +52,7 @@ async function reject(p: Product) {
       관리자
     </NuxtLink>
 
-    <h1 class="mt-6 text-3xl font-bold tracking-tighter sm:text-4xl">승인 대기</h1>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">승인 대기</h1>
     <p class="mt-2 text-neutral-500">사용자가 등록한 프로덕트를 검토해요.</p>
 
     <section v-if="pending?.length" class="mt-10 space-y-3">

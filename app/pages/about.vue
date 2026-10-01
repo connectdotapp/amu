@@ -7,7 +7,7 @@ useSeoMeta({
 
 <template>
   <div class="mx-auto max-w-3xl px-6 py-16 sm:py-24">
-    <h1 class="text-4xl font-bold tracking-tighter sm:text-6xl">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
       아무거나 소개하지 않아요.
     </h1>
 

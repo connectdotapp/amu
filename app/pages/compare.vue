@@ -64,7 +64,7 @@ const remainingSlots = computed(() => MAX_COMPARE - selectedIds.value.length)
 <template>
   <div class="mx-auto max-w-[1280px] px-6 py-10">
     <header class="mx-auto max-w-3xl text-center">
-      <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl">비교</h1>
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">비교</h1>
       <p class="mx-auto mt-4 max-w-xl text-base text-neutral-500 sm:text-lg">
         관심 있는 프로덕트를 나란히 놓고 살펴봐요. 최대 {{ MAX_COMPARE }}개.
       </p>

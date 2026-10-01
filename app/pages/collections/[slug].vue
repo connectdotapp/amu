@@ -78,7 +78,7 @@ useSchemaOrg([
         <div class="text-xs font-semibold uppercase tracking-wider text-neutral-500">
           컬렉션 · {{ orderedProducts.length }}개 프로덕트
         </div>
-        <h1 class="mt-3 text-3xl font-bold tracking-tighter sm:text-5xl">
+        <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">
           {{ collectionDoc.title }}
         </h1>
         <p class="mt-4 text-base text-neutral-600 sm:text-lg dark:text-neutral-400">
