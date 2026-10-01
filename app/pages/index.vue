@@ -119,11 +119,22 @@ onMounted(() => {
 
 <template>
   <div class="mx-auto max-w-[1280px] px-6">
+    <!-- Hero banner — 브랜드 이미지/색감 전달용. 전체 컨테이너 너비로 배치. -->
+    <section class="pt-6">
+      <div class="aspect-[21/6] overflow-hidden rounded-3xl bg-neutral-100 sm:aspect-[21/5]">
+        <img
+          src="/hero-banner.png"
+          alt=""
+          class="size-full object-cover"
+        >
+      </div>
+    </section>
+
     <div class="grid gap-10 lg:grid-cols-[1fr_320px]">
       <!-- MAIN CONTENT -->
       <div class="min-w-0">
         <!-- Hero -->
-        <section class="pt-12 pb-10 sm:pt-16">
+        <section class="pt-10 pb-10 sm:pt-14">
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
             오늘의 새로운 발견
           </h1>
