@@ -16,7 +16,7 @@ const isNew = computed(() => {
 <template>
   <NuxtLink
     :to="`/products/${product.slug || product.id}`"
-    class="group relative flex aspect-[6/5] flex-col overflow-hidden rounded-3xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+    class="group relative flex flex-col overflow-hidden rounded-3xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
   >
     <span
       v-if="product.source === 'curated'"

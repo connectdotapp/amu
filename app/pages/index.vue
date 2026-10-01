@@ -134,12 +134,12 @@ onMounted(() => {
 
         <!-- Today's Pick -->
         <section v-if="featuredPick" class="pb-12">
-          <div class="mb-5 flex items-baseline justify-between">
+          <div class="mb-5 flex items-end justify-between gap-4">
             <div>
               <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Today's Pick</div>
               <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">오늘의 아무</h2>
             </div>
-            <NuxtLink to="/?sort=pick" class="text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+            <NuxtLink to="/?sort=pick" class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
               전체 보기 →
             </NuxtLink>
           </div>
@@ -219,27 +219,24 @@ onMounted(() => {
           </div>
 
           <!-- Sort tabs -->
-          <div class="flex items-center justify-between gap-4 pb-3">
-            <nav class="flex items-center gap-5 text-sm font-bold">
-              <button
-                v-for="tab in sortTabs"
-                :key="tab.value"
-                class="relative pb-2 transition"
-                :class="filters.sort === tab.value ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-                @click="router.push({ query: { ...route.query, sort: tab.value === 'latest' ? undefined : tab.value } })"
-              >
-                {{ tab.label }}
-                <span
-                  v-if="filters.sort === tab.value"
-                  class="absolute inset-x-0 -bottom-[9px] h-0.5 bg-neutral-950 dark:bg-neutral-50"
-                />
-              </button>
-            </nav>
-            <span class="text-xs tabular-nums text-neutral-500">{{ products.length }}개</span>
-          </div>
+          <nav class="flex items-center gap-5 pb-3 text-sm font-bold">
+            <button
+              v-for="tab in sortTabs"
+              :key="tab.value"
+              class="relative pb-2 transition"
+              :class="filters.sort === tab.value ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+              @click="router.push({ query: { ...route.query, sort: tab.value === 'latest' ? undefined : tab.value } })"
+            >
+              {{ tab.label }}
+              <span
+                v-if="filters.sort === tab.value"
+                class="absolute inset-x-0 -bottom-[9px] h-0.5 bg-neutral-950 dark:bg-neutral-50"
+              />
+            </button>
+          </nav>
 
-          <!-- Pricing chips row -->
-          <div class="mt-4 flex flex-wrap items-center gap-1.5">
+          <!-- Pricing chips row + count -->
+          <div class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <span class="mr-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Pricing</span>
             <button
               v-for="p in pricingOptions"
@@ -253,6 +250,7 @@ onMounted(() => {
             >
               {{ p.label }}
             </button>
+            <span class="ml-auto text-xs tabular-nums text-neutral-400">{{ products.length }}개</span>
           </div>
 
           <!-- Cards grid -->
