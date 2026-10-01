@@ -63,6 +63,31 @@ const rankedProducts = computed(() =>
     .slice(0, 7)
 )
 
+// 주제별 홈 섹션. category/tags/name/tagline 을 느슨하게 매칭 — 초기 데이터
+// 적을 때도 섹션이 살아 보이게. 첫 키워드가 "전체 보기" 링크의 ?q 로 쓰임.
+type HomeTheme = { key: string, eyebrow: string, title: string, keywords: string[] }
+
+const homeThemes: HomeTheme[] = [
+  { key: 'game', eyebrow: 'Games', title: '게임', keywords: ['게임', 'game'] },
+  { key: 'service', eyebrow: 'Lifestyle Services', title: '생활 서비스', keywords: ['서비스', 'service', '예약', '매칭', '배달'] },
+  { key: 'hobby', eyebrow: 'Hobby', title: '취미', keywords: ['취미', 'hobby', '사진', '음악', '그림'] },
+  { key: 'diary', eyebrow: 'Diary', title: '다이어리', keywords: ['다이어리', 'diary', '일기', 'journal'] },
+  { key: 'health', eyebrow: 'Health', title: '헬스', keywords: ['헬스', 'health', '운동', '피트니스', 'fitness'] }
+]
+
+function matchesTheme(p: { name?: string, tagline?: string, category?: string, tags?: string[] }, keywords: string[]) {
+  const haystack = `${p.name ?? ''} ${p.tagline ?? ''} ${p.category ?? ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+  return keywords.some(k => haystack.includes(k.toLowerCase()))
+}
+
+const themedSections = computed(() => {
+  const all = allProducts.value || []
+  return homeThemes.map(t => ({
+    ...t,
+    products: all.filter(p => matchesTheme(p, t.keywords)).slice(0, 4)
+  }))
+})
+
 // "N월 M주차" — week of the current month
 const currentWeekLabel = computed(() => {
   const now = new Date()
@@ -100,10 +125,10 @@ onMounted(() => {
         <!-- Hero -->
         <section class="pt-12 pb-10 sm:pt-16">
           <h1 class="text-4xl font-extrabold tracking-tighter sm:text-5xl">
-            오늘,<br>무엇을 써볼까요?
+            오늘의 새로운 발견
           </h1>
-          <p class="mt-7 max-w-xl text-base text-neutral-500 sm:text-lg">
-            1인 개발자·소규모 팀이 만든 앱·웹·프로그램을 아무가 골라 소개해요
+          <p class="mt-2 max-w-xl text-base text-neutral-500 sm:text-lg">
+            내 일상을 함께할 아무를 찾아보아요
           </p>
 
           <form class="mt-8 max-w-xl" @submit.prevent="submitHeroSearch">
@@ -182,6 +207,37 @@ onMounted(() => {
               </div>
             </div>
           </NuxtLink>
+        </section>
+
+        <!-- Themed collections -->
+        <section
+          v-for="t in themedSections"
+          :key="t.key"
+          class="pb-12"
+        >
+          <div class="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">{{ t.eyebrow }}</div>
+              <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">{{ t.title }}</h2>
+            </div>
+            <NuxtLink
+              :to="`/?q=${encodeURIComponent(t.keywords[0]!)}`"
+              class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50"
+            >
+              전체 보기 →
+            </NuxtLink>
+          </div>
+
+          <div v-if="t.products.length" class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <ProductCard
+              v-for="p in t.products"
+              :key="p.id"
+              :product="p"
+            />
+          </div>
+          <p v-else class="pb-2 text-sm text-neutral-400">
+            곧 큐레이션돼요
+          </p>
         </section>
 
         <!-- Active filter chips -->
