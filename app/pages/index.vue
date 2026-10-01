@@ -342,8 +342,8 @@ onMounted(() => {
       </div>
 
       <!-- SIDEBAR: Weekly ranking + Collections -->
-      <aside class="lg:pt-24">
-        <div class="sticky top-6 space-y-4">
+      <aside class="lg:pt-[86px]">
+        <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
           <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
             <h3 class="text-lg font-bold tracking-tight">이번 주 순위</h3>

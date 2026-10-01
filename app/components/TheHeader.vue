@@ -72,7 +72,7 @@ const nav = [
 </script>
 
 <template>
-  <header class="w-full">
+  <header class="sticky top-0 z-50 w-full bg-white dark:bg-neutral-950">
     <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-7">
       <NuxtLink to="/" class="block shrink-0 text-2xl font-bold tracking-tight" aria-label="AMU 홈">
         AMU
