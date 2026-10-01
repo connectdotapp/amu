@@ -19,10 +19,11 @@
   --color-neutral-900: #171717;
   --color-neutral-950: #0A0A0A;
 
-  /* AMU point color — used very locally. See AMU_디자인계획.html for rules. */
-  --color-amu-pink: #FF3C7D;
-  --color-amu-pink-dark: #E01D5F;
-  --color-amu-pink-tint: #FFE5EE;
+  /* 포인트 컬러 — 컬러 방향 결정 전까지 중립 블랙으로 통일.
+     변수명은 pink 유지(쓰이는 곳 많아서 리네임 미룸). 색 결정되면 값만 교체. */
+  --color-amu-pink: #0A0A0A;
+  --color-amu-pink-dark: #262626;
+  --color-amu-pink-tint: #EDEDED;
 }
 
 html,

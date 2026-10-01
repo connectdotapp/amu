@@ -17,7 +17,13 @@ export default defineNuxtPlugin(() => {
   const route = useRoute()
 
   function apply() {
-    const key = String(route.query.point || 'pink')
+    const key = route.query.point ? String(route.query.point) : null
+    if (!key) {
+      // 쿼리 없으면 main.css 기본값(현재 블랙) 유지. 인라인 스타일 제거.
+      document.documentElement.style.removeProperty('--color-amu-pink')
+      document.documentElement.style.removeProperty('--color-amu-pink-dark')
+      return
+    }
     const variant = PALETTE[key] ?? PALETTE.pink!
     document.documentElement.style.setProperty('--color-amu-pink', variant.base)
     document.documentElement.style.setProperty('--color-amu-pink-dark', variant.dark)
