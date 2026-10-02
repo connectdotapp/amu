@@ -74,8 +74,21 @@ const nav = [
 <template>
   <header class="sticky top-0 z-50 w-full bg-white dark:bg-neutral-950">
     <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-7">
-      <NuxtLink to="/" class="block shrink-0 text-2xl font-bold tracking-tight" aria-label="AMU 홈">
-        AMU
+      <NuxtLink to="/" class="block shrink-0" aria-label="AMU 홈">
+        <!-- 로고 프리뷰: ?logo=1|2 쿼리로 전환. 쿼리 없으면 텍스트 유지. -->
+        <img
+          v-if="route.query.logo === '1'"
+          src="/logo-1.png"
+          alt="AMU"
+          class="h-8 w-auto"
+        >
+        <img
+          v-else-if="route.query.logo === '2'"
+          src="/logo-2.png"
+          alt="AMU"
+          class="h-8 w-auto"
+        >
+        <span v-else class="text-2xl font-bold tracking-tight">AMU</span>
       </NuxtLink>
 
       <nav class="hidden md:flex items-center gap-10 text-[15px] font-bold">
