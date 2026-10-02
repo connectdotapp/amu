@@ -80,13 +80,13 @@ const nav = [
           v-if="route.query.logo === '1'"
           src="/logo-1.png"
           alt="AMU"
-          class="h-8 w-auto"
+          class="h-16 w-auto"
         >
         <img
           v-else-if="route.query.logo === '2'"
           src="/logo-2.png"
           alt="AMU"
-          class="h-8 w-auto"
+          class="h-16 w-auto"
         >
         <span v-else class="text-2xl font-bold tracking-tight">AMU</span>
       </NuxtLink>
