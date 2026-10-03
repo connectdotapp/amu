@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
     <!-- Hero banner carousel — 5개 자동 전환. public/hero-banner-N.png 교체로 반영. -->
     <section class="pt-6">
       <div
-        class="relative aspect-[21/6] overflow-hidden rounded-3xl bg-neutral-100 sm:aspect-[21/5]"
+        class="relative aspect-[35/9] overflow-hidden rounded-3xl bg-neutral-100"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
       >
