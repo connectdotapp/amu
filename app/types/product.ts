@@ -43,6 +43,18 @@ export interface ProductShowroom {
   investorPitch?: string  // one-line pitch aimed at potential backers
 }
 
+/**
+ * 메이커 인터뷰. 셀프 1분 영상 또는 이메일 Q&A로 가볍게 운영.
+ * 영상 URL은 YouTube 임베드만 허용. Q&A는 2-3개 항목.
+ * 모든 필드가 비어있으면 섹션은 렌더링되지 않는다.
+ */
+export interface MakerStory {
+  videoUrl?: string  // YouTube URL (watch 또는 shorts 모두 허용)
+  oneLiner?: string  // "왜 만들었나" 한 문장
+  qa?: Array<{ q: string, a: string }>
+  publishedAt?: Timestamp
+}
+
 export interface Product {
   id: string
   slug: string
@@ -69,6 +81,7 @@ export interface Product {
   bookmarkCount: number
 
   showroom?: ProductShowroom
+  makerStory?: MakerStory
 }
 
 export type ProductDraft = Omit<Product, 'id' | 'status' | 'source' | 'submittedBy' | 'submittedAt' | 'publishedAt' | 'upvoteCount' | 'commentCount' | 'bookmarkCount'>

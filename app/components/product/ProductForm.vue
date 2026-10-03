@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import type {
+  MakerStory,
   MonthlyRevenueRange,
   MonthlyUsersRange,
   PricingModel,
@@ -59,6 +60,29 @@ const showroomOpen = ref(
     || props.product?.showroom?.foundedAt
     || props.product?.showroom?.location
     || props.product?.showroom?.investorPitch
+  )
+)
+
+// 메이커 인터뷰 섹션 — 영상 URL + Q&A 2-3개. 모두 optional.
+const PRESET_QUESTIONS = [
+  '어떤 문제를 보고 만들었나',
+  '가장 자랑스러운 기능 하나',
+  '다음 업데이트에 넣고 싶은 것'
+]
+
+const makerStory = reactive({
+  videoUrl: props.product?.makerStory?.videoUrl ?? '',
+  oneLiner: props.product?.makerStory?.oneLiner ?? '',
+  qa: props.product?.makerStory?.qa && props.product.makerStory.qa.length
+    ? [...props.product.makerStory.qa]
+    : PRESET_QUESTIONS.map(q => ({ q, a: '' }))
+})
+
+const makerStoryOpen = ref(
+  !!(
+    props.product?.makerStory?.videoUrl
+    || props.product?.makerStory?.oneLiner
+    || props.product?.makerStory?.qa?.some(x => x.a?.trim())
   )
 )
 
@@ -182,6 +206,15 @@ function buildShowroomPayload(): ProductShowroom | null {
   return Object.keys(s).length > 0 ? s : null
 }
 
+function buildMakerStoryPayload(): MakerStory | null {
+  const m: MakerStory = {}
+  if (makerStory.videoUrl.trim()) m.videoUrl = makerStory.videoUrl.trim()
+  if (makerStory.oneLiner.trim()) m.oneLiner = makerStory.oneLiner.trim()
+  const filledQa = makerStory.qa.filter(x => x.a?.trim())
+  if (filledQa.length) m.qa = filledQa.map(x => ({ q: x.q, a: x.a.trim() }))
+  return Object.keys(m).length > 0 ? m : null
+}
+
 async function submit() {
   errorMessage.value = null
   if (!user.value) {
@@ -204,6 +237,7 @@ async function submit() {
       ? [{ label: form.linkLabel || '웹사이트', url: form.linkUrl.trim() }]
       : []
     const showroomPayload = buildShowroomPayload()
+    const makerStoryPayload = buildMakerStoryPayload()
 
     if (isEdit.value && props.product) {
       let thumbnailUrl = props.product.thumbnailUrl
@@ -220,7 +254,8 @@ async function submit() {
         links: linkArr,
         thumbnailUrl,
         maker: form.maker.trim() || null,
-        showroom: showroomPayload
+        showroom: showroomPayload,
+        makerStory: makerStoryPayload
       })
       emit('submitted', props.product.id)
     } else {
@@ -243,6 +278,7 @@ async function submit() {
         screenshots: [],
         maker: form.maker.trim() || null,
         showroom: showroomPayload,
+        makerStory: makerStoryPayload,
 
         status: props.status!,
         source: props.source!,
@@ -447,6 +483,60 @@ async function submit() {
             maxlength="120"
           />
         </UFormField>
+      </div>
+    </section>
+
+    <!-- 메이커 인터뷰 섹션 (collapsible, optional) -->
+    <section class="rounded-3xl border border-neutral-200 dark:border-neutral-700">
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-3 rounded-3xl px-5 py-4 text-left transition hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        @click="makerStoryOpen = !makerStoryOpen"
+      >
+        <div>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-mic" class="size-4 text-neutral-500" />
+            <span class="text-sm font-semibold">메이커 인터뷰</span>
+            <span class="rounded-full bg-neutral-150 px-2 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800">선택</span>
+          </div>
+          <p class="mt-1 text-xs text-neutral-500">
+            셀프 1분 영상 또는 이메일 Q&amp;A. 채운 항목만 상세 페이지 메이커 탭에 표시된다.
+          </p>
+        </div>
+        <UIcon
+          :name="makerStoryOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+          class="size-4 shrink-0 text-neutral-500"
+        />
+      </button>
+
+      <div v-if="makerStoryOpen" class="space-y-4 px-5 pb-5">
+        <UFormField label="영상 URL" help="YouTube 링크. 셀프 녹화 1분 영상 권장">
+          <UInput
+            v-model="makerStory.videoUrl"
+            placeholder="https://youtube.com/watch?v=..."
+            type="url"
+          />
+        </UFormField>
+
+        <UFormField label="한 줄 소감" help="왜 만들었는지 짧게 한 문장">
+          <UInput
+            v-model="makerStory.oneLiner"
+            placeholder="예: 내가 쓸 게 없어서 만들었다"
+            maxlength="60"
+          />
+        </UFormField>
+
+        <div class="space-y-3">
+          <div class="text-xs font-semibold text-neutral-500">Q&amp;A (선택)</div>
+          <div v-for="(item, i) in makerStory.qa" :key="i" class="space-y-1.5">
+            <label class="block text-sm font-medium">{{ item.q }}</label>
+            <UTextarea
+              v-model="item.a"
+              :rows="2"
+              :placeholder="`${item.q}에 대한 답 (비워두면 노출 안 됨)`"
+            />
+          </div>
+        </div>
       </div>
     </section>
 

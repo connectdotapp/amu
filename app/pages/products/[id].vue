@@ -84,12 +84,27 @@ const hasShowroom = computed(() => {
   )
 })
 
-type Tab = 'overview' | 'showroom' | 'links' | 'comments'
-const activeTab = ref<Tab>('overview')
+type Tab = 'overview' | 'maker' | 'showroom' | 'links' | 'comments'
+const activeTab = ref<Tab>((route.query.tab as Tab) || 'overview')
+
+const hasMakerStory = computed(() => {
+  const m = product.value?.makerStory
+  if (!m) return false
+  return !!(m.videoUrl || m.oneLiner || m.qa?.some(x => x.a?.trim()))
+})
+
+// YouTube URL → 임베드 URL 변환. watch?v= / youtu.be / shorts/ 모두 지원.
+const youtubeEmbed = computed(() => {
+  const url = product.value?.makerStory?.videoUrl
+  if (!url) return null
+  const m = url.match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/)
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null
+})
 
 const tabs = computed(() => {
   const list: Array<{ value: Tab, label: string, visible: boolean }> = [
     { value: 'overview', label: '소개', visible: !!product.value?.description },
+    { value: 'maker', label: '메이커', visible: hasMakerStory.value },
     { value: 'showroom', label: '쇼룸', visible: hasShowroom.value },
     { value: 'links', label: '링크', visible: !!(product.value?.links?.length) },
     { value: 'comments', label: `댓글${product.value?.commentCount ? ` · ${product.value.commentCount}` : ''}`, visible: true }
@@ -246,6 +261,48 @@ watchEffect(() => {
         <p class="mt-4 max-w-[680px] whitespace-pre-wrap text-[15px] leading-[1.7] text-neutral-700 dark:text-neutral-300">
           {{ product.description }}
         </p>
+      </section>
+
+      <!-- 메이커 인터뷰 -->
+      <section v-else-if="activeTab === 'maker' && product.makerStory" class="pt-8">
+        <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">Maker</div>
+        <h2 class="mt-3.5 text-xl font-bold tracking-tight sm:text-[22px]">
+          메이커의 이야기
+        </h2>
+
+        <div v-if="product.maker" class="mt-4 text-sm text-neutral-500">
+          by <span class="font-semibold text-neutral-950 dark:text-neutral-50">{{ product.maker }}</span>
+        </div>
+
+        <!-- 영상 -->
+        <div v-if="youtubeEmbed" class="mt-5 aspect-video overflow-hidden rounded-2xl bg-neutral-100">
+          <iframe
+            :src="youtubeEmbed"
+            class="size-full"
+            allowfullscreen
+            frameborder="0"
+          />
+        </div>
+
+        <!-- 한 줄 소감 -->
+        <blockquote
+          v-if="product.makerStory.oneLiner"
+          class="mt-6 border-l-[3px] border-[#F2293A] pl-4 text-lg font-semibold leading-snug tracking-tight sm:text-xl"
+        >
+          "{{ product.makerStory.oneLiner }}"
+        </blockquote>
+
+        <!-- Q&A -->
+        <div v-if="product.makerStory.qa?.length" class="mt-7 space-y-6">
+          <div v-for="(item, i) in product.makerStory.qa" :key="i" class="max-w-[680px]">
+            <div class="text-xs font-bold uppercase tracking-wider text-neutral-500">
+              Q. {{ item.q }}
+            </div>
+            <p class="mt-2 whitespace-pre-wrap text-[15px] leading-[1.7] text-neutral-700 dark:text-neutral-300">
+              {{ item.a }}
+            </p>
+          </div>
+        </div>
       </section>
 
       <!-- Showroom -->

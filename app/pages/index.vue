@@ -88,6 +88,17 @@ const themedSections = computed(() => {
   }))
 })
 
+// 메이커 이야기 — makerStory 가 채워진 프로덕트만. 최신 publishedAt 순.
+const makerStories = computed(() => {
+  const all = allProducts.value || []
+  return all
+    .filter(p => {
+      const m = p.makerStory
+      return !!m && !!(m.videoUrl || m.oneLiner || m.qa?.some(x => x.a?.trim()))
+    })
+    .slice(0, 4)
+})
+
 // "N월 M주차" — week of the current month
 const currentWeekLabel = computed(() => {
   const now = new Date()
@@ -293,6 +304,53 @@ onBeforeUnmount(() => {
           <p v-else class="pb-2 text-sm text-neutral-400">
             곧 큐레이션돼요
           </p>
+        </section>
+
+        <!-- 메이커 이야기 -->
+        <section v-if="makerStories.length" class="pb-12">
+          <div class="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Maker Voice</div>
+              <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <NuxtLink
+              v-for="p in makerStories"
+              :key="p.id"
+              :to="`/products/${p.slug || p.id}?tab=maker`"
+              class="group flex flex-col gap-4 rounded-3xl bg-neutral-100 p-6 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+            >
+              <div class="flex items-center gap-3">
+                <img
+                  :src="p.thumbnailUrl"
+                  :alt="p.name"
+                  class="size-12 shrink-0 rounded-xl bg-neutral-50 object-cover"
+                >
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
+                  <div v-if="p.maker" class="mt-0.5 truncate text-xs text-neutral-500">
+                    by {{ p.maker }}
+                  </div>
+                </div>
+                <UIcon name="i-lucide-mic" class="size-4 shrink-0 text-neutral-400" />
+              </div>
+
+              <blockquote
+                v-if="p.makerStory?.oneLiner"
+                class="border-l-[3px] border-[#F2293A] pl-3 text-[15px] font-semibold leading-snug tracking-tight line-clamp-3"
+              >
+                "{{ p.makerStory.oneLiner }}"
+              </blockquote>
+              <p
+                v-else-if="p.makerStory?.qa?.[0]?.a"
+                class="line-clamp-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300"
+              >
+                {{ p.makerStory.qa[0].a }}
+              </p>
+            </NuxtLink>
+          </div>
         </section>
 
         <!-- Active filter chips -->
