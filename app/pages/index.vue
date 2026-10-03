@@ -115,18 +115,65 @@ onMounted(() => {
   }
 })
 
+// 히어로 배너 캐러셀. public/hero-banner-N.png 파일을 교체하면 즉시 반영.
+const heroBanners = [
+  '/hero-banner.png',
+  '/hero-banner-2.png',
+  '/hero-banner-3.png',
+  '/hero-banner-4.png',
+  '/hero-banner-5.png'
+]
+const heroIndex = ref(0)
+const heroPaused = ref(false)
+let heroTimer: ReturnType<typeof setInterval> | null = null
+
+function nextHero() {
+  heroIndex.value = (heroIndex.value + 1) % heroBanners.length
+}
+
+onMounted(() => {
+  heroTimer = setInterval(() => {
+    if (!heroPaused.value) nextHero()
+  }, 5000)
+})
+
+onBeforeUnmount(() => {
+  if (heroTimer) clearInterval(heroTimer)
+})
 </script>
 
 <template>
   <div class="mx-auto max-w-[1280px] px-6">
-    <!-- Hero banner — 브랜드 이미지/색감 전달용. 전체 컨테이너 너비로 배치. -->
+    <!-- Hero banner carousel — 5개 자동 전환. public/hero-banner-N.png 교체로 반영. -->
     <section class="pt-6">
-      <div class="aspect-[21/6] overflow-hidden rounded-3xl bg-neutral-100 sm:aspect-[21/5]">
+      <div
+        class="relative aspect-[21/6] overflow-hidden rounded-3xl bg-neutral-100 sm:aspect-[21/5]"
+        @mouseenter="heroPaused = true"
+        @mouseleave="heroPaused = false"
+      >
         <img
-          src="/hero-banner.png"
+          v-for="(src, i) in heroBanners"
+          :key="src"
+          :src="src"
           alt=""
-          class="size-full object-cover"
+          class="absolute inset-0 size-full object-cover transition-opacity duration-700"
+          :class="heroIndex === i ? 'opacity-100' : 'opacity-0'"
         >
+
+        <!-- 점선 인디케이터 -->
+        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2">
+          <button
+            v-for="(_, i) in heroBanners"
+            :key="i"
+            type="button"
+            class="h-2 rounded-full transition-all"
+            :class="heroIndex === i
+              ? 'w-6 bg-white'
+              : 'w-2 bg-white/50 hover:bg-white/80'"
+            :aria-label="`배너 ${i + 1}`"
+            @click="heroIndex = i"
+          />
+        </div>
       </div>
     </section>
 
