@@ -42,6 +42,14 @@ export default defineNuxtConfig({
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css'
         }
+      ],
+      // 전역 OG 이미지 fallback. 특정 페이지가 ogImage 를 지정하면 그게 우선.
+      meta: [
+        { property: 'og:image', content: '/og-default.png' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { name: 'twitter:image', content: '/og-default.png' },
+        { name: 'twitter:card', content: 'summary_large_image' }
       ]
     }
   },
