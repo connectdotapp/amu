@@ -39,6 +39,35 @@ function firstSentence(text: string): string {
   return (m ? m[1]! : clean).slice(0, 30).trim()
 }
 
+/**
+ * App Store 웹페이지 HTML을 긁어서 서브타이틀 추출.
+ * iTunes Lookup API는 서브타이틀(프로모션 텍스트)을 안 돌려줘서 페이지 HTML 파싱 필수.
+ * 실패하거나 못 찾으면 null 반환 → 호출자가 fallback 처리.
+ */
+async function fetchAppStoreSubtitle(storeUrl: string): Promise<string | null> {
+  try {
+    const html = await $fetch<string>(storeUrl, {
+      timeout: 8_000,
+      responseType: 'text',
+      redirect: 'follow',
+      headers: {
+        // 데스크톱 UA 강제. 모바일 UA 주면 리다이렉트·축약 페이지가 올 수 있음.
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
+      }
+    })
+    // Apple App Store는 Svelte 로 전환됐고 클래스가 해시 포함 (svelte-xxx).
+    // "subtitle" 토큰이 들어간 첫 번째 요소의 텍스트가 메인 앱 서브타이틀.
+    const m = html.match(/class="[^"]*\bsubtitle\b[^"]*"[^>]*>([^<]+)</)
+    if (m) {
+      const text = m[1]!.replace(/\s+/g, ' ').trim()
+      if (text) return text.slice(0, 30)
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 function derivePricing(entry: ItunesEntry): 'free' | 'paid' | 'freemium' {
   if (entry.price === 0) {
     // 무료 앱 중에서도 앱 내 결제가 있을 수 있지만 iTunes API에서 정확히 알 수 없음.
@@ -77,10 +106,14 @@ export default defineEventHandler(async (event) => {
 
   const entry = res.results[0]!
 
+  // App Store 서브타이틀을 우선 사용. 없으면 설명 첫 문장으로 fallback.
+  const subtitle = await fetchAppStoreSubtitle(entry.trackViewUrl)
+  const tagline = subtitle || (entry.description ? firstSentence(entry.description) : '')
+
   return {
     id: String(entry.trackId),
     name: entry.trackName,
-    tagline: entry.description ? firstSentence(entry.description) : '',
+    tagline,
     description: entry.description ?? '',
     maker: entry.sellerName ?? '',
     genreName: entry.primaryGenreName ?? '',
