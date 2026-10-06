@@ -30,13 +30,20 @@ export default defineNuxtConfig({
   },
 
   // satori 렌더러로 동적 OG 이미지 생성. Puppeteer·네이티브 바이너리 없이 Node에서 돌아감.
+  // 폰트는 아래 fonts 블록(@nuxt/fonts) 에서 Noto Sans KR 자동 로드.
   ogImage: {
     enabled: true,
     defaults: {
       renderer: 'satori',
       cacheMaxAgeSeconds: 60 * 60 * 24 * 7 // 7일
-    },
-    fonts: ['Pretendard:400', 'Pretendard:700', 'Pretendard:800']
+    }
+  },
+
+  // @nuxt/fonts: 한국어 OG 이미지용. 템플릿에서 font-family: 'Noto Sans KR' 를 쓰면 자동 다운로드.
+  fonts: {
+    families: [
+      { name: 'Noto Sans KR', weights: [400, 700, 800], provider: 'google', global: true }
+    ]
   },
 
   app: {
