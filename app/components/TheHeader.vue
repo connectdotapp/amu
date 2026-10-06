@@ -102,7 +102,7 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
         <img src="/logo-2.png" alt="AMU" class="h-16 w-auto">
       </NuxtLink>
 
-      <nav class="hidden md:flex items-center gap-10 text-[15px] font-bold">
+      <nav class="hidden md:flex items-center gap-14 text-base font-bold">
         <NuxtLink
           v-for="item in nav"
           :key="item.to"

@@ -74,10 +74,9 @@ const rankedProducts = computed(() =>
 type HomeTheme = { key: string, eyebrow: string, title: string, keywords: string[] }
 
 const homeThemes: HomeTheme[] = [
-  { key: 'game', eyebrow: 'Games', title: '게임', keywords: ['게임', 'game'] },
-  // 라이프스타일: 기존 '생활 서비스' + '라이프' + '취미' 통합
-  { key: 'lifestyle', eyebrow: 'Lifestyle', title: '라이프스타일', keywords: ['라이프', 'life', 'lifestyle', '일상', '일기', '다이어리', '서비스', 'service', '예약', '매칭', '배달', '취미', 'hobby', '사진', '음악', '그림'] },
-  { key: 'health', eyebrow: 'Health', title: '헬스', keywords: ['헬스', 'health', '운동', '피트니스', 'fitness'] }
+  { key: 'lifestyle', eyebrow: 'Lifestyle', title: '라이프스타일', keywords: ['라이프', 'life', 'lifestyle', '일상', '일기', '다이어리', '서비스', 'service', '예약', '매칭', '배달', '취미', 'hobby', '사진'] },
+  { key: 'productivity', eyebrow: 'Productivity', title: '생산성', keywords: ['생산성', 'productivity', '노션', 'notion', 'linear', '효율', '업무', '관리', '할일', 'todo', '시간', '포커스'] },
+  { key: 'entertainment', eyebrow: 'Entertainment', title: '엔터테인먼트', keywords: ['엔터테인먼트', 'entertainment', '영화', '드라마', '음악', 'music', '만화', '웹툰', '팬', 'ott', '릴스'] }
 ]
 
 function matchesTheme(p: { name?: string, tagline?: string, category?: string, tags?: string[] }, keywords: string[]) {
