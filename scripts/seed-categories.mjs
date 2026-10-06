@@ -16,13 +16,18 @@ initializeApp({
 const db = getFirestore()
 
 const categories = [
-  { slug: 'ai', name: 'AI', order: 1 },
-  { slug: 'productivity', name: '생산성', order: 2 },
-  { slug: 'design', name: '디자인', order: 3 },
-  { slug: 'dev', name: '개발도구', order: 4 },
-  { slug: 'marketing', name: '마케팅', order: 5 },
-  { slug: 'lifestyle', name: '라이프스타일', order: 6 },
-  { slug: 'entertainment', name: '엔터테인먼트', order: 7 },
+  { slug: 'game', name: '게임', order: 1 },
+  { slug: 'entertainment', name: '엔터테인먼트', order: 2 },
+  { slug: 'social', name: '소셜네트워킹', order: 3 },
+  { slug: 'lifestyle', name: '라이프스타일', order: 4 },
+  { slug: 'photo-video', name: '촬영 및 편집', order: 5 },
+  { slug: 'education', name: '교육', order: 6 },
+  { slug: 'productivity', name: '생산성', order: 7 },
+  { slug: 'utility', name: '유틸리티', order: 8 },
+  { slug: 'books', name: '도서', order: 9 },
+  { slug: 'business', name: '비즈니스', order: 10 },
+  { slug: 'health', name: '헬스', order: 11 },
+  { slug: 'ai', name: 'AI', order: 12 },
   { slug: 'etc', name: '기타', order: 99 }
 ]
 

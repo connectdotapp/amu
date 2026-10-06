@@ -75,9 +75,8 @@ type HomeTheme = { key: string, eyebrow: string, title: string, keywords: string
 
 const homeThemes: HomeTheme[] = [
   { key: 'game', eyebrow: 'Games', title: '게임', keywords: ['게임', 'game'] },
-  { key: 'service', eyebrow: 'Lifestyle Services', title: '생활 서비스', keywords: ['서비스', 'service', '예약', '매칭', '배달'] },
-  { key: 'hobby', eyebrow: 'Hobby', title: '취미', keywords: ['취미', 'hobby', '사진', '음악', '그림'] },
-  { key: 'life', eyebrow: 'Life', title: '라이프', keywords: ['라이프', 'life', '일상', 'lifestyle', '일기', '다이어리'] },
+  // 라이프스타일: 기존 '생활 서비스' + '라이프' + '취미' 통합
+  { key: 'lifestyle', eyebrow: 'Lifestyle', title: '라이프스타일', keywords: ['라이프', 'life', 'lifestyle', '일상', '일기', '다이어리', '서비스', 'service', '예약', '매칭', '배달', '취미', 'hobby', '사진', '음악', '그림'] },
   { key: 'health', eyebrow: 'Health', title: '헬스', keywords: ['헬스', 'health', '운동', '피트니스', 'fitness'] }
 ]
 

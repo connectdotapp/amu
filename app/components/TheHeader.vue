@@ -66,9 +66,33 @@ function isActive(to: string) {
 const nav = [
   { label: '둘러보기', to: '/' },
   { label: '컬렉션', to: '/collections' },
-  { label: '비교하기', to: '/compare' },
   { label: 'About', to: '/about' }
 ]
+
+// 카테고리 메가메뉴
+const { data: categories } = useCategories()
+const categoriesOpen = ref(false)
+const megamenuRef = ref<HTMLElement | null>(null)
+const categoryBtnRef = ref<HTMLElement | null>(null)
+
+function onCategoryClick(slug: string) {
+  categoriesOpen.value = false
+  router.push({ path: '/', query: { category: slug } })
+}
+
+function handleOutsideClick(e: MouseEvent) {
+  if (!categoriesOpen.value) return
+  const target = e.target as Node
+  if (megamenuRef.value?.contains(target)) return
+  if (categoryBtnRef.value?.contains(target)) return
+  categoriesOpen.value = false
+}
+
+onMounted(() => document.addEventListener('mousedown', handleOutsideClick))
+onBeforeUnmount(() => document.removeEventListener('mousedown', handleOutsideClick))
+
+// 라우트 바뀌면 닫기
+watch(() => route.fullPath, () => { categoriesOpen.value = false })
 </script>
 
 <template>
@@ -88,6 +112,19 @@ const nav = [
         >
           {{ item.label }}
         </NuxtLink>
+
+        <!-- 카테고리 메가메뉴 트리거 -->
+        <button
+          ref="categoryBtnRef"
+          type="button"
+          class="inline-flex items-center gap-1 transition"
+          :class="categoriesOpen ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+          :aria-expanded="categoriesOpen"
+          @click="categoriesOpen = !categoriesOpen"
+        >
+          카테고리
+          <UIcon :name="categoriesOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-4" />
+        </button>
       </nav>
 
       <div class="ml-auto flex items-center gap-3">
@@ -138,6 +175,30 @@ const nav = [
       </div>
     </div>
 
+    <!-- 카테고리 메가메뉴 패널 -->
+    <div
+      v-if="categoriesOpen"
+      ref="megamenuRef"
+      class="hidden md:block absolute left-0 right-0 top-full border-t border-neutral-150 bg-white shadow-lg dark:bg-neutral-950"
+    >
+      <div class="mx-auto max-w-[1280px] px-6 py-8">
+        <div class="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500">
+          Categories
+        </div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+          <button
+            v-for="c in categories"
+            :key="c.slug"
+            type="button"
+            class="group rounded-xl px-3 py-3 text-left text-[15px] font-semibold text-neutral-700 transition hover:bg-neutral-100 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+            @click="onCategoryClick(c.slug)"
+          >
+            {{ c.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="mobileOpen" class="md:hidden">
       <div class="mx-auto max-w-[1280px] space-y-4 px-6 py-4">
         <form @submit.prevent="submitSearch">
@@ -170,6 +231,23 @@ const nav = [
           <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             관리자
           </NuxtLink>
+
+          <!-- 카테고리 (모바일: 아코디언 대신 바로 그리드로 노출) -->
+          <div class="mt-3 border-t border-neutral-150 pt-3 dark:border-neutral-800">
+            <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500">
+              카테고리
+            </div>
+            <div class="grid grid-cols-2 gap-1">
+              <NuxtLink
+                v-for="c in categories"
+                :key="c.slug"
+                :to="`/?category=${c.slug}`"
+                class="rounded-full px-3 py-2 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              >
+                {{ c.name }}
+              </NuxtLink>
+            </div>
+          </div>
         </nav>
 
         <div class="pt-2">
