@@ -18,12 +18,10 @@
     "@nuxt/fonts": "^0.14.0",
     "@nuxt/ui": "^4.11.0",
     "@nuxtjs/seo": "^5.3.14",
-    "@resvg/resvg-js": "^2.6.2",
     "firebase": "^12.19.0",
     "firebase-admin": "^14.3.0",
     "nuxt": "^4.5.2",
     "nuxt-vuefire": "^1.1.2",
-    "satori": "^0.35.0",
     "tailwindcss": "^4.3.3",
     "vuefire": "^3.2.3"
   },

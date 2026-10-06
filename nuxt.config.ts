@@ -29,22 +29,10 @@ export default defineNuxtConfig({
     defaultLocale: 'ko'
   },
 
-  // satori 렌더러로 동적 OG 이미지 생성. Puppeteer·네이티브 바이너리 없이 Node에서 돌아감.
-  // 폰트는 아래 fonts 블록(@nuxt/fonts) 에서 Noto Sans KR 자동 로드.
-  ogImage: {
-    enabled: true,
-    defaults: {
-      renderer: 'satori',
-      cacheMaxAgeSeconds: 60 * 60 * 24 * 7 // 7일
-    }
-  },
-
-  // @nuxt/fonts: 한국어 OG 이미지용. 템플릿에서 font-family: 'Noto Sans KR' 를 쓰면 자동 다운로드.
-  fonts: {
-    families: [
-      { name: 'Noto Sans KR', weights: [400, 700, 800], provider: 'google', global: true }
-    ]
-  },
+  // OG 이미지 동적 생성은 일시 비활성화. satori + @resvg/resvg-js 설치 시 Windows 바이너리가
+  // lockfile 에 고정돼 Firebase 리눅스 빌드에서 EBADPLATFORM 발생. 추후 pnpm 전환 또는 Nitro
+  // externals 설정으로 재도입 예정.
+  ogImage: { enabled: false },
 
   app: {
     head: {
