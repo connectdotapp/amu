@@ -16,44 +16,40 @@ const isNew = computed(() => {
 <template>
   <NuxtLink
     :to="`/products/${product.slug || product.id}`"
-    class="group relative flex flex-col overflow-hidden rounded-3xl bg-neutral-100 p-4 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+    class="group block"
   >
-    <span
-      v-if="product.source === 'curated'"
-      class="absolute left-4 top-4 z-10 rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-semibold text-white"
-    >
-      AMU Pick
-    </span>
-
-    <span
-      v-if="isNew"
-      class="absolute right-4 top-4 z-10 rounded-full bg-neutral-950 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white"
-    >
-      New
-    </span>
-
-    <div class="flex flex-1 items-center justify-center">
+    <!-- 아이콘이 꽉 찬 정사각형 -->
+    <div class="relative aspect-square overflow-hidden rounded-3xl bg-neutral-100 ring-1 ring-transparent transition hover:ring-neutral-200 dark:bg-neutral-800 dark:hover:ring-neutral-700">
       <img
         :src="product.thumbnailUrl"
         :alt="product.name"
-        class="size-[110px] rounded-2xl object-cover bg-neutral-50"
+        class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         loading="lazy"
       >
+
+      <span
+        v-if="product.source === 'curated'"
+        class="absolute left-3 top-3 z-10 rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm"
+      >
+        AMU Pick
+      </span>
+
+      <span
+        v-if="isNew"
+        class="absolute right-3 top-3 z-10 rounded-full bg-neutral-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm"
+      >
+        New
+      </span>
     </div>
 
-    <div class="mt-4">
-      <h3 class="truncate text-base font-bold tracking-tight">{{ product.name }}</h3>
-      <p class="mt-1 line-clamp-2 text-sm text-neutral-500">{{ product.tagline }}</p>
-      <div class="mt-3 flex items-center gap-3 text-xs text-neutral-400">
-        <span class="inline-flex items-center gap-1">
-          <UIcon name="i-lucide-arrow-up" class="size-3.5" />
-          {{ product.upvoteCount ?? 0 }}
-        </span>
-        <span class="inline-flex items-center gap-1">
-          <UIcon name="i-lucide-message-square" class="size-3.5" />
-          {{ product.commentCount ?? 0 }}
-        </span>
-      </div>
+    <!-- 아래 텍스트: 이름 + 한줄소개만 -->
+    <div class="mt-3 px-0.5">
+      <h3 class="truncate text-[15px] font-bold tracking-tight">
+        {{ product.name }}
+      </h3>
+      <p class="mt-1 line-clamp-1 text-sm text-neutral-500">
+        {{ product.tagline }}
+      </p>
     </div>
   </NuxtLink>
 </template>
