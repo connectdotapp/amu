@@ -103,14 +103,6 @@ const makerStories = computed(() => {
     .slice(0, 4)
 })
 
-// "N월 M주차" — week of the current month
-const currentWeekLabel = computed(() => {
-  const now = new Date()
-  const month = now.getMonth() + 1
-  const weekOfMonth = Math.ceil(now.getDate() / 7)
-  return `${month}월 ${weekOfMonth}주차`
-})
-
 // Hero search — auto-focus when arriving via ?focus=search
 const heroSearchInput = ref((route.query.q as string) || '')
 watch(() => route.query.q, (v) => { heroSearchInput.value = (v as string) || '' })
@@ -453,8 +445,8 @@ onBeforeUnmount(() => {
         <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
           <div class="rounded-3xl bg-white p-6 transition hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-900">
-            <h3 class="text-lg font-bold tracking-tight">이번 주 순위</h3>
-            <div class="mt-1 text-xs text-neutral-400">{{ currentWeekLabel }}</div>
+            <h3 class="text-lg font-bold tracking-tight">인기 순위</h3>
+            <div class="mt-1 text-xs text-neutral-400">누적 업보트 기준</div>
 
             <div v-if="rankedProducts.length" class="mt-4 flex flex-col gap-1">
               <NuxtLink

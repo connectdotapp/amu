@@ -243,6 +243,11 @@ watchEffect(() => {
           </UButton>
           <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
           <ProductBookmarkButton :product-id="id" />
+          <ProductShareButton
+            :url="`/products/${product.slug || id}`"
+            :title="product.name"
+            :text="product.tagline"
+          />
           <UButton
             :to="`/compare?ids=${id}`"
             color="neutral"

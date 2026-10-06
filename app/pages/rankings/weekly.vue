@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: '이번 주 순위',
-  description: '이번 주 아무의 관심이 모인 프로덕트'
+  title: '인기 순위',
+  description: '아무의 관심이 모인 프로덕트 전체 순위'
 })
 
 const { data: allProducts } = useAllPublishedProducts(200)
@@ -11,12 +11,9 @@ const ranked = computed(() =>
     .sort((a, b) => (b.upvoteCount || 0) - (a.upvoteCount || 0))
 )
 
-const currentWeekLabel = computed(() => {
-  const now = new Date()
-  const month = now.getMonth() + 1
-  const weekOfMonth = Math.ceil(now.getDate() / 7)
-  return `${month}월 ${weekOfMonth}주차`
-})
+// 업보트 타임스탬프가 저장되지 않아 "지난 7일 내 업보트" 집계가 불가능.
+// 전체 누적 기준으로 운영하되 네이밍은 '인기 순위'로 정직하게 표기.
+// 추후 upvotes 서브컬렉션에 createdAt 저장하면 실시간 주간 윈도우 전환 가능.
 
 const pricingLabel: Record<string, string> = {
   free: '무료',
@@ -34,12 +31,12 @@ const pricingLabel: Record<string, string> = {
     </NuxtLink>
 
     <header class="mt-6 pb-6">
-      <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">
-        Ranking · {{ currentWeekLabel }}
-      </div>
-      <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-        이번 주 순위
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+        인기 순위
       </h1>
+      <p class="mt-3 text-sm text-neutral-500">
+        누적 업보트 기준으로 집계해요
+      </p>
     </header>
 
     <ol v-if="ranked.length" class="mt-4 flex flex-col gap-2">

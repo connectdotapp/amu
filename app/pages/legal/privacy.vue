@@ -4,7 +4,7 @@ useSeoMeta({
   description: 'AMU 개인정보 처리 방침.'
 })
 
-const updated = '2026-09-15'
+const updated = '2026-10-06'
 </script>
 
 <template>
@@ -59,26 +59,39 @@ const updated = '2026-09-15'
         </p>
         <ul class="mt-3 list-disc space-y-2 pl-5">
           <li><strong>Google LLC</strong> — Firebase 인증·데이터베이스·스토리지 (미국)</li>
-          <li><strong>Google LLC</strong> — Google Analytics를 통한 이용 통계 (미국)</li>
+          <li><strong>Google LLC</strong> — Google Analytics 4를 통한 이용 통계 (미국)</li>
         </ul>
       </section>
 
       <section>
-        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">6. 사용자의 권리</h2>
+        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">6. 쿠키·유사 기술 사용 안내</h2>
+        <p class="mt-3">
+          AMU는 서비스 이용 분석과 사용자 편의 제공을 위해 쿠키·로컬스토리지 등 유사 기술을 사용합니다.
+        </p>
+        <ul class="mt-3 list-disc space-y-2 pl-5">
+          <li><strong>목적</strong>: 로그인 유지, 북마크·설정 저장, 익명 이용 통계 수집</li>
+          <li><strong>저장 항목</strong>: Firebase Auth 세션 토큰, Google Analytics 익명 식별자, 색상 모드·언어 설정</li>
+          <li><strong>Google Analytics 4</strong>: 페이지 조회·클릭·검색어 등 익명화된 행동 데이터를 Google 서버로 전송하며 개인 식별 정보는 포함되지 않습니다. 보관 기간은 최대 14개월입니다.</li>
+          <li><strong>거부 방법</strong>: 브라우저 설정에서 쿠키 차단 또는 <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" class="underline underline-offset-2">Google Analytics 옵트아웃 애드온</a> 설치로 수집을 거부할 수 있습니다. 단 이 경우 일부 기능이 제한될 수 있습니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">7. 사용자의 권리</h2>
         <p class="mt-3">
           사용자는 언제든지 자신의 개인정보에 대한 열람·정정·삭제·처리정지를 요청할 수 있습니다. 요청은 아래 연락처로 접수할 수 있습니다.
         </p>
       </section>
 
       <section>
-        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">7. 파기 절차·방법</h2>
+        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">8. 파기 절차·방법</h2>
         <p class="mt-3">
           보유 기간이 종료되거나 처리 목적이 달성된 개인정보는 지체 없이 파기합니다. 전자적 파일은 복구 불가능한 방식으로 삭제하며, 종이 문서는 분쇄·소각합니다.
         </p>
       </section>
 
       <section>
-        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">8. 안전성 확보 조치</h2>
+        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">9. 안전성 확보 조치</h2>
         <ul class="mt-3 list-disc space-y-2 pl-5">
           <li>Firebase Auth를 통한 인증 및 세션 관리</li>
           <li>Firestore 보안 규칙을 통한 접근 통제</li>
@@ -87,7 +100,7 @@ const updated = '2026-09-15'
       </section>
 
       <section>
-        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">9. 개인정보 보호책임자</h2>
+        <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">10. 개인정보 보호책임자</h2>
         <ul class="mt-3 space-y-1">
           <li>이름: 조은솔</li>
           <li>이메일: <a href="mailto:eslabsofficial@gmail.com" class="underline underline-offset-2">eslabsofficial@gmail.com</a></li>
