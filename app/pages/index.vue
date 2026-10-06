@@ -111,10 +111,13 @@ const currentWeekLabel = computed(() => {
 const heroSearchInput = ref((route.query.q as string) || '')
 watch(() => route.query.q, (v) => { heroSearchInput.value = (v as string) || '' })
 
+const analytics = useAnalytics()
+
 function submitHeroSearch() {
   const q = heroSearchInput.value.trim()
   const { focus: _drop, ...rest } = route.query
   router.push({ query: { ...rest, q: q || undefined } })
+  if (q) analytics.search(q)
 }
 
 const heroSearchRef = ref<HTMLInputElement | null>(null)

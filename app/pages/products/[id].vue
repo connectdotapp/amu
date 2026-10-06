@@ -21,6 +21,20 @@ watchEffect(async () => {
 
 const db = useFirestore()
 const toast = useToast()
+const analytics = useAnalytics()
+
+// 상세 뷰 이벤트. product 로드 완료되면 1회 로깅.
+watch(product, (p) => {
+  if (!p) return
+  analytics.productView({
+    productId: p.id,
+    productSlug: p.slug,
+    productName: p.name,
+    category: p.category,
+    pricing: p.pricing,
+    source: p.source
+  })
+}, { immediate: true, once: true })
 
 async function removeProduct() {
   if (!product.value) return
@@ -213,6 +227,7 @@ watchEffect(() => {
             color="neutral"
             variant="solid"
             trailing-icon="i-lucide-arrow-up-right"
+            @click="analytics.externalLink({ productId: id, productName: product.name, url: product.links[0]!.url })"
           >
             {{ product.links[0].label || '방문하기' }}
           </UButton>
