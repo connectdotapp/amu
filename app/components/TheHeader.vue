@@ -140,7 +140,7 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
 
         <NuxtLink
           to="/submit"
-          class="hidden sm:inline-flex items-center justify-center rounded-full bg-[#F2293A] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#D81A2E]"
+          class="hidden sm:inline-flex items-center justify-center rounded-full bg-[#0A0A0A] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#262626]"
         >
           등록하기
         </NuxtLink>

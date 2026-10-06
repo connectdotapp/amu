@@ -12,7 +12,7 @@ defineProps<{
   <div style="width:1200px;height:630px;background:#FFFFFF;display:flex;flex-direction:column;justify-content:space-between;padding:72px 80px;font-family:'Noto Sans KR'">
     <!-- 상단 로고 영역 -->
     <div style="display:flex;align-items:center;gap:16px">
-      <div style="width:64px;height:64px;background:#F2293A;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;font-size:32px;font-weight:800;letter-spacing:-0.03em">
+      <div style="width:64px;height:64px;background:#0A0A0A;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;font-size:32px;font-weight:800;letter-spacing:-0.03em">
         A
       </div>
       <div style="font-size:28px;font-weight:800;letter-spacing:-0.03em;color:#0A0A0A">
@@ -22,7 +22,7 @@ defineProps<{
 
     <!-- 중앙 본문 -->
     <div style="display:flex;flex-direction:column;gap:24px">
-      <div v-if="eyebrow" style="font-size:18px;font-weight:700;letter-spacing:0.12em;color:#F2293A;text-transform:uppercase">
+      <div v-if="eyebrow" style="font-size:18px;font-weight:700;letter-spacing:0.12em;color:#0A0A0A;text-transform:uppercase">
         {{ eyebrow }}
       </div>
       <div style="font-size:72px;font-weight:800;letter-spacing:-0.03em;color:#0A0A0A;line-height:1.05">

@@ -88,7 +88,7 @@ const hasAnyShowroom = computed(() =>
                   </NuxtLink>
                   <span
                     v-if="p.source === 'curated'"
-                    class="rounded-full bg-[#F2293A] px-2 py-0.5 text-[10px] font-semibold text-white"
+                    class="rounded-full bg-[#0A0A0A] px-2 py-0.5 text-[10px] font-semibold text-white"
                   >
                     Pick
                   </span>

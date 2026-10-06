@@ -74,7 +74,7 @@ defineOgImageComponent('Maker', {
 
     <!-- 최근 메이커 소감 (있을 경우) -->
     <section v-if="latestStory?.makerStory?.oneLiner" class="mb-12">
-      <blockquote class="border-l-[3px] border-[#F2293A] pl-5 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">
+      <blockquote class="border-l-[3px] border-[#0A0A0A] pl-5 text-xl font-semibold leading-snug tracking-tight sm:text-2xl">
         "{{ latestStory.makerStory.oneLiner }}"
       </blockquote>
       <NuxtLink

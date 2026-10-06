@@ -409,8 +409,8 @@ onMounted(() => {
 
 <style scoped>
 .about-page {
-  --red: #F2293A;
-  --red-dark: #D81A2E;
+  --red: #0A0A0A;
+  --red-dark: #262626;
   --yellow: #FFD60A;
   --blue: #4A90E2;
   --green: #22C55E;

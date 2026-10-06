@@ -29,7 +29,7 @@ const isNew = computed(() => {
 
       <span
         v-if="product.source === 'curated'"
-        class="absolute left-3 top-3 z-10 rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm"
+        class="absolute left-3 top-3 z-10 rounded-full bg-[#0A0A0A] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm"
       >
         AMU Pick
       </span>

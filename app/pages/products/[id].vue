@@ -178,7 +178,7 @@ watchEffect(() => {
           <div class="min-w-0 flex-1 pt-1">
             <span
               v-if="product.source === 'curated'"
-              class="mb-3 inline-block rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-semibold text-white"
+              class="mb-3 inline-block rounded-full bg-[#0A0A0A] px-2.5 py-1 text-[11px] font-semibold text-white"
             >
               AMU Pick
             </span>
@@ -318,7 +318,7 @@ watchEffect(() => {
         <!-- 한 줄 소감 -->
         <blockquote
           v-if="product.makerStory.oneLiner"
-          class="mt-6 border-l-[3px] border-[#F2293A] pl-4 text-lg font-semibold leading-snug tracking-tight sm:text-xl"
+          class="mt-6 border-l-[3px] border-[#0A0A0A] pl-4 text-lg font-semibold leading-snug tracking-tight sm:text-xl"
         >
           "{{ product.makerStory.oneLiner }}"
         </blockquote>

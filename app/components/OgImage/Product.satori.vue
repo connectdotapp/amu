@@ -22,7 +22,7 @@ const pricingLabel: Record<string, string> = {
     <!-- 상단 로고 -->
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:48px;height:48px;background:#F2293A;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;font-weight:800;letter-spacing:-0.03em">
+        <div style="width:48px;height:48px;background:#0A0A0A;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;font-weight:800;letter-spacing:-0.03em">
           A
         </div>
         <div style="font-size:22px;font-weight:700;letter-spacing:-0.03em;color:#0A0A0A">
@@ -30,7 +30,7 @@ const pricingLabel: Record<string, string> = {
         </div>
       </div>
 
-      <div v-if="isPick" style="background:#F2293A;color:white;padding:10px 18px;border-radius:999px;font-size:16px;font-weight:700">
+      <div v-if="isPick" style="background:#0A0A0A;color:white;padding:10px 18px;border-radius:999px;font-size:16px;font-weight:700">
         AMU Pick
       </div>
     </div>

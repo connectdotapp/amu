@@ -251,7 +251,7 @@ onBeforeUnmount(() => {
                 class="size-28 shrink-0 rounded-3xl bg-neutral-50 object-cover sm:size-32"
               >
               <div class="min-w-0 flex-1">
-                <span class="inline-block rounded-full bg-[#F2293A] px-2.5 py-1 text-[11px] font-semibold text-white">
+                <span class="inline-block rounded-full bg-[#0A0A0A] px-2.5 py-1 text-[11px] font-semibold text-white">
                   AMU Pick
                 </span>
                 <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">
@@ -347,7 +347,7 @@ onBeforeUnmount(() => {
 
               <blockquote
                 v-if="p.makerStory?.oneLiner"
-                class="border-l-[3px] border-[#F2293A] pl-3 text-[15px] font-semibold leading-snug tracking-tight line-clamp-3"
+                class="border-l-[3px] border-[#0A0A0A] pl-3 text-[15px] font-semibold leading-snug tracking-tight line-clamp-3"
               >
                 "{{ p.makerStory.oneLiner }}"
               </blockquote>
