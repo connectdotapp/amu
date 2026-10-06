@@ -44,7 +44,7 @@ const isNew = computed(() => {
 
     <!-- 아래 텍스트: 이름 + 한줄소개만 -->
     <div class="mt-3 px-0.5">
-      <h3 class="truncate text-[15px] font-bold tracking-tight">
+      <h3 class="truncate text-base font-bold tracking-tight">
         {{ product.name }}
       </h3>
       <p class="mt-1 line-clamp-1 text-sm text-neutral-500">
