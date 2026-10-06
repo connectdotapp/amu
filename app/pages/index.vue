@@ -55,11 +55,27 @@ const sortTabs = [
   { value: 'pick', label: 'AMU Pick' }
 ] as const
 
-// Today's Pick — the most recent curated product
-const featuredPick = computed(() => (allProducts.value || []).find(p => p.source === 'curated'))
-
 const pricingLabelKR: Record<string, string> = {
   free: '무료', freemium: '프리미엄', paid: '유료', subscription: '구독'
+}
+
+// 이 주의 컬렉션 — 가장 최근 발행된 컬렉션 하나.
+const weeklyCollection = computed(() => (collections.value || [])[0] || null)
+
+// 배너 컬러 팔레트 — 어바웃 페이지에서 쓴 비비드 톤.
+// 컬렉션 slug 해시로 자동 배정해서 매주 다른 색이 돌아가게.
+const bannerPalette = [
+  { bg: '#FFD60A', text: '#0A0A0A', deco: '#F2293A' },
+  { bg: '#4A90E2', text: '#FFFFFF', deco: '#FFD60A' },
+  { bg: '#22C55E', text: '#FFFFFF', deco: '#FFD60A' },
+  { bg: '#FF6B9D', text: '#FFFFFF', deco: '#FFD60A' },
+  { bg: '#FF8C42', text: '#0A0A0A', deco: '#4A90E2' },
+  { bg: '#5EEAD4', text: '#0A0A0A', deco: '#FF6B9D' },
+  { bg: '#0A0A0A', text: '#FFFFFF', deco: '#FFD60A' }
+]
+function paletteFor(slug: string) {
+  const hash = slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  return bannerPalette[hash % bannerPalette.length]!
 }
 
 // Weekly ranking — top 7 by upvoteCount
@@ -229,52 +245,59 @@ onBeforeUnmount(() => {
           </form>
         </section>
 
-        <!-- Today's Pick -->
-        <section v-if="featuredPick" class="pb-14">
+        <!-- 이 주의 컬렉션 -->
+        <section v-if="weeklyCollection" class="pb-14">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
-              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">오늘의 아무</h2>
+              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">이 주의 컬렉션</h2>
             </div>
-            <NuxtLink to="/?sort=pick" class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+            <NuxtLink to="/collections" class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
               전체 보기 →
             </NuxtLink>
           </div>
 
           <NuxtLink
-            :to="`/products/${featuredPick.slug || featuredPick.id}`"
-            class="block rounded-3xl bg-neutral-100 p-8 transition hover:bg-neutral-150 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+            :to="`/collections/${weeklyCollection.slug}`"
+            class="group relative block aspect-[21/9] overflow-hidden rounded-3xl p-10 transition sm:p-14"
+            :style="{
+              backgroundColor: paletteFor(weeklyCollection.slug).bg,
+              color: paletteFor(weeklyCollection.slug).text
+            }"
           >
-            <div class="flex flex-col items-start gap-7 sm:flex-row sm:items-center">
-              <img
-                :src="featuredPick.thumbnailUrl"
-                :alt="featuredPick.name"
-                class="size-28 shrink-0 rounded-3xl bg-neutral-50 object-cover sm:size-32"
-              >
-              <div class="min-w-0 flex-1">
-                <span class="inline-block rounded-full bg-[#0A0A0A] px-2.5 py-1 text-[11px] font-semibold text-white">
-                  AMU Pick
-                </span>
-                <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">
-                  {{ featuredPick.name }}
-                </h3>
-                <p class="mt-2 text-[15px] leading-relaxed text-neutral-500">
-                  {{ featuredPick.tagline }}
-                </p>
-                <div class="mt-4 flex flex-wrap gap-1.5">
-                  <span v-if="featuredPick.category" class="rounded-full bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
-                    {{ featuredPick.category }}
-                  </span>
-                  <span v-if="featuredPick.pricing" class="rounded-full bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
-                    {{ pricingLabelKR[featuredPick.pricing] || featuredPick.pricing }}
-                  </span>
-                  <span
-                    v-for="t in (featuredPick.tags || []).slice(0, 3)"
-                    :key="t"
-                    class="rounded-full bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
-                  >
-                    {{ t }}
-                  </span>
+            <!-- 떠다니는 장식 도형 -->
+            <div
+              class="absolute right-16 top-10 size-24 rounded-full opacity-80 transition-transform duration-700 group-hover:translate-y-2"
+              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).deco }"
+            />
+            <div
+              class="absolute right-40 bottom-8 size-16 rounded-2xl opacity-70 transition-transform duration-700 group-hover:-rotate-12"
+              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).deco, transform: 'rotate(18deg)' }"
+            />
+            <div
+              class="absolute right-6 bottom-20 size-10 rounded-full opacity-60"
+              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).text }"
+            />
+
+            <!-- 본문 -->
+            <div class="relative z-10 flex h-full flex-col justify-between">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.14em] opacity-80">
+                  Collection No. {{ weeklyCollection.order || '001' }}
                 </div>
+                <h3 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl md:leading-[1.1]">
+                  {{ weeklyCollection.title }}
+                </h3>
+                <p v-if="weeklyCollection.description" class="mt-4 max-w-xl text-sm leading-relaxed opacity-85 sm:text-base">
+                  {{ weeklyCollection.description }}
+                </p>
+              </div>
+
+              <div class="mt-6 flex items-center gap-4 text-sm font-bold">
+                <span class="opacity-80">작품 {{ weeklyCollection.productCount || 0 }}개</span>
+                <span class="opacity-40">·</span>
+                <span class="inline-flex items-center gap-1 transition-transform duration-300 group-hover:translate-x-1">
+                  보러가기 →
+                </span>
               </div>
             </div>
           </NuxtLink>
