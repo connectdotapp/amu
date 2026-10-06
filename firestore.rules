@@ -72,5 +72,15 @@ service cloud.firestore {
       allow list: if isAdmin() || request.query.limit <= 100;
       allow create, update, delete: if isAdmin();
     }
+
+    // 신고 접수. 로그인한 유저만 생성 가능. 조회는 어드민만.
+    match /reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.targetType in ['product', 'comment']
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
+    }
   }
 }

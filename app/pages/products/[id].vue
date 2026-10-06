@@ -389,6 +389,15 @@ watchEffect(() => {
           <ProductCommentSection :product-id="id" />
         </div>
       </section>
+
+      <!-- 신고 링크 (풋터 영역) -->
+      <div class="mt-16 flex justify-end border-t border-neutral-200 pt-6 dark:border-neutral-800">
+        <ProductReportButton
+          target-type="product"
+          :target-id="id"
+          :target-label="product.name"
+        />
+      </div>
     </article>
 
     <div v-else class="mt-12 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
