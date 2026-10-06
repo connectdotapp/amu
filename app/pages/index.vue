@@ -201,7 +201,7 @@ onBeforeUnmount(() => {
         <!-- Hero -->
         <section class="pt-10 pb-14 sm:pt-14">
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
-            오늘의 새로운 발견
+            새로운 발견
           </h1>
 
           <form class="mt-8 max-w-xl" @submit.prevent="submitHeroSearch">
@@ -391,7 +391,7 @@ onBeforeUnmount(() => {
         <!-- Latest section -->
         <section class="pb-24">
           <div class="mb-5">
-            <h2 class="text-xl font-bold tracking-tight sm:text-2xl">새로 발견한 것들</h2>
+            <h2 class="text-xl font-bold tracking-tight sm:text-2xl">신상 앱 소개</h2>
           </div>
 
           <!-- Sort tabs -->
