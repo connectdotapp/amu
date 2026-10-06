@@ -199,7 +199,7 @@ onBeforeUnmount(() => {
       <!-- MAIN CONTENT -->
       <div class="min-w-0">
         <!-- Hero -->
-        <section class="pt-10 pb-10 sm:pt-14">
+        <section class="pt-10 pb-14 sm:pt-14">
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
             오늘의 새로운 발견
           </h1>
@@ -230,7 +230,7 @@ onBeforeUnmount(() => {
         </section>
 
         <!-- Today's Pick -->
-        <section v-if="featuredPick" class="pb-12">
+        <section v-if="featuredPick" class="pb-14">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold tracking-tight sm:text-2xl">오늘의 아무</h2>
@@ -284,7 +284,7 @@ onBeforeUnmount(() => {
         <section
           v-for="t in themedSections"
           :key="t.key"
-          class="pb-12"
+          class="pb-14"
         >
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
@@ -311,7 +311,7 @@ onBeforeUnmount(() => {
         </section>
 
         <!-- 메이커 이야기 -->
-        <section v-if="makerStories.length" class="pb-12">
+        <section v-if="makerStories.length" class="pb-14">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
