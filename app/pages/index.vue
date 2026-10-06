@@ -62,22 +62,6 @@ const pricingLabelKR: Record<string, string> = {
 // 이 주의 컬렉션 — 가장 최근 발행된 컬렉션 하나.
 const weeklyCollection = computed(() => (collections.value || [])[0] || null)
 
-// 배너 컬러 팔레트 — 어바웃 페이지에서 쓴 비비드 톤.
-// 컬렉션 slug 해시로 자동 배정해서 매주 다른 색이 돌아가게.
-const bannerPalette = [
-  { bg: '#FFD60A', text: '#0A0A0A', deco: '#F2293A' },
-  { bg: '#4A90E2', text: '#FFFFFF', deco: '#FFD60A' },
-  { bg: '#22C55E', text: '#FFFFFF', deco: '#FFD60A' },
-  { bg: '#FF6B9D', text: '#FFFFFF', deco: '#FFD60A' },
-  { bg: '#FF8C42', text: '#0A0A0A', deco: '#4A90E2' },
-  { bg: '#5EEAD4', text: '#0A0A0A', deco: '#FF6B9D' },
-  { bg: '#0A0A0A', text: '#FFFFFF', deco: '#FFD60A' }
-]
-function paletteFor(slug: string) {
-  const hash = slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
-  return bannerPalette[hash % bannerPalette.length]!
-}
-
 // Weekly ranking — top 7 by upvoteCount
 const rankedProducts = computed(() =>
   [...(allProducts.value || [])]
@@ -258,42 +242,32 @@ onBeforeUnmount(() => {
 
           <NuxtLink
             :to="`/collections/${weeklyCollection.slug}`"
-            class="group relative block overflow-hidden rounded-3xl p-8 transition"
-            :style="{
-              backgroundColor: paletteFor(weeklyCollection.slug).bg,
-              color: paletteFor(weeklyCollection.slug).text
-            }"
+            class="group relative block overflow-hidden rounded-3xl bg-neutral-950 p-8 text-white transition"
           >
-            <!-- 떠다니는 장식 도형 -->
-            <div
-              class="absolute right-10 top-6 size-16 rounded-full opacity-80 transition-transform duration-700 group-hover:translate-y-1"
-              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).deco }"
-            />
-            <div
-              class="absolute right-28 bottom-6 size-10 rounded-xl opacity-70 transition-transform duration-700 group-hover:-rotate-12"
-              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).deco, transform: 'rotate(18deg)' }"
-            />
-            <div
-              class="absolute right-4 bottom-10 size-6 rounded-full opacity-60"
-              :style="{ backgroundColor: paletteFor(weeklyCollection.slug).text }"
-            />
+            <!-- 알록달록 작은 포인트들 -->
+            <span class="absolute right-10 top-7 size-3 rounded-full bg-[#FFD60A] transition-transform duration-700 group-hover:translate-y-1" />
+            <span class="absolute right-20 top-12 size-2.5 rounded-full bg-[#4A90E2]" />
+            <span class="absolute right-6 top-16 size-2 rounded-full bg-[#22C55E]" />
+            <span class="absolute right-16 bottom-10 size-3 rounded-full bg-[#FF6B9D]" />
+            <span class="absolute right-28 bottom-6 size-2.5 rounded-sm bg-[#FF8C42] transition-transform duration-700 group-hover:-rotate-12" style="transform: rotate(18deg)" />
+            <span class="absolute right-5 bottom-20 size-2 rounded-full bg-[#5EEAD4]" />
 
             <!-- 본문 -->
             <div class="relative z-10">
-              <div class="text-[11px] font-bold uppercase tracking-[0.14em] opacity-80">
+              <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-400">
                 Collection No. {{ weeklyCollection.order || '001' }}
               </div>
               <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">
                 {{ weeklyCollection.title }}
               </h3>
-              <p v-if="weeklyCollection.description" class="mt-2 max-w-xl text-[15px] leading-relaxed opacity-85">
+              <p v-if="weeklyCollection.description" class="mt-2 max-w-xl text-[15px] leading-relaxed text-neutral-300">
                 {{ weeklyCollection.description }}
               </p>
 
               <div class="mt-4 flex items-center gap-4 text-sm font-bold">
-                <span class="opacity-80">작품 {{ weeklyCollection.productCount || 0 }}개</span>
-                <span class="opacity-40">·</span>
-                <span class="inline-flex items-center gap-1 transition-transform duration-300 group-hover:translate-x-1">
+                <span class="text-neutral-400">작품 {{ weeklyCollection.productCount || 0 }}개</span>
+                <span class="text-neutral-700">·</span>
+                <span class="inline-flex items-center gap-1 text-white transition-transform duration-300 group-hover:translate-x-1">
                   보러가기 →
                 </span>
               </div>
