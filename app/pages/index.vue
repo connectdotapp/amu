@@ -333,9 +333,14 @@ onBeforeUnmount(() => {
                 >
                 <div class="min-w-0 flex-1">
                   <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
-                  <div v-if="p.maker" class="mt-0.5 truncate text-xs text-neutral-500">
+                  <button
+                    v-if="p.maker"
+                    type="button"
+                    class="mt-0.5 block truncate text-xs text-neutral-500 hover:underline"
+                    @click.stop.prevent="navigateTo(`/makers/${encodeURIComponent(p.maker)}`)"
+                  >
                     by {{ p.maker }}
-                  </div>
+                  </button>
                 </div>
                 <UIcon name="i-lucide-mic" class="size-4 shrink-0 text-neutral-400" />
               </div>

@@ -84,6 +84,29 @@ export function usePendingProducts() {
   )
 }
 
+export function useProductsByMaker(maker: string) {
+  return useAsyncData<Product[]>(
+    `products:maker:${maker}`,
+    async () => {
+      try {
+        const db = useFirestore()
+        const snap = await getDocs(query(
+          collection(db, 'products'),
+          where('status', '==', 'published'),
+          where('maker', '==', maker),
+          fbLimit(100)
+        ))
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
+        return sortByPublishedDesc(items)
+      } catch (e) {
+        console.warn('[useProductsByMaker] fetch failed:', e)
+        return []
+      }
+    },
+    { default: () => [] }
+  )
+}
+
 export function useProductById(id: string) {
   return useAsyncData<Product | null>(
     `products:${id}`,

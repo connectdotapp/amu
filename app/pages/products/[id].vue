@@ -210,12 +210,13 @@ watchEffect(() => {
           >
             {{ t }}
           </span>
-          <span
+          <NuxtLink
             v-if="product.maker"
-            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
+            :to="`/makers/${encodeURIComponent(product.maker)}`"
+            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700"
           >
             by {{ product.maker }}
-          </span>
+          </NuxtLink>
         </div>
 
         <!-- Actions -->
@@ -286,7 +287,13 @@ watchEffect(() => {
         </h2>
 
         <div v-if="product.maker" class="mt-4 text-sm text-neutral-500">
-          by <span class="font-semibold text-neutral-950 dark:text-neutral-50">{{ product.maker }}</span>
+          by
+          <NuxtLink
+            :to="`/makers/${encodeURIComponent(product.maker)}`"
+            class="font-semibold text-neutral-950 hover:underline dark:text-neutral-50"
+          >
+            {{ product.maker }}
+          </NuxtLink>
         </div>
 
         <!-- 영상 -->
