@@ -233,8 +233,7 @@ onBeforeUnmount(() => {
         <section v-if="featuredPick" class="pb-12">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
-              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Today's Pick</div>
-              <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">오늘의 아무</h2>
+              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">오늘의 아무</h2>
             </div>
             <NuxtLink to="/?sort=pick" class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
               전체 보기 →
@@ -289,8 +288,7 @@ onBeforeUnmount(() => {
         >
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
-              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">{{ t.eyebrow }}</div>
-              <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">{{ t.title }}</h2>
+              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">{{ t.title }}</h2>
             </div>
             <NuxtLink
               :to="`/?q=${encodeURIComponent(t.keywords[0]!)}`"
@@ -316,8 +314,7 @@ onBeforeUnmount(() => {
         <section v-if="makerStories.length" class="pb-12">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
-              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Maker Voice</div>
-              <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
+              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
             </div>
           </div>
 
@@ -394,8 +391,7 @@ onBeforeUnmount(() => {
         <!-- Latest section -->
         <section class="pb-24">
           <div class="mb-5">
-            <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Latest</div>
-            <h2 class="mt-1 text-xl font-bold tracking-tight sm:text-2xl">새로 발견한 것들</h2>
+            <h2 class="text-xl font-bold tracking-tight sm:text-2xl">새로 발견한 것들</h2>
           </div>
 
           <!-- Sort tabs -->
@@ -509,7 +505,7 @@ onBeforeUnmount(() => {
           <!-- Collections quick list -->
           <div v-if="collections?.length" class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
             <div class="flex items-center justify-between">
-              <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Collection</div>
+              <h3 class="text-base font-bold tracking-tight">컬렉션</h3>
               <NuxtLink to="/collections" class="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50">
                 전체
               </NuxtLink>
@@ -529,7 +525,7 @@ onBeforeUnmount(() => {
 
           <!-- Quick links -->
           <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
-            <div class="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Quick</div>
+            <h3 class="text-base font-bold tracking-tight">바로가기</h3>
             <ul class="mt-4 space-y-2.5 text-[15px] font-bold tracking-tight">
               <li><NuxtLink to="/submit" class="hover:text-neutral-500">프로덕트 등록</NuxtLink></li>
               <li><NuxtLink to="/compare" class="hover:text-neutral-500">비교하기</NuxtLink></li>
