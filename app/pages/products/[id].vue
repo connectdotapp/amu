@@ -53,9 +53,18 @@ useSeoMeta({
   description: () => product.value?.tagline,
   ogTitle: () => product.value?.name,
   ogDescription: () => product.value?.tagline,
-  ogImage: () => product.value?.thumbnailUrl,
   ogType: 'article',
   ogUrl: () => `${site.url}/products/${id}`
+})
+
+// 동적 OG 이미지: 프로덕트 데이터로 자동 생성.
+defineOgImageComponent('Product', {
+  name: () => product.value?.name,
+  tagline: () => product.value?.tagline,
+  category: () => product.value?.category,
+  pricing: () => product.value?.pricing,
+  thumbnailUrl: () => product.value?.thumbnailUrl,
+  isPick: () => product.value?.source === 'curated'
 })
 
 useSchemaOrg([

@@ -18,6 +18,7 @@
     "@nuxt/fonts": "^0.14.0",
     "@nuxt/ui": "^4.11.0",
     "@nuxtjs/seo": "^5.3.14",
+    "@takumi-rs/core": "^2.14.0",
     "firebase": "^12.19.0",
     "firebase-admin": "^14.3.0",
     "nuxt": "^4.5.2",

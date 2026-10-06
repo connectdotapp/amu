@@ -30,6 +30,13 @@ useSeoMeta({
   title: () => `${makerName} · 메이커`,
   description: () => `AMU에 등록된 ${makerName}의 작품 모음`
 })
+
+defineOgImageComponent('Maker', {
+  name: makerName,
+  productCount: () => products.value?.length ?? 0,
+  totalUpvotes: () => totalUpvotes.value,
+  quote: () => latestStory.value?.makerStory?.oneLiner
+})
 </script>
 
 <template>

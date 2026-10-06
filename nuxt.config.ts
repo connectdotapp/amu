@@ -29,9 +29,15 @@ export default defineNuxtConfig({
     defaultLocale: 'ko'
   },
 
-  // Disable dynamic OG image generation for now (uses product thumbnail instead).
-  // Re-enable by installing @takumi-rs/core and removing this block.
-  ogImage: { enabled: false },
+  // satori 렌더러로 동적 OG 이미지 생성. Puppeteer·네이티브 바이너리 없이 Node에서 돌아감.
+  ogImage: {
+    enabled: true,
+    defaults: {
+      renderer: 'satori',
+      cacheMaxAgeSeconds: 60 * 60 * 24 * 7 // 7일
+    },
+    fonts: ['Pretendard:400', 'Pretendard:700', 'Pretendard:800']
+  },
 
   app: {
     head: {

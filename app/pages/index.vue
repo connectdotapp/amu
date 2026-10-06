@@ -6,6 +6,12 @@ useSeoMeta({
   description: '오늘의 앱·웹·프로그램. 아무거나 소개하지 않아요.'
 })
 
+defineOgImageComponent('Default', {
+  eyebrow: 'AMU',
+  title: '오늘의 새로운 발견',
+  description: '내 일상을 함께할 아무를 찾는다. 매주 월요일 3개.'
+})
+
 const route = useRoute()
 const router = useRouter()
 
