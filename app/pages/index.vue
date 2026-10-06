@@ -88,7 +88,7 @@ const themedSections = computed(() => {
   const all = allProducts.value || []
   return homeThemes.map(t => ({
     ...t,
-    products: all.filter(p => matchesTheme(p, t.keywords)).slice(0, 4)
+    products: all.filter(p => matchesTheme(p, t.keywords)).slice(0, 6)
   }))
 })
 
@@ -301,7 +301,7 @@ onBeforeUnmount(() => {
             </NuxtLink>
           </div>
 
-          <div v-if="t.products.length" class="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+          <div v-if="t.products.length" class="grid gap-2 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
             <ProductCard
               v-for="p in t.products"
               :key="p.id"
@@ -435,7 +435,7 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- Cards grid -->
-          <section v-if="products.length" class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <section v-if="products.length" class="mt-6 grid gap-3 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
             <ProductCard
               v-for="p in products"
               :key="p.id"
