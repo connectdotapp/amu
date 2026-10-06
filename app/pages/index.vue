@@ -223,8 +223,7 @@ onBeforeUnmount(() => {
                 ref="heroSearchRef"
                 v-model="heroSearchInput"
                 type="text"
-                placeholder="이름, 태그, 설명으로 검색"
-                class="min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-neutral-400"
+                class="min-w-0 flex-1 bg-transparent text-[15px] outline-none"
               >
             </div>
           </form>
@@ -462,7 +461,7 @@ onBeforeUnmount(() => {
       <aside class="lg:pt-[86px]">
         <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
-          <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
+          <div class="rounded-3xl bg-white p-6 transition hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-900">
             <h3 class="text-lg font-bold tracking-tight">이번 주 순위</h3>
             <div class="mt-1 text-xs text-neutral-400">{{ currentWeekLabel }}</div>
 
