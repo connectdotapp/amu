@@ -21,5 +21,8 @@ useSchemaOrg([
       <NuxtPage />
     </main>
     <TheFooter />
+    <ClientOnly>
+      <CookieConsent />
+    </ClientOnly>
   </UApp>
 </template>

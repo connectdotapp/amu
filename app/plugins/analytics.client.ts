@@ -17,9 +17,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const firebaseApp = useFirebaseApp()
   const analytics: Analytics = getAnalytics(firebaseApp)
 
-  // SPA 라우트 변화마다 page_view 자동 로깅. Nuxt 라우터 훅.
+  // SPA 라우트 변화마다 page_view 자동 로깅. 쿠키 동의한 유저만.
   const router = useRouter()
   router.afterEach((to) => {
+    // CookieConsent 가 세팅하는 글로벌 플래그. 'accepted' 가 아니면 수집 안 함.
+    if ((window as any).__amuConsent !== 'accepted') return
     logEvent(analytics, 'page_view', {
       page_path: to.fullPath,
       page_title: typeof document !== 'undefined' ? document.title : undefined,

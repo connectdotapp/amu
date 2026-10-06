@@ -19,6 +19,8 @@ export function useAnalytics() {
 
   function track(name: string, params?: Record<string, any>) {
     if (!$analytics || !import.meta.client) return
+    // 쿠키 동의하지 않은 유저는 수집하지 않음.
+    if ((window as any).__amuConsent !== 'accepted') return
     logEvent($analytics, name, params)
   }
 
