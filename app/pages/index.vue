@@ -301,7 +301,7 @@ onBeforeUnmount(() => {
             </NuxtLink>
           </div>
 
-          <div v-if="t.products.length" class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div v-if="t.products.length" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <ProductCard
               v-for="p in t.products"
               :key="p.id"
@@ -435,7 +435,7 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- Cards grid -->
-          <section v-if="products.length" class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <section v-if="products.length" class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             <ProductCard
               v-for="p in products"
               :key="p.id"
