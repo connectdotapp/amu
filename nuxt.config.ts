@@ -20,9 +20,12 @@ export default defineNuxtConfig({
     // Server-only secrets. firebase-admin 은 GOOGLE_APPLICATION_CREDENTIALS 또는 ADC 로 자동 초기화.
     kakaoRestKey: process.env.KAKAO_REST_KEY || '',
     kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET || '',
+    naverClientId: process.env.NAVER_CLIENT_ID || '',
+    naverClientSecret: process.env.NAVER_CLIENT_SECRET || '',
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-      kakaoJsKey: process.env.NUXT_PUBLIC_KAKAO_JS_KEY || ''
+      kakaoJsKey: process.env.NUXT_PUBLIC_KAKAO_JS_KEY || '',
+      naverClientId: process.env.NUXT_PUBLIC_NAVER_CLIENT_ID || ''
     }
   },
 

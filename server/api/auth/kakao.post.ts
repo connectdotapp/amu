@@ -116,9 +116,15 @@ export default defineEventHandler(async (event) => {
     await adminAuth.updateUser(uid, { displayName: nickname, photoURL })
   } catch (e: any) {
     if (e?.code === 'auth/user-not-found') {
-      await adminAuth.createUser({ uid, displayName: nickname, photoURL })
+      try {
+        await adminAuth.createUser({ uid, displayName: nickname, photoURL })
+      } catch (createErr: any) {
+        console.error('[kakao createUser failed]', { code: createErr?.code, message: createErr?.message })
+        throw createError({ statusCode: 500, statusMessage: `사용자 생성 실패: ${createErr?.message || createErr?.code || 'unknown'}` })
+      }
     } else {
-      throw createError({ statusCode: 500, statusMessage: '사용자 생성에 실패했어요.' })
+      console.error('[kakao updateUser failed]', { code: e?.code, message: e?.message })
+      throw createError({ statusCode: 500, statusMessage: `사용자 처리 실패: ${e?.message || e?.code || 'unknown'}` })
     }
   }
 

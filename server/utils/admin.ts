@@ -26,6 +26,13 @@ function ensureInit(): App {
     return adminApp
   }
 
+  // projectId 는 명시 — Cloud Functions 환경에서 자동 감지 실패할 수 있음.
+  const projectId = process.env.GCLOUD_PROJECT
+    || process.env.GOOGLE_CLOUD_PROJECT
+    || process.env.FIREBASE_PROJECT_ID
+    || process.env.NUXT_PUBLIC_FIREBASE_PROJECT_ID
+    || 'amu-project-6efae'
+
   // 로컬: GOOGLE_APPLICATION_CREDENTIALS 가 존재하는 파일을 가리키면 명시적 cert() 사용.
   // 프로덕션 (Cloud Functions): env 는 로컬 경로가 복사돼 있을 수 있지만 그 파일은 없음 → ADC 로 폴백.
   const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
@@ -33,13 +40,13 @@ function ensureInit(): App {
     const absPath = resolve(process.cwd(), credPath)
     if (existsSync(absPath)) {
       const serviceAccount = JSON.parse(readFileSync(absPath, 'utf-8'))
-      adminApp = initializeApp({ credential: cert(serviceAccount) })
+      adminApp = initializeApp({ credential: cert(serviceAccount), projectId })
       return adminApp
     }
   }
 
   // ADC (Cloud Functions / Cloud Run 자동 인증)
-  adminApp = initializeApp()
+  adminApp = initializeApp({ projectId })
   return adminApp
 }
 

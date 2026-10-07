@@ -15,10 +15,11 @@ const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const { run: deleteAccount, deleting, error: deleteError } = useAccountDelete()
 
-// 로그인 방식 식별. 카카오는 UID prefix, Google 은 providerData.
+// 로그인 방식 식별. 소셜은 UID prefix, Google 은 providerData.
 const loginProvider = computed(() => {
   if (!user.value) return ''
   if (user.value.uid.startsWith('kakao:')) return '카카오'
+  if (user.value.uid.startsWith('naver:')) return '네이버'
   const providerId = user.value.providerData?.[0]?.providerId
   if (providerId === 'google.com') return 'Google'
   return '기타'

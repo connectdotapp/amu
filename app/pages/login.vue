@@ -8,11 +8,13 @@ useSeoMeta({
 
 const auth = useFirebaseAuth()
 const route = useRoute()
+const config = useRuntimeConfig()
 const googleLoading = ref(false)
 const kakaoLoading = ref(false)
+const naverLoading = ref(false)
 const error = ref<string | null>(null)
 
-const loading = computed(() => googleLoading.value || kakaoLoading.value)
+const loading = computed(() => googleLoading.value || kakaoLoading.value || naverLoading.value)
 
 async function finishLogin() {
   const redirect = (route.query.redirect as string) || '/'
@@ -59,6 +61,34 @@ function loginKakao() {
   })
   // 이 호출은 리다이렉트를 트리거하므로 반환되지 않음. kakaoLoading 상태는 페이지 이탈로 리셋.
 }
+
+function loginNaver() {
+  if (!auth || loading.value) return
+
+  const clientId = config.public.naverClientId as string
+  if (!clientId) {
+    error.value = '네이버 로그인이 설정되지 않았어요.'
+    return
+  }
+
+  naverLoading.value = true
+  error.value = null
+
+  // CSRF 방어용 state. 콜백에서 sessionStorage 값과 비교.
+  const state = Math.random().toString(36).slice(2) + Date.now().toString(36)
+  // sessionStorage 는 일부 환경 (리다이렉트 후 창 재생성 등) 에서 유실 → localStorage.
+  localStorage.setItem('naver-state', state)
+  localStorage.setItem('naver-redirect', (route.query.redirect as string) || '/')
+
+  const redirectUri = `${location.origin}/auth/naver/callback`
+  const authUrl = new URL('https://nid.naver.com/oauth2.0/authorize')
+  authUrl.searchParams.set('response_type', 'code')
+  authUrl.searchParams.set('client_id', clientId)
+  authUrl.searchParams.set('redirect_uri', redirectUri)
+  authUrl.searchParams.set('state', state)
+
+  window.location.href = authUrl.toString()
+}
 </script>
 
 <template>
@@ -72,6 +102,25 @@ function loginKakao() {
     <h1 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">아무와 함께하세요</h1>
 
     <div class="mt-10 w-full space-y-3 rounded-3xl bg-neutral-100 p-8 dark:bg-neutral-800">
+      <button
+        type="button"
+        class="flex w-full items-center justify-center gap-2 rounded-full bg-[#03C75A] px-5 py-3 text-[15px] font-bold text-white transition hover:brightness-[0.95] disabled:cursor-not-allowed disabled:opacity-60"
+        :disabled="loading"
+        @click="loginNaver"
+      >
+        <svg
+          v-if="!naverLoading"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="size-5"
+          aria-hidden="true"
+        >
+          <path fill="white" d="M14.233 12.835 9.302 5.667H5v12.666h4.767V11.165l4.931 7.168H19V5.667h-4.767v7.168Z" />
+        </svg>
+        <UIcon v-else name="i-lucide-loader-2" class="size-5 animate-spin" />
+        네이버로 계속하기
+      </button>
+
       <button
         type="button"
         class="flex w-full items-center justify-center gap-2 rounded-full bg-[#FEE500] px-5 py-3 text-[15px] font-bold text-[#191600] transition hover:brightness-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
