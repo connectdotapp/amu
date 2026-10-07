@@ -32,7 +32,8 @@ const userMenuItems = computed(() => {
   }
   const items: any[][] = [[{ label: user.value.email ?? '', type: 'label' as const }]]
   const main: any[] = [
-    { label: '북마크', to: '/me/bookmarks', icon: 'i-lucide-bookmark' }
+    { label: '북마크', to: '/me/bookmarks', icon: 'i-lucide-bookmark' },
+    { label: '설정', to: '/settings', icon: 'i-lucide-settings' }
   ]
   if (isAdmin.value) {
     main.unshift({ label: '관리자', to: '/admin', icon: 'i-lucide-shield' })
@@ -227,6 +228,9 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
           </NuxtLink>
           <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             내 북마크
+          </NuxtLink>
+          <NuxtLink v-if="user" to="/settings" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+            설정
           </NuxtLink>
           <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             관리자

@@ -4,7 +4,7 @@ useSeoMeta({
   description: 'AMU 개인정보 처리 방침.'
 })
 
-const updated = '2026-10-06'
+const updated = '2026-10-07'
 </script>
 
 <template>
@@ -80,6 +80,16 @@ const updated = '2026-10-06'
         <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">7. 사용자의 권리</h2>
         <p class="mt-3">
           사용자는 언제든지 자신의 개인정보에 대한 열람·정정·삭제·처리정지를 요청할 수 있습니다. 요청은 아래 연락처로 접수할 수 있습니다.
+        </p>
+        <p class="mt-3">
+          <strong>계정 삭제</strong>는 로그인 후 <NuxtLink to="/settings" class="underline underline-offset-2">설정</NuxtLink> 페이지에서 직접 수행할 수 있습니다. 삭제 시 다음 범위가 즉시 영구 삭제됩니다.
+        </p>
+        <ul class="mt-3 list-disc space-y-2 pl-5">
+          <li>Firebase Auth 계정 (이메일·이름·프로필 이미지)</li>
+          <li>프로필 문서 및 북마크 전체</li>
+        </ul>
+        <p class="mt-3">
+          작성한 댓글·업보트·제출한 프로덕트는 다른 사용자의 맥락 보존을 위해 계정 식별 정보가 분리된 상태로 유지됩니다. 이들까지 완전 삭제를 원하시면 아래 보호책임자 메일로 요청해주세요. 접수 후 30일 이내 처리합니다.
         </p>
       </section>
 
