@@ -8,7 +8,7 @@
  * 반환되는 App 인스턴스를 getAuth / getFirestore 에 명시적으로 전달한다 (HMR 로 firebase-admin
  * 모듈 캐시가 꼬일 때 기본 app 참조가 깨지는 걸 방지).
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { App } from 'firebase-admin/app'
 import { cert, getApps, initializeApp } from 'firebase-admin/app'
@@ -26,17 +26,20 @@ function ensureInit(): App {
     return adminApp
   }
 
+  // 로컬: GOOGLE_APPLICATION_CREDENTIALS 가 존재하는 파일을 가리키면 명시적 cert() 사용.
+  // 프로덕션 (Cloud Functions): env 는 로컬 경로가 복사돼 있을 수 있지만 그 파일은 없음 → ADC 로 폴백.
   const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
-  if (!credPath) {
-    adminApp = initializeApp()
-    return adminApp
+  if (credPath) {
+    const absPath = resolve(process.cwd(), credPath)
+    if (existsSync(absPath)) {
+      const serviceAccount = JSON.parse(readFileSync(absPath, 'utf-8'))
+      adminApp = initializeApp({ credential: cert(serviceAccount) })
+      return adminApp
+    }
   }
 
-  const absPath = resolve(process.cwd(), credPath)
-  const serviceAccount = JSON.parse(readFileSync(absPath, 'utf-8'))
-  adminApp = initializeApp({
-    credential: cert(serviceAccount)
-  })
+  // ADC (Cloud Functions / Cloud Run 자동 인증)
+  adminApp = initializeApp()
   return adminApp
 }
 
