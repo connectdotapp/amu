@@ -34,7 +34,6 @@ function ensureInit(): App {
     || 'amu-project-6efae'
 
   // 로컬: GOOGLE_APPLICATION_CREDENTIALS 가 존재하는 파일을 가리키면 명시적 cert() 사용.
-  // 프로덕션 (Cloud Functions): env 는 로컬 경로가 복사돼 있을 수 있지만 그 파일은 없음 → ADC 로 폴백.
   const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
   if (credPath) {
     const absPath = resolve(process.cwd(), credPath)
@@ -43,6 +42,9 @@ function ensureInit(): App {
       adminApp = initializeApp({ credential: cert(serviceAccount), projectId })
       return adminApp
     }
+    // 프로덕션: env 는 로컬 경로가 복사돼 있지만 그 파일은 없음. firebase-admin 이
+    // initializeApp 내부에서 env 를 또 읽어 ENOENT 를 던지지 않도록 명시적으로 제거.
+    delete process.env.GOOGLE_APPLICATION_CREDENTIALS
   }
 
   // ADC (Cloud Functions / Cloud Run 자동 인증)

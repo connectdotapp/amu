@@ -80,7 +80,7 @@ const categoryBtnRef = ref<HTMLElement | null>(null)
 
 function onCategoryClick(slug: string) {
   categoriesOpen.value = false
-  router.push({ path: '/', query: { category: slug } })
+  router.push(`/categories/${slug}`)
 }
 
 // 커뮤니티 드롭다운
@@ -312,7 +312,7 @@ watch(() => route.fullPath, () => {
               <NuxtLink
                 v-for="c in categories"
                 :key="c.slug"
-                :to="`/?category=${c.slug}`"
+                :to="`/categories/${c.slug}`"
                 class="rounded-full px-3 py-2 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
               >
                 {{ c.name }}

@@ -91,13 +91,15 @@ const thumbnailPreview = ref<string | null>(props.product?.thumbnailUrl ?? null)
 const isSubmitting = ref(false)
 const errorMessage = ref<string | null>(null)
 
-// iTunes 자동 채우기
-const itunesInput = ref('')
-const itunesFetching = ref(false)
-const itunesGenreHint = ref('')
-const itunesError = ref<string | null>(null)
+// 스토어 자동 채우기 (App Store / Play Store)
+type StorePlatform = 'appstore' | 'playstore'
+const storePlatform = ref<StorePlatform>('appstore')
+const storeInput = ref('')
+const storeFetching = ref(false)
+const storeGenreHint = ref('')
+const storeError = ref<string | null>(null)
 
-type ItunesResult = {
+type StoreResult = {
   id: string
   name: string
   tagline: string
@@ -111,16 +113,49 @@ type ItunesResult = {
   screenshotUrls: string[]
 }
 
-async function fillFromItunes() {
-  itunesError.value = null
-  const raw = itunesInput.value.trim()
+const storeConfig: Record<StorePlatform, {
+  label: string
+  endpoint: string
+  imageProxy: string
+  linkLabel: string
+  placeholder: string
+  helpText: string
+  imageHostRegex: RegExp
+  filenamePrefix: string
+}> = {
+  appstore: {
+    label: 'App Store',
+    endpoint: '/api/itunes',
+    imageProxy: '/api/itunes-image',
+    linkLabel: 'App Store',
+    placeholder: 'https://apps.apple.com/kr/app/.../id123456789',
+    helpText: 'iOS/Mac 앱만 가능해요. 채워진 내용은 아래에서 자유롭게 수정하세요.',
+    imageHostRegex: /mzstatic\.com/,
+    filenamePrefix: 'itunes'
+  },
+  playstore: {
+    label: 'Play Store',
+    endpoint: '/api/play',
+    imageProxy: '/api/play-image',
+    linkLabel: 'Play Store',
+    placeholder: 'https://play.google.com/store/apps/details?id=com.example.app',
+    helpText: 'Android 앱 또는 패키지명(com.example.app). 채워진 내용은 아래에서 수정하세요.',
+    imageHostRegex: /googleusercontent\.com/,
+    filenamePrefix: 'play'
+  }
+}
+
+async function fillFromStore() {
+  storeError.value = null
+  const raw = storeInput.value.trim()
+  const cfg = storeConfig[storePlatform.value]
   if (!raw) {
-    itunesError.value = 'App Store URL 또는 앱 ID를 입력해주세요'
+    storeError.value = `${cfg.label} URL 또는 앱 ID를 입력해주세요`
     return
   }
-  itunesFetching.value = true
+  storeFetching.value = true
   try {
-    const data = await $fetch<ItunesResult>('/api/itunes', { query: { url: raw } })
+    const data = await $fetch<StoreResult>(cfg.endpoint, { query: { url: raw } })
 
     form.name = data.name
     form.tagline = data.tagline
@@ -128,19 +163,20 @@ async function fillFromItunes() {
     form.maker = data.maker
     form.pricing = data.pricing
     form.linkUrl = data.linkUrl
-    form.linkLabel = 'App Store'
+    form.linkLabel = cfg.linkLabel
     if (data.tags.length) {
       form.tags = data.tags.join(', ')
     }
-    itunesGenreHint.value = data.genreName
+    storeGenreHint.value = data.genreName
 
-    // 썸네일: 서버 프록시로 받아 File 로 변환 → 폼 업로드 파이프라인에 그대로 태움
+    // 썸네일: 서버 프록시로 받아 File 로 변환
     if (data.thumbnailUrl) {
       try {
-        const proxied = `/api/itunes-image?url=${encodeURIComponent(data.thumbnailUrl)}`
+        const proxied = `${cfg.imageProxy}?url=${encodeURIComponent(data.thumbnailUrl)}`
         const res = await fetch(proxied)
         const blob = await res.blob()
-        const file = new File([blob], `itunes-${data.id}.jpg`, { type: blob.type || 'image/jpeg' })
+        const ext = (blob.type || 'image/jpeg').split('/')[1] || 'jpg'
+        const file = new File([blob], `${cfg.filenamePrefix}-${data.id}.${ext}`, { type: blob.type || 'image/jpeg' })
         thumbnailFile.value = file
         thumbnailPreview.value = URL.createObjectURL(file)
       } catch {
@@ -148,10 +184,18 @@ async function fillFromItunes() {
       }
     }
   } catch (e: any) {
-    itunesError.value = e?.data?.statusMessage || e?.statusMessage || '조회 실패'
+    storeError.value = e?.data?.statusMessage || e?.statusMessage || '조회 실패'
   } finally {
-    itunesFetching.value = false
+    storeFetching.value = false
   }
+}
+
+function switchPlatform(p: StorePlatform) {
+  if (storePlatform.value === p) return
+  storePlatform.value = p
+  storeInput.value = ''
+  storeError.value = null
+  storeGenreHint.value = ''
 }
 
 const pricingOptions: Array<{ label: string, value: PricingModel }> = [
@@ -304,38 +348,59 @@ async function submit() {
 
 <template>
   <form class="space-y-6" @submit.prevent="submit">
-    <!-- iTunes 자동 채우기 -->
+    <!-- 스토어 링크로 자동 채우기 -->
     <section v-if="!isEdit" class="rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800">
       <label class="mb-2 flex items-center gap-2 text-sm font-semibold">
-        <UIcon name="i-lucide-wand-2" class="size-4 text-[var(--color-amu-pink)]" />
-        App Store 링크로 자동 채우기
+        <UIcon name="i-lucide-wand-2" class="size-4 text-neutral-700 dark:text-neutral-200" />
+        스토어 링크로 자동 채우기
       </label>
+
+      <!-- 플랫폼 토글 -->
+      <div class="mb-3 inline-flex rounded-full bg-white p-1 text-sm font-semibold dark:bg-neutral-900">
+        <button
+          type="button"
+          class="rounded-full px-5 py-2 transition"
+          :class="storePlatform === 'appstore' ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
+          @click="switchPlatform('appstore')"
+        >
+          App Store
+        </button>
+        <button
+          type="button"
+          class="rounded-full px-5 py-2 transition"
+          :class="storePlatform === 'playstore' ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
+          @click="switchPlatform('playstore')"
+        >
+          Play Store
+        </button>
+      </div>
+
       <div class="flex flex-col gap-2 sm:flex-row">
         <UInput
-          v-model="itunesInput"
-          placeholder="https://apps.apple.com/kr/app/.../id123456789"
+          v-model="storeInput"
+          :placeholder="storeConfig[storePlatform].placeholder"
           class="flex-1"
-          @keydown.enter.prevent="fillFromItunes"
+          @keydown.enter.prevent="fillFromStore"
         />
         <UButton
           color="neutral"
           variant="solid"
-          :loading="itunesFetching"
-          :disabled="itunesFetching"
+          :loading="storeFetching"
+          :disabled="storeFetching"
           icon="i-lucide-download"
-          @click="fillFromItunes"
+          @click="fillFromStore"
         >
           가져오기
         </UButton>
       </div>
-      <p v-if="itunesError" class="mt-2 text-xs text-error">
-        {{ itunesError }}
+      <p v-if="storeError" class="mt-2 text-xs text-error">
+        {{ storeError }}
       </p>
-      <p v-else-if="itunesGenreHint" class="mt-2 text-xs text-neutral-500">
-        App Store 장르: <span class="font-semibold">{{ itunesGenreHint }}</span> — 아래 카테고리에서 맞춰 골라주세요.
+      <p v-else-if="storeGenreHint" class="mt-2 text-xs text-neutral-500">
+        {{ storeConfig[storePlatform].label }} 장르: <span class="font-semibold">{{ storeGenreHint }}</span> — 아래 카테고리에서 맞춰 골라주세요.
       </p>
       <p v-else class="mt-2 text-xs text-neutral-500">
-        iOS/Mac 앱만 가능해요. 채워진 내용은 아래에서 자유롭게 수정하세요.
+        {{ storeConfig[storePlatform].helpText }}
       </p>
     </section>
 

@@ -68,7 +68,12 @@ onMounted(handleCallback)
     </template>
 
     <template v-else>
-      <UIcon name="i-lucide-alert-triangle" class="size-8 text-red-500" />
+      <img
+        src="/mascot-sad.png"
+        alt="로그인에 실패했어요"
+        class="h-28 w-auto select-none sm:h-32"
+        draggable="false"
+      >
       <h1 class="mt-4 text-xl font-bold tracking-tight">로그인에 실패했어요</h1>
       <p class="mt-2 text-sm text-neutral-500">{{ errorMessage }}</p>
       <UButton to="/login" color="neutral" variant="solid" class="mt-6">
