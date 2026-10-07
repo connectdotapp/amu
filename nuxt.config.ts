@@ -17,8 +17,12 @@ export default defineNuxtConfig({
   future: { compatibilityVersion: 4 },
 
   runtimeConfig: {
+    // Server-only secrets. firebase-admin 은 GOOGLE_APPLICATION_CREDENTIALS 또는 ADC 로 자동 초기화.
+    kakaoRestKey: process.env.KAKAO_REST_KEY || '',
+    kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET || '',
     public: {
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      kakaoJsKey: process.env.NUXT_PUBLIC_KAKAO_JS_KEY || ''
     }
   },
 

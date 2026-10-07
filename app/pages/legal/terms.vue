@@ -84,7 +84,7 @@ const updated = '2026-09-15'
         <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">9. 문의</h2>
         <p class="mt-3">
           약관 관련 문의는
-          <a href="mailto:eslabsofficial@gmail.com" class="underline underline-offset-2">eslabsofficial@gmail.com</a>
+          <a href="mailto:connectdot.app@gmail.com" class="underline underline-offset-2">connectdot.app@gmail.com</a>
           으로 보내주세요.
         </p>
       </section>

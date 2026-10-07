@@ -53,8 +53,13 @@ export function useAccountDelete() {
       await performDelete(user.value)
       return true
     } catch (e: any) {
-      // 최근 로그인 요구 → Google 재인증 후 재시도
+      // 최근 로그인 요구 → provider 별 재인증. Google 은 자동, 카카오는 재로그인 안내.
       if (e?.code === 'auth/requires-recent-login') {
+        const isKakao = user.value.uid.startsWith('kakao:')
+        if (isKakao) {
+          error.value = '보안을 위해 로그아웃 후 다시 로그인한 뒤 삭제해주세요.'
+          return false
+        }
         try {
           await reauthenticateWithPopup(user.value, new GoogleAuthProvider())
           await performDelete(user.value)

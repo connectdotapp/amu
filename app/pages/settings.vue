@@ -15,6 +15,15 @@ const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const { run: deleteAccount, deleting, error: deleteError } = useAccountDelete()
 
+// 로그인 방식 식별. 카카오는 UID prefix, Google 은 providerData.
+const loginProvider = computed(() => {
+  if (!user.value) return ''
+  if (user.value.uid.startsWith('kakao:')) return '카카오'
+  const providerId = user.value.providerData?.[0]?.providerId
+  if (providerId === 'google.com') return 'Google'
+  return '기타'
+})
+
 const confirmOpen = ref(false)
 const confirmText = ref('')
 const confirmPhrase = '계정 삭제'
@@ -59,13 +68,16 @@ function openConfirm() {
         <div v-else class="flex size-14 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700">
           <UIcon name="i-lucide-user" class="size-6 text-neutral-500" />
         </div>
-        <div class="min-w-0">
+        <div class="min-w-0 flex-1">
           <p class="truncate text-base font-bold tracking-tight">{{ user?.displayName ?? '이름 없음' }}</p>
-          <p class="truncate text-sm text-neutral-500">{{ user?.email }}</p>
+          <p class="truncate text-sm text-neutral-500">{{ user?.email || loginProvider + ' 계정' }}</p>
         </div>
+        <span class="shrink-0 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+          {{ loginProvider }}
+        </span>
       </div>
       <p class="mt-3 text-xs text-neutral-500">
-        프로필 정보는 Google 계정에서 가져와요
+        프로필 정보는 {{ loginProvider }} 계정에서 가져와요
       </p>
     </section>
 
@@ -88,27 +100,29 @@ function openConfirm() {
 
     <section class="mt-12">
       <h2 class="text-xs font-bold uppercase tracking-[0.14em] text-red-600">위험 영역</h2>
-      <div class="mt-4 rounded-3xl border border-red-200 bg-red-50/60 p-5 dark:border-red-900/50 dark:bg-red-950/20">
+      <div class="mt-4 rounded-3xl border border-red-200 bg-red-50/60 p-6 dark:border-red-900/50 dark:bg-red-950/20">
         <h3 class="text-sm font-bold tracking-tight">계정 삭제</h3>
         <p class="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-          계정과 북마크가 영구 삭제돼요. 작성한 댓글·업보트·제출한 프로덕트는 계정 식별 정보가 분리된 상태로 유지돼요
-          완전 삭제가 필요하면 아래 메일로 요청해주세요
+          계정과 북마크가 영구 삭제돼요
+          작성한 댓글·업보트·제출한 프로덕트는 계정 식별 정보가 분리된 상태로 유지돼요
+          완전 삭제가 필요하면
+          <a
+            href="mailto:connectdot.app@gmail.com?subject=%EA%B3%84%EC%A0%95%20%EC%99%84%EC%A0%84%20%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD"
+            class="text-neutral-700 underline underline-offset-2 hover:text-neutral-900 dark:text-neutral-300"
+          >connectdot.app@gmail.com</a>
+          으로 요청해주세요
         </p>
-        <a
-          href="mailto:eslabsofficial@gmail.com?subject=%EA%B3%84%EC%A0%95%20%EC%99%84%EC%A0%84%20%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD"
-          class="mt-2 inline-block text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-700"
-        >
-          eslabsofficial@gmail.com
-        </a>
 
-        <button
-          type="button"
-          class="mt-5 inline-flex items-center gap-2 rounded-full border border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-600 hover:text-white"
-          @click="openConfirm"
-        >
-          <UIcon name="i-lucide-trash-2" class="size-4" />
-          계정 삭제
-        </button>
+        <div class="mt-6">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-600 hover:text-white"
+            @click="openConfirm"
+          >
+            <UIcon name="i-lucide-trash-2" class="size-4" />
+            계정 삭제하기
+          </button>
+        </div>
       </div>
     </section>
 

@@ -113,7 +113,7 @@ const updated = '2026-10-07'
         <h2 class="text-lg font-bold text-neutral-950 dark:text-neutral-50">10. 개인정보 보호책임자</h2>
         <ul class="mt-3 space-y-1">
           <li>이름: 조은솔</li>
-          <li>이메일: <a href="mailto:eslabsofficial@gmail.com" class="underline underline-offset-2">eslabsofficial@gmail.com</a></li>
+          <li>이메일: <a href="mailto:connectdot.app@gmail.com" class="underline underline-offset-2">connectdot.app@gmail.com</a></li>
         </ul>
       </section>
     </div>

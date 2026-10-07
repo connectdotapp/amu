@@ -27,8 +27,8 @@ const year = new Date().getFullYear()
           </div>
           <div class="flex flex-col gap-2">
             <span class="text-xs font-semibold text-white/60">연결</span>
-            <a href="https://instagram.com" target="_blank" class="hover:text-white/70">Instagram</a>
-            <a href="mailto:eslabsofficial@gmail.com" class="hover:text-white/70">문의</a>
+            <a href="https://instagram.com/amu_hunter" target="_blank" rel="noopener noreferrer" class="hover:text-white/70">Instagram</a>
+            <a href="mailto:connectdot.app@gmail.com" class="hover:text-white/70">문의</a>
           </div>
         </div>
       </div>

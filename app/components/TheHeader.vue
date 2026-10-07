@@ -30,7 +30,9 @@ const userMenuItems = computed(() => {
   if (!user.value) {
     return [[{ label: '로그인', to: '/login', icon: 'i-lucide-log-in' }]]
   }
-  const items: any[][] = [[{ label: user.value.email ?? '', type: 'label' as const }]]
+  // 카카오 유저는 email 이 없음 (비즈앱 심사 전까지 수집 불가) → displayName 으로 폴백.
+  const identityLabel = user.value.email || user.value.displayName || '내 계정'
+  const items: any[][] = [[{ label: identityLabel, type: 'label' as const }]]
   const main: any[] = [
     { label: '북마크', to: '/me/bookmarks', icon: 'i-lucide-bookmark' },
     { label: '설정', to: '/settings', icon: 'i-lucide-settings' }
@@ -65,8 +67,8 @@ function isActive(to: string) {
 }
 
 const nav = [
-  { label: '둘러보기', to: '/' },
   { label: '컬렉션', to: '/collections' },
+  { label: '둘러보기', to: '/' },
   { label: 'About', to: '/about' }
 ]
 
@@ -81,19 +83,38 @@ function onCategoryClick(slug: string) {
   router.push({ path: '/', query: { category: slug } })
 }
 
+// 커뮤니티 드롭다운
+const communityOpen = ref(false)
+const communityMenuRef = ref<HTMLElement | null>(null)
+const communityBtnRef = ref<HTMLElement | null>(null)
+const communityLinks = [
+  { label: '공지사항', to: '/community/notices', icon: 'i-lucide-megaphone' },
+  { label: '커뮤니티', to: '/community', icon: 'i-lucide-messages-square' },
+  { label: 'FAQ', to: '/community/faq', icon: 'i-lucide-help-circle' }
+]
+
 function handleOutsideClick(e: MouseEvent) {
-  if (!categoriesOpen.value) return
   const target = e.target as Node
-  if (megamenuRef.value?.contains(target)) return
-  if (categoryBtnRef.value?.contains(target)) return
-  categoriesOpen.value = false
+  if (categoriesOpen.value) {
+    if (!megamenuRef.value?.contains(target) && !categoryBtnRef.value?.contains(target)) {
+      categoriesOpen.value = false
+    }
+  }
+  if (communityOpen.value) {
+    if (!communityMenuRef.value?.contains(target) && !communityBtnRef.value?.contains(target)) {
+      communityOpen.value = false
+    }
+  }
 }
 
 onMounted(() => document.addEventListener('mousedown', handleOutsideClick))
 onBeforeUnmount(() => document.removeEventListener('mousedown', handleOutsideClick))
 
 // 라우트 바뀌면 닫기
-watch(() => route.fullPath, () => { categoriesOpen.value = false })
+watch(() => route.fullPath, () => {
+  categoriesOpen.value = false
+  communityOpen.value = false
+})
 </script>
 
 <template>
@@ -104,16 +125,6 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
       </NuxtLink>
 
       <nav class="hidden md:flex items-center gap-14 text-base font-bold">
-        <NuxtLink
-          v-for="item in nav"
-          :key="item.to"
-          :to="item.to"
-          class="transition"
-          :class="isActive(item.to) ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-        >
-          {{ item.label }}
-        </NuxtLink>
-
         <!-- 카테고리 메가메뉴 트리거 -->
         <button
           ref="categoryBtnRef"
@@ -126,6 +137,46 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
           카테고리
           <UIcon :name="categoriesOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-4" />
         </button>
+
+        <NuxtLink
+          v-for="item in nav"
+          :key="item.to"
+          :to="item.to"
+          class="transition"
+          :class="isActive(item.to) ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+        >
+          {{ item.label }}
+        </NuxtLink>
+
+        <!-- 커뮤니티 드롭다운 트리거 -->
+        <div class="relative">
+          <button
+            ref="communityBtnRef"
+            type="button"
+            class="inline-flex items-center gap-1 transition"
+            :class="communityOpen || route.path.startsWith('/community') ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
+            :aria-expanded="communityOpen"
+            @click="communityOpen = !communityOpen"
+          >
+            커뮤니티
+            <UIcon :name="communityOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-4" />
+          </button>
+          <div
+            v-if="communityOpen"
+            ref="communityMenuRef"
+            class="absolute left-0 top-full z-50 mt-3 w-52 overflow-hidden rounded-2xl border border-neutral-150 bg-white py-2 shadow-lg dark:border-neutral-800 dark:bg-neutral-950"
+          >
+            <NuxtLink
+              v-for="link in communityLinks"
+              :key="link.to"
+              :to="link.to"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-100 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+            >
+              <UIcon :name="link.icon" class="size-4 text-neutral-500" />
+              {{ link.label }}
+            </NuxtLink>
+          </div>
+        </div>
       </nav>
 
       <div class="ml-auto flex items-center gap-3">
@@ -235,6 +286,22 @@ watch(() => route.fullPath, () => { categoriesOpen.value = false })
           <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             관리자
           </NuxtLink>
+
+          <!-- 커뮤니티 (모바일: 섹션으로 펼침) -->
+          <div class="mt-3 border-t border-neutral-150 pt-3 dark:border-neutral-800">
+            <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500">
+              커뮤니티
+            </div>
+            <NuxtLink
+              v-for="link in communityLinks"
+              :key="link.to"
+              :to="link.to"
+              class="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            >
+              <UIcon :name="link.icon" class="size-4 text-neutral-500" />
+              {{ link.label }}
+            </NuxtLink>
+          </div>
 
           <!-- 카테고리 (모바일: 아코디언 대신 바로 그리드로 노출) -->
           <div class="mt-3 border-t border-neutral-150 pt-3 dark:border-neutral-800">
