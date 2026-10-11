@@ -33,8 +33,10 @@ function ensureInit(): App {
     || process.env.NUXT_PUBLIC_FIREBASE_PROJECT_ID
     || 'amu-project-6efae'
 
-  // 로컬: GOOGLE_APPLICATION_CREDENTIALS 가 존재하는 파일을 가리키면 명시적 cert() 사용.
-  const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
+  // 로컬: LOCAL_SERVICE_ACCOUNT_PATH 가 존재하는 파일을 가리키면 명시적 cert() 사용.
+  // 변수명을 GOOGLE_APPLICATION_CREDENTIALS 로 안 두는 이유: Cloud Function 에 그대로 복사돼
+  // firebase-admin SDK 가 자동 로드 시도하면서 ENOENT 로 터지기 때문.
+  const credPath = process.env.LOCAL_SERVICE_ACCOUNT_PATH
   if (credPath) {
     const absPath = resolve(process.cwd(), credPath)
     if (existsSync(absPath)) {
@@ -42,9 +44,6 @@ function ensureInit(): App {
       adminApp = initializeApp({ credential: cert(serviceAccount), projectId })
       return adminApp
     }
-    // 프로덕션: env 는 로컬 경로가 복사돼 있지만 그 파일은 없음. firebase-admin 이
-    // initializeApp 내부에서 env 를 또 읽어 ENOENT 를 던지지 않도록 명시적으로 제거.
-    delete process.env.GOOGLE_APPLICATION_CREDENTIALS
   }
 
   // ADC (Cloud Functions / Cloud Run 자동 인증)
