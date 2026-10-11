@@ -32,9 +32,15 @@ body {
   color: var(--color-neutral-950);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* 모바일에서 어떤 자식 요소가 뷰포트 폭을 넘겨도 가로 스크롤 유발하지 않도록 clip.
-     전체 레이아웃이 오른쪽으로 치우쳐 보이는 현상 방지. */
+  /* 모바일에서 특정 요소가 뷰포트 폭을 넘겨 레이아웃이 왼/오로 shift 되는 현상 방지.
+     clip + width + position 조합으로 iOS Safari 포함 완전 봉쇄. */
   overflow-x: clip;
+  width: 100%;
+  position: relative;
+}
+
+body {
+  min-height: 100dvh;
 }
 
 .dark html,
