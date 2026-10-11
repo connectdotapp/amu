@@ -33,12 +33,7 @@ const canSubmitDelete = computed(() => confirmText.value.trim() === confirmPhras
 async function handleLogout() {
   if (!auth) return
   await signOut(auth)
-  useToast().add({
-    title: '로그아웃했어요',
-    icon: 'i-lucide-log-out',
-    color: 'neutral',
-    duration: 1500
-  })
+  useFlash().show('로그아웃했어요')
   await navigateTo('/')
 }
 

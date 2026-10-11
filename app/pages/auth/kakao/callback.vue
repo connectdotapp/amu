@@ -48,12 +48,7 @@ async function handleCallback() {
 
     await signInWithCustomToken(auth, customToken)
 
-    useToast().add({
-      title: '로그인했어요',
-      icon: 'i-lucide-check-circle',
-      color: 'success',
-      duration: 1500
-    })
+    useFlash().show('로그인했어요')
 
     const state = route.query.state as string | undefined
     const redirect = state ? decodeURIComponent(state) : '/'

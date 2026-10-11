@@ -23,6 +23,7 @@ useSchemaOrg([
     <TheFooter />
     <ClientOnly>
       <CookieConsent />
+      <FlashToast />
     </ClientOnly>
   </UApp>
 </template>

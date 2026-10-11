@@ -47,28 +47,18 @@ const userMenuItems = computed(() => {
   return items
 })
 
-const toast = useToast()
+const flash = useFlash()
 
 async function logout() {
   if (!auth) return
   await signOut(auth)
-  toast.add({
-    title: '로그아웃했어요',
-    icon: 'i-lucide-log-out',
-    color: 'neutral',
-    duration: 1500
-  })
+  flash.show('로그아웃했어요')
   await navigateTo('/')
 }
 
 function handleSubmitClick() {
   if (!user.value) {
-    toast.add({
-      title: '로그인이 필요해요',
-      icon: 'i-lucide-log-in',
-      color: 'warning',
-      duration: 1500
-    })
+    flash.show('로그인이 필요해요')
     navigateTo('/login?redirect=/submit')
     mobileOpen.value = false
     return
