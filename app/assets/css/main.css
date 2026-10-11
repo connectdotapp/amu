@@ -32,11 +32,14 @@ body {
   color: var(--color-neutral-950);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* 모바일에서 특정 요소가 뷰포트 폭을 넘겨 레이아웃이 왼/오로 shift 되는 현상 방지.
-     clip + width + position 조합으로 iOS Safari 포함 완전 봉쇄. */
+  /* 뷰포트 가로 overflow + 좌/우 shift 완전 봉쇄 */
   overflow-x: clip;
   width: 100%;
   position: relative;
+  /* UI 라이브러리 (Nuxt UI 등) 가 modal/overlay 를 위해 body padding-right 를
+     자동 삽입하는 경우가 있어 좌/우 비대칭 패딩 유발. 강제로 0 처리. */
+  padding: 0;
+  margin: 0;
 }
 
 body {
