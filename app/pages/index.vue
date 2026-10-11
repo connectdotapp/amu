@@ -187,9 +187,9 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <div class="grid gap-10 lg:grid-cols-[1fr_320px]">
+    <div class="flex flex-col gap-10 lg:grid lg:grid-cols-[1fr_320px]">
       <!-- MAIN CONTENT -->
-      <div class="min-w-0">
+      <div class="min-w-0 w-full">
         <!-- Hero -->
         <section class="pt-10 pb-14 sm:pt-14">
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -441,7 +441,7 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- SIDEBAR: Weekly ranking + Collections -->
-      <aside class="lg:pt-[86px]">
+      <aside class="min-w-0 w-full lg:pt-[86px]">
         <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
           <div class="rounded-3xl bg-white p-6 transition hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-900">
