@@ -32,6 +32,9 @@ body {
   color: var(--color-neutral-950);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 모바일에서 어떤 자식 요소가 뷰포트 폭을 넘겨도 가로 스크롤 유발하지 않도록 clip.
+     전체 레이아웃이 오른쪽으로 치우쳐 보이는 현상 방지. */
+  overflow-x: clip;
 }
 
 .dark html,
