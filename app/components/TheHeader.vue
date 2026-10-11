@@ -47,10 +47,34 @@ const userMenuItems = computed(() => {
   return items
 })
 
+const toast = useToast()
+
 async function logout() {
   if (!auth) return
   await signOut(auth)
+  toast.add({
+    title: '로그아웃했어요',
+    icon: 'i-lucide-log-out',
+    color: 'neutral',
+    duration: 1500
+  })
   await navigateTo('/')
+}
+
+function handleSubmitClick() {
+  if (!user.value) {
+    toast.add({
+      title: '로그인이 필요해요',
+      icon: 'i-lucide-log-in',
+      color: 'warning',
+      duration: 1500
+    })
+    navigateTo('/login?redirect=/submit')
+    mobileOpen.value = false
+    return
+  }
+  navigateTo('/submit')
+  mobileOpen.value = false
 }
 
 const mobileOpen = ref(false)
@@ -190,12 +214,13 @@ watch(() => route.fullPath, () => {
           <UIcon name="i-lucide-search" class="size-5" />
         </button>
 
-        <NuxtLink
-          to="/submit"
+        <button
+          type="button"
           class="hidden sm:inline-flex items-center justify-center rounded-full bg-[#0A0A0A] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#262626]"
+          @click="handleSubmitClick"
         >
           등록하기
-        </NuxtLink>
+        </button>
 
         <UDropdownMenu :items="userMenuItems" :content="{ align: 'end' }">
           <button
@@ -274,9 +299,13 @@ watch(() => route.fullPath, () => {
           >
             {{ item.label }}
           </NuxtLink>
-          <NuxtLink to="/submit" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <button
+            type="button"
+            class="rounded-full px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            @click="handleSubmitClick"
+          >
             등록하기
-          </NuxtLink>
+          </button>
           <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             내 북마크
           </NuxtLink>

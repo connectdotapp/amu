@@ -9,6 +9,7 @@ useSeoMeta({
 const auth = useFirebaseAuth()
 const route = useRoute()
 const config = useRuntimeConfig()
+const toast = useToast()
 const googleLoading = ref(false)
 const kakaoLoading = ref(false)
 const naverLoading = ref(false)
@@ -17,6 +18,12 @@ const error = ref<string | null>(null)
 const loading = computed(() => googleLoading.value || kakaoLoading.value || naverLoading.value)
 
 async function finishLogin() {
+  toast.add({
+    title: '로그인했어요',
+    icon: 'i-lucide-check-circle',
+    color: 'success',
+    duration: 1500
+  })
   const redirect = (route.query.redirect as string) || '/'
   await navigateTo(redirect)
 }

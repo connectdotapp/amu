@@ -48,6 +48,13 @@ async function handleCallback() {
 
     await signInWithCustomToken(auth, customToken)
 
+    useToast().add({
+      title: '로그인했어요',
+      icon: 'i-lucide-check-circle',
+      color: 'success',
+      duration: 1500
+    })
+
     const state = route.query.state as string | undefined
     const redirect = state ? decodeURIComponent(state) : '/'
     await navigateTo(redirect, { replace: true })
@@ -76,9 +83,12 @@ onMounted(handleCallback)
       >
       <h1 class="mt-4 text-xl font-bold tracking-tight">로그인에 실패했어요</h1>
       <p class="mt-2 text-sm text-neutral-500">{{ errorMessage }}</p>
-      <UButton to="/login" color="neutral" variant="solid" class="mt-6">
+      <NuxtLink
+        to="/login"
+        class="mt-6 inline-flex items-center justify-center rounded-full bg-[#0A0A0A] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#262626]"
+      >
         로그인으로 돌아가기
-      </UButton>
+      </NuxtLink>
     </template>
   </div>
 </template>
