@@ -8,11 +8,11 @@ const props = defineProps<{
 const code = computed(() => Number(props.error?.statusCode || 500))
 const isNotFound = computed(() => code.value === 404)
 
-const title = computed(() => isNotFound.value ? '길을 잃었어요' : '뭔가 문제가 생겼어요')
+const title = computed(() => isNotFound.value ? '앗! 페이지가 도망갔어요' : '뭔가 문제가 생겼어요')
 const description = computed(() =>
   isNotFound.value
-    ? '아무도 이 페이지를 아직 발견하지 못했어요'
-    : '잠시 후 다시 시도해주세요. 문제가 계속되면 알려주세요'
+    ? '주소가 잘못됐거나 삭제된 페이지일 수 있어요'
+    : '일시적인 오류예요. 잠시 후 다시 시도해주세요'
 )
 
 function goHome() {
