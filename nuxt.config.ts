@@ -48,6 +48,23 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css'
+        },
+        // 첫 Hero banner preload — LCP 최적화 (뷰포트에 따라 모바일/데스크톱 분리).
+        {
+          rel: 'preload',
+          as: 'image',
+          href: '/hero-banner-m.webp',
+          type: 'image/webp',
+          media: '(max-width: 640px)',
+          fetchpriority: 'high'
+        },
+        {
+          rel: 'preload',
+          as: 'image',
+          href: '/hero-banner.webp',
+          type: 'image/webp',
+          media: '(min-width: 641px)',
+          fetchpriority: 'high'
         }
       ],
       // 전역 OG 이미지 fallback. 특정 페이지가 ogImage 를 지정하면 그게 우선.

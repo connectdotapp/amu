@@ -154,21 +154,39 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="mx-auto max-w-[1280px] px-6">
-    <!-- Hero banner carousel — 5개 자동 전환. public/hero-banner-N.png 교체로 반영. -->
+    <!-- Hero banner carousel — 5개 자동 전환.
+         public/hero-banner-N.png 원본 교체 시 scripts/convert-banners.mjs 재실행해
+         .webp (desktop 1600w) 와 -m.webp (mobile 800w) 를 함께 갱신해야 함. -->
     <section class="pt-6">
       <div
         class="relative aspect-[35/9] overflow-hidden rounded-3xl bg-neutral-100"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
       >
-        <img
+        <picture
           v-for="(src, i) in heroBanners"
           :key="src"
-          :src="src"
-          alt=""
-          class="absolute inset-0 size-full object-cover transition-opacity duration-700"
+          class="absolute inset-0 block size-full transition-opacity duration-700"
           :class="heroIndex === i ? 'opacity-100' : 'opacity-0'"
         >
+          <source
+            media="(max-width: 640px)"
+            :srcset="src.replace('.png', '-m.webp')"
+            type="image/webp"
+          >
+          <source
+            :srcset="src.replace('.png', '.webp')"
+            type="image/webp"
+          >
+          <img
+            :src="src"
+            alt=""
+            class="size-full object-cover"
+            :fetchpriority="i === 0 ? 'high' : 'auto'"
+            :loading="i === 0 ? 'eager' : 'lazy'"
+            decoding="async"
+          >
+        </picture>
 
         <!-- 점선 인디케이터 -->
         <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2">
