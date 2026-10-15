@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, limit as fbLimit, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { normalizeUrl } from '~/utils/url'
 import type {
   MakerStory,
   MonthlyRevenueRange,
@@ -269,6 +270,14 @@ async function submit() {
     errorMessage.value = '필수 항목을 모두 채워 주세요.'
     return
   }
+
+  // URL 형식 검증 (http/https 유효 URL)
+  const normalizedLinkUrl = normalizeUrl(form.linkUrl)
+  if (!normalizedLinkUrl) {
+    errorMessage.value = '올바른 URL이 아니에요. http:// 또는 https:// 로 시작해야 해요.'
+    return
+  }
+
   if (!isEdit.value && !thumbnailFile.value) {
     errorMessage.value = '대표 이미지를 선택해 주세요.'
     return
@@ -276,10 +285,26 @@ async function submit() {
 
   isSubmitting.value = true
   try {
+    // 중복 등록 차단 — 같은 URL 로 이미 소개된 프로덕트가 있는지 확인.
+    // Edit 모드에서 URL 변경이 없거나 자기 자신인 경우는 통과.
+    const originalLinkUrl = props.product ? normalizeUrl(props.product.linkUrl || props.product.links?.[0]?.url || '') : ''
+    const urlChanged = normalizedLinkUrl !== originalLinkUrl
+    if (urlChanged) {
+      const dupSnap = await getDocs(query(
+        collection(db, 'products'),
+        where('linkUrl', '==', normalizedLinkUrl),
+        where('status', '==', 'published'),
+        fbLimit(1)
+      ))
+      if (!dupSnap.empty) {
+        errorMessage.value = '이미 소개된 프로덕트예요. 같은 URL 로 등록된 글이 이미 있어요.'
+        isSubmitting.value = false
+        return
+      }
+    }
+
     const tags = form.tags.split(',').map(t => t.trim()).filter(Boolean)
-    const linkArr = form.linkUrl
-      ? [{ label: form.linkLabel || '웹사이트', url: form.linkUrl.trim() }]
-      : []
+    const linkArr = [{ label: form.linkLabel || '웹사이트', url: normalizedLinkUrl }]
     const showroomPayload = buildShowroomPayload()
     const makerStoryPayload = buildMakerStoryPayload()
 
@@ -295,6 +320,7 @@ async function submit() {
         category: form.category,
         tags,
         pricing: form.pricing,
+        linkUrl: normalizedLinkUrl,
         links: linkArr,
         thumbnailUrl,
         maker: form.maker.trim() || null,
@@ -317,6 +343,7 @@ async function submit() {
         tags,
         platforms: [],
         pricing: form.pricing,
+        linkUrl: normalizedLinkUrl,
         links: linkArr,
         thumbnailUrl,
         screenshots: [],

@@ -65,6 +65,8 @@ export interface Product {
   tags: string[]
   platforms: Platform[]
   pricing: PricingModel
+  /** 정규화된 메인 URL. 중복 등록 차단 쿼리에 사용. links[0].url 과 동일하게 유지. */
+  linkUrl?: string
   links: ProductLink[]
   thumbnailUrl: string
   screenshots: string[]
