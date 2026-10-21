@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
         class="flex items-center gap-2 py-1.5 pl-5 pr-3"
         @submit.prevent="search(input)"
       >
-        <div class="flex h-12 flex-1 items-center gap-2.5 rounded-full bg-neutral-100 px-[18px] dark:bg-neutral-800">
+        <div class="flex h-12 min-w-0 flex-1 items-center gap-2.5 rounded-full bg-neutral-100 px-[18px] dark:bg-neutral-800">
           <UIcon
             name="i-lucide-search"
             class="size-5 shrink-0 text-neutral-950 dark:text-neutral-50"
@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
         </div>
         <button
           type="button"
-          class="flex h-11 items-center px-2 text-[15px] font-semibold"
+          class="flex h-11 shrink-0 items-center px-2 text-[15px] font-semibold"
           @click="open = false"
         >
           취소
@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
             v-for="c in categories"
             :key="c.slug"
             :to="`/categories/${c.slug}`"
-            class="flex h-11 items-center rounded-xl bg-neutral-50 px-3.5 text-[15px] font-semibold dark:bg-neutral-900"
+            class="flex h-11 items-center rounded-xl bg-neutral-100 px-3.5 text-[15px] font-semibold dark:bg-neutral-900"
             @click="open = false"
           >
             {{ c.name }}

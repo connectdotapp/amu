@@ -9,6 +9,10 @@ type Consent = 'accepted' | 'rejected' | null
 const consent = ref<Consent>(null)
 const visible = ref(false)
 
+// 모바일: 상품 상세는 하단 액션바, 그 외는 하단 탭바 위로 띄움
+const route = useRoute()
+const hasBottomBar = computed(() => route.path.startsWith('/products/'))
+
 onMounted(() => {
   const stored = localStorage.getItem(CONSENT_KEY) as Consent
   consent.value = stored
@@ -39,7 +43,8 @@ function set(value: 'accepted' | 'rejected') {
   >
     <div
       v-if="visible"
-      class="fixed inset-x-3 bottom-[calc(var(--mobile-tabbar-h)+var(--safe-bottom)+0.5rem)] z-50 mx-auto max-w-3xl rounded-2xl bg-neutral-950 px-4 py-3 text-white shadow-2xl md:inset-x-4 md:bottom-6 md:p-6"
+      class="fixed inset-x-3 z-50 mx-auto max-w-3xl rounded-2xl bg-neutral-950 px-4 py-3 text-white shadow-2xl md:inset-x-4 md:bottom-6 md:p-6"
+      :class="hasBottomBar ? 'bottom-[calc(5rem+var(--safe-bottom))]' : 'bottom-[calc(var(--mobile-tabbar-h)+var(--safe-bottom)+0.5rem)]'"
     >
       <div class="flex items-center gap-3 sm:items-start md:gap-4">
         <div class="flex-1">
