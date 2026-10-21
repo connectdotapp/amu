@@ -17,6 +17,7 @@ const router = useRouter()
 
 const { data: allProducts } = useAllPublishedProducts(200)
 const { data: collections } = usePublishedCollections(6)
+const { data: categories } = useCategories()
 
 const filters = computed<ProductFilters>(() => ({
   q: (route.query.q as string) || '',
@@ -153,13 +154,28 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1280px] px-6">
+  <div class="mx-auto max-w-[1280px] px-5 md:px-6">
+    <!-- 모바일 카테고리 텍스트 탭 (데스크톱 헤더 nav 스타일: 굵은 텍스트, 회색 → 활성 검정) -->
+    <nav class="no-scrollbar -mx-5 flex gap-[22px] overflow-x-auto whitespace-nowrap border-b border-neutral-100 px-5 text-[15px] font-bold text-neutral-400 md:hidden dark:border-neutral-800">
+      <NuxtLink to="/" class="flex min-h-11 shrink-0 items-center text-neutral-950 shadow-[inset_0_-2px_0_#0A0A0A] dark:text-neutral-50">
+        전체
+      </NuxtLink>
+      <NuxtLink
+        v-for="c in categories"
+        :key="c.slug"
+        :to="`/categories/${c.slug}`"
+        class="flex min-h-11 shrink-0 items-center active:text-neutral-950"
+      >
+        {{ c.name }}
+      </NuxtLink>
+    </nav>
+
     <!-- Hero banner carousel — 5개 자동 전환.
          public/hero-banner-N.png 원본 교체 시 scripts/convert-banners.mjs 재실행해
          .webp (desktop 1600w) 와 -m.webp (mobile 800w) 를 함께 갱신해야 함. -->
-    <section class="pt-6">
+    <section class="pt-4 md:pt-6">
       <div
-        class="relative aspect-[35/9] overflow-hidden rounded-3xl bg-neutral-100"
+        class="relative aspect-[13/5] overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
       >
@@ -181,7 +197,7 @@ onBeforeUnmount(() => {
           <img
             :src="src"
             alt=""
-            class="size-full object-cover"
+            class="size-full object-cover object-right md:object-center"
             :fetchpriority="i === 0 ? 'high' : 'auto'"
             :loading="i === 0 ? 'eager' : 'lazy'"
             decoding="async"
@@ -189,7 +205,7 @@ onBeforeUnmount(() => {
         </picture>
 
         <!-- 점선 인디케이터 -->
-        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <div class="absolute bottom-3 left-4 flex items-center gap-1.5 md:bottom-5 md:left-1/2 md:-translate-x-1/2 md:gap-2">
           <button
             v-for="(_, i) in heroBanners"
             :key="i"
@@ -203,6 +219,37 @@ onBeforeUnmount(() => {
           />
         </div>
       </div>
+    </section>
+
+    <!-- 모바일: 실시간 순위를 히어로 바로 아래로 (데스크톱은 사이드바 유지) -->
+    <section class="pt-6 md:hidden">
+      <div class="flex items-end justify-between">
+        <h2 class="text-xl font-bold tracking-tight">
+          실시간 순위
+        </h2>
+        <NuxtLink to="/rankings/weekly" class="flex min-h-11 items-center text-xs text-neutral-500">
+          더 보기 →
+        </NuxtLink>
+      </div>
+      <ol v-if="rankedProducts.length">
+        <li v-for="(p, i) in rankedProducts.slice(0, 5)" :key="p.id">
+          <NuxtLink :to="`/products/${p.slug || p.id}`" class="flex h-14 items-center gap-3 active:opacity-70">
+            <span
+              class="w-[18px] shrink-0 text-[17px] font-bold"
+              :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
+            >{{ i + 1 }}</span>
+            <img :src="p.thumbnailUrl" :alt="p.name" class="size-10 shrink-0 rounded-xl bg-neutral-100 object-cover">
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
+              <div class="mt-0.5 truncate text-xs text-neutral-400">{{ p.tagline }}</div>
+            </div>
+            <span class="shrink-0 text-xs font-bold tabular-nums text-neutral-400">↑ {{ p.upvoteCount ?? 0 }}</span>
+          </NuxtLink>
+        </li>
+      </ol>
+      <p v-else class="py-4 text-center text-sm text-neutral-400">
+        아직 순위가 없어요
+      </p>
     </section>
 
     <div class="flex flex-col gap-10 lg:grid lg:grid-cols-[1fr_320px]">
@@ -233,7 +280,7 @@ onBeforeUnmount(() => {
                 ref="heroSearchRef"
                 v-model="heroSearchInput"
                 type="text"
-                class="min-w-0 flex-1 bg-transparent text-[15px] outline-none"
+                class="min-w-0 flex-1 bg-transparent text-base outline-none md:text-[15px]"
               >
             </div>
           </form>
@@ -417,13 +464,13 @@ onBeforeUnmount(() => {
           </nav>
 
           <!-- Pricing chips row + count -->
-          <div class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          <div class="no-scrollbar mt-4 flex items-center gap-x-2 gap-y-1.5 overflow-x-auto md:flex-wrap md:overflow-visible">
             <span class="mr-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Pricing</span>
             <button
               v-for="p in pricingOptions"
               :key="p.value"
               type="button"
-              class="rounded-full px-3 py-1 text-xs font-semibold transition"
+              class="h-[29px] shrink-0 rounded-full px-3 text-[12.5px] font-semibold transition md:h-auto md:py-1 md:text-xs"
               :class="filters.pricing === p.value
                 ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950'
                 : 'bg-neutral-100 text-neutral-500 hover:text-neutral-950 dark:bg-neutral-800 dark:hover:text-neutral-50'"
@@ -435,7 +482,15 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- Cards grid -->
-          <section v-if="products.length" class="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+          <!-- 모바일: 4열 앱스토어형 타일 -->
+          <section v-if="products.length" class="-mx-1 mt-5 grid grid-cols-4 gap-x-2 gap-y-3 md:hidden">
+            <ProductAppTile
+              v-for="p in products"
+              :key="p.id"
+              :product="p"
+            />
+          </section>
+          <section v-if="products.length" class="mt-6 hidden gap-3 grid-cols-2 sm:grid-cols-3 md:grid lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
             <ProductCard
               v-for="p in products"
               :key="p.id"
@@ -459,7 +514,7 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- SIDEBAR: Weekly ranking + Collections -->
-      <aside class="min-w-0 w-full lg:pt-[86px]">
+      <aside class="min-w-0 w-full max-md:hidden lg:pt-[86px]">
         <div class="sticky top-24 space-y-4">
           <!-- Ranking card -->
           <div class="rounded-3xl bg-white p-6 transition hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-900">

@@ -146,7 +146,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px] px-6 pb-24 pt-2">
+  <div class="mx-auto max-w-[900px] px-5 pb-28 pt-2 md:px-6 md:pb-24">
     <NuxtLink to="/" class="mb-6 inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-neutral-950 dark:hover:text-neutral-50">
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       둘러보기
@@ -262,13 +262,13 @@ watchEffect(() => {
 
       <!-- TABS -->
       <nav
-        class="sticky top-0 z-10 -mx-6 mt-0 flex gap-7 bg-white px-6 pt-4 dark:bg-neutral-950"
+        class="no-scrollbar sticky top-[var(--mobile-header-h)] z-10 -mx-5 mt-0 flex gap-6 overflow-x-auto whitespace-nowrap bg-white px-5 pt-2 md:top-0 md:-mx-6 md:gap-7 md:overflow-visible md:px-6 md:pt-4 dark:bg-neutral-950"
       >
         <button
           v-for="tab in tabs"
           :key="tab.value"
           type="button"
-          class="relative pb-2.5 text-sm font-bold transition"
+          class="relative flex min-h-11 shrink-0 items-end pb-2.5 text-sm font-bold transition md:block md:min-h-0"
           :class="activeTab === tab.value
             ? 'text-neutral-950 dark:text-neutral-50'
             : 'text-neutral-400 hover:text-neutral-600'"
@@ -397,6 +397,26 @@ watchEffect(() => {
           :target-id="id"
           :target-label="product.name"
         />
+      </div>
+      <!-- 모바일 하단 고정 액션바: 기존 북마크/업보트 컴포넌트와 외부 링크 핸들러 재사용 -->
+      <div
+        class="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t border-neutral-150 bg-white px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:hidden dark:border-neutral-800 dark:bg-neutral-950"
+      >
+        <ProductBookmarkButton :product-id="id" class="size-[52px]! rounded-2xl!" />
+        <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" class="h-[52px]! rounded-2xl! px-3!" />
+        <UButton
+          v-if="product.links?.[0]"
+          :to="product.links[0].url"
+          target="_blank"
+          color="neutral"
+          variant="solid"
+          block
+          trailing-icon="i-lucide-arrow-up-right"
+          class="h-[52px] flex-1 rounded-2xl text-base font-bold"
+          @click="analytics.externalLink({ productId: id, productName: product.name, url: product.links[0]!.url })"
+        >
+          웹사이트 방문
+        </UButton>
       </div>
     </article>
 
