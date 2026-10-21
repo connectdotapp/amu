@@ -36,7 +36,7 @@ const tabs = computed(() => [
     />
 
     <nav
-      class="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-150 bg-white/95 pb-safe backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/95"
+      class="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-150 bg-white pb-safe dark:border-neutral-800 dark:bg-neutral-950"
       aria-label="하단 메뉴"
     >
       <ul class="grid h-14 grid-cols-5">

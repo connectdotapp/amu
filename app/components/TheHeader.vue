@@ -336,22 +336,7 @@ watch(() => route.fullPath, () => {
             </NuxtLink>
           </div>
 
-          <!-- 카테고리 (모바일: 아코디언 대신 바로 그리드로 노출) -->
-          <div class="mt-3 border-t border-neutral-150 pt-3 dark:border-neutral-800">
-            <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500">
-              카테고리
-            </div>
-            <div class="grid grid-cols-2 gap-1">
-              <NuxtLink
-                v-for="c in categories"
-                :key="c.slug"
-                :to="`/categories/${c.slug}`"
-                class="flex min-h-11 items-center rounded-full px-3 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              >
-                {{ c.name }}
-              </NuxtLink>
-            </div>
-          </div>
+          <!-- 카테고리는 하단 탭바에서 접근하므로 햄버거 메뉴에서는 제외 -->
         </nav>
 
         <div class="pt-2">

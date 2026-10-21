@@ -228,8 +228,8 @@ watchEffect(() => {
           </NuxtLink>
         </div>
 
-        <!-- Actions -->
-        <div class="mt-6 flex flex-wrap items-center gap-2">
+        <!-- Actions (모바일에선 하단 고정 액션바로 대체) -->
+        <div class="mt-6 flex-wrap items-center gap-2 max-md:hidden md:flex">
           <UButton
             v-if="product.links?.[0]"
             :to="product.links[0].url"
