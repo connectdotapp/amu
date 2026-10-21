@@ -51,3 +51,23 @@ body {
   background-color: var(--color-neutral-950);
   color: var(--color-neutral-50);
 }
+
+/* ── Mobile (below md) ─────────────────────────────────────────── */
+:root {
+  --mobile-header-h: 56px;
+  --mobile-tabbar-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 767.98px) {
+  html { -webkit-tap-highlight-color: transparent; }
+}

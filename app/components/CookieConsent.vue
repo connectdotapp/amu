@@ -39,14 +39,14 @@ function set(value: 'accepted' | 'rejected') {
   >
     <div
       v-if="visible"
-      class="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-3xl rounded-2xl bg-neutral-950 p-5 text-white shadow-2xl sm:bottom-6 sm:p-6"
+      class="fixed inset-x-3 bottom-[calc(var(--mobile-tabbar-h)+var(--safe-bottom)+0.5rem)] z-50 mx-auto max-w-3xl rounded-2xl bg-neutral-950 px-4 py-3 text-white shadow-2xl md:inset-x-4 md:bottom-6 md:p-6"
     >
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+      <div class="flex items-center gap-3 sm:items-start md:gap-4">
         <div class="flex-1">
-          <h3 class="text-sm font-bold tracking-tight sm:text-base">
+          <h3 class="hidden text-sm font-bold tracking-tight md:block md:text-base">
             🍪 쿠키 사용에 동의해주세요
           </h3>
-          <p class="mt-1.5 text-xs leading-relaxed text-neutral-300 sm:text-sm">
+          <p class="text-xs leading-snug text-neutral-300 md:mt-1.5 md:text-sm md:leading-relaxed">
             AMU는 서비스 개선을 위해 쿠키와 Google Analytics 를 사용해요
             동의하지 않아도 서비스는 이용 가능해요
             <NuxtLink to="/legal/privacy" class="underline underline-offset-2 hover:text-white">
@@ -55,17 +55,17 @@ function set(value: 'accepted' | 'rejected') {
           </p>
         </div>
 
-        <div class="flex gap-2 sm:flex-col sm:items-stretch">
+        <div class="flex shrink-0 gap-1.5 sm:flex-col sm:items-stretch md:gap-2">
           <button
             type="button"
-            class="flex-1 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-neutral-950 transition hover:bg-neutral-200 sm:text-sm"
+            class="min-h-9 rounded-full bg-white px-3 py-2 md:flex-1 md:px-4 md:py-2.5 text-xs font-bold text-neutral-950 transition hover:bg-neutral-200 sm:text-sm"
             @click="set('accepted')"
           >
-            전체 동의
+            <span class="md:hidden">동의</span><span class="hidden md:inline">전체 동의</span>
           </button>
           <button
             type="button"
-            class="flex-1 rounded-full border border-neutral-700 px-4 py-2.5 text-xs font-semibold text-neutral-300 transition hover:bg-neutral-800 sm:text-sm"
+            class="min-h-9 rounded-full border border-neutral-700 px-3 py-2 md:flex-1 md:px-4 md:py-2.5 text-xs font-semibold text-neutral-300 transition hover:bg-neutral-800 sm:text-sm"
             @click="set('rejected')"
           >
             거부

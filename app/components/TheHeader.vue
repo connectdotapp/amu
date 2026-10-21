@@ -68,6 +68,7 @@ function handleSubmitClick() {
 }
 
 const mobileOpen = ref(false)
+const searchOpen = ref(false)
 watch(() => route.fullPath, () => { mobileOpen.value = false })
 
 const isHome = computed(() => route.path === '/')
@@ -133,9 +134,13 @@ watch(() => route.fullPath, () => {
 
 <template>
   <header class="sticky top-0 z-50 w-full bg-white dark:bg-neutral-950">
-    <div class="mx-auto flex max-w-[1280px] items-center gap-10 px-6 py-7">
+    <div class="mx-auto flex h-14 max-w-[1280px] items-center gap-10 px-5 md:h-auto md:px-6 md:py-7">
       <NuxtLink to="/" class="block shrink-0" aria-label="AMU 홈">
-        <img src="/logo-2.png" alt="AMU" class="h-16 w-auto">
+        <!-- logo-2.png 는 여백이 큰 원본이라 모바일에선 래퍼로 크롭해 글자 높이 ~22px 로 맞춤 -->
+        <span class="relative block h-[22px] w-[70px] overflow-hidden md:hidden">
+          <img src="/logo-2.png" alt="AMU" class="absolute -left-[25px] -top-[17px] h-auto w-[119px] max-w-none">
+        </span>
+        <img src="/logo-2.png" alt="AMU" class="hidden h-16 w-auto md:block">
       </NuxtLink>
 
       <nav class="hidden md:flex items-center gap-14 text-base font-bold">
@@ -232,12 +237,21 @@ watch(() => route.fullPath, () => {
         </UDropdownMenu>
 
         <button
-          class="ml-1 flex size-9 items-center justify-center rounded-full bg-neutral-100 md:hidden dark:bg-neutral-800"
+          type="button"
+          class="flex size-11 items-center justify-center rounded-full sm:hidden"
+          aria-label="검색"
+          @click="searchOpen = true"
+        >
+          <UIcon name="i-lucide-search" class="size-[22px]" />
+        </button>
+
+        <button
+          class="-mr-2 flex size-11 items-center justify-center rounded-full md:hidden"
           :aria-expanded="mobileOpen"
           aria-label="메뉴"
           @click="mobileOpen = !mobileOpen"
         >
-          <UIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-4" />
+          <UIcon :name="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-[22px]" />
         </button>
       </div>
     </div>
@@ -266,7 +280,7 @@ watch(() => route.fullPath, () => {
       </div>
     </div>
 
-    <div v-if="mobileOpen" class="md:hidden">
+    <div v-if="mobileOpen" class="max-h-[calc(100dvh-var(--mobile-header-h))] overflow-y-auto overscroll-contain md:hidden">
       <div class="mx-auto max-w-[1280px] space-y-4 px-6 py-4">
         <form @submit.prevent="submitSearch">
           <div class="flex items-center gap-2 rounded-2xl bg-neutral-100 px-4 py-2 dark:bg-neutral-800">
@@ -285,24 +299,24 @@ watch(() => route.fullPath, () => {
             v-for="item in nav"
             :key="item.to"
             :to="item.to"
-            class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            class="flex min-h-11 items-center rounded-full px-3 hover:bg-neutral-100 dark:hover:bg-neutral-800"
           >
             {{ item.label }}
           </NuxtLink>
           <button
             type="button"
-            class="rounded-full px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            class="flex min-h-11 items-center rounded-full px-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800"
             @click="handleSubmitClick"
           >
             등록하기
           </button>
-          <NuxtLink v-if="user" to="/me/bookmarks" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <NuxtLink v-if="user" to="/me/bookmarks" class="flex min-h-11 items-center rounded-full px-3 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             내 북마크
           </NuxtLink>
-          <NuxtLink v-if="user" to="/settings" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <NuxtLink v-if="user" to="/settings" class="flex min-h-11 items-center rounded-full px-3 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             설정
           </NuxtLink>
-          <NuxtLink v-if="isAdmin" to="/admin" class="rounded-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <NuxtLink v-if="isAdmin" to="/admin" class="flex min-h-11 items-center rounded-full px-3 hover:bg-neutral-100 dark:hover:bg-neutral-800">
             관리자
           </NuxtLink>
 
@@ -315,7 +329,7 @@ watch(() => route.fullPath, () => {
               v-for="link in communityLinks"
               :key="link.to"
               :to="link.to"
-              class="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              class="flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
             >
               <UIcon :name="link.icon" class="size-4 text-neutral-500" />
               {{ link.label }}
@@ -332,7 +346,7 @@ watch(() => route.fullPath, () => {
                 v-for="c in categories"
                 :key="c.slug"
                 :to="`/categories/${c.slug}`"
-                class="rounded-full px-3 py-2 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                class="flex min-h-11 items-center rounded-full px-3 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
               >
                 {{ c.name }}
               </NuxtLink>
@@ -364,5 +378,6 @@ watch(() => route.fullPath, () => {
         </div>
       </div>
     </div>
+    <MobileSearchOverlay v-model:open="searchOpen" />
   </header>
 </template>

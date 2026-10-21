@@ -21,6 +21,7 @@ useSchemaOrg([
       <NuxtPage />
     </main>
     <TheFooter />
+    <MobileTabBar />
     <ClientOnly>
       <CookieConsent />
       <FlashToast />

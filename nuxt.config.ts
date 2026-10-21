@@ -69,6 +69,7 @@ export default defineNuxtConfig({
       ],
       // 전역 OG 이미지 fallback. 특정 페이지가 ogImage 를 지정하면 그게 우선.
       meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { property: 'og:image', content: '/og-default.png' },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
