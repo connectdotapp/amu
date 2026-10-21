@@ -105,7 +105,14 @@ export default defineNuxtConfig({
       // Cloud Functions ADC 로는 VueFire 가 자동 초기화를 못 해서 /api/__session 이 401 을 뱉고 로그인 흐름이 실패했음.
       // 현재는 모든 auth 체크를 클라이언트 사이드로 돌림 (admin 페이지는 하이드레이션 이후 가드).
       sessionCookie: false
-    }
+    },
+    // VueFire 의 admin 플러그인이 SSR 중 getAuth() 를 호출하므로
+    // Firebase Admin SDK 를 초기화할 자격증명이 필요하다.
+    // - 로컬: LOCAL_SERVICE_ACCOUNT_PATH 로 지정한 JSON 파일 경로를 넘긴다.
+    // - 프로덕션 (Cloud Functions): 환경변수가 없으면 undefined 로 두어 ADC 자동 인증을 유도한다.
+    admin: process.env.LOCAL_SERVICE_ACCOUNT_PATH
+      ? { serviceAccount: process.env.LOCAL_SERVICE_ACCOUNT_PATH }
+      : undefined
   },
 
   eslint: {
