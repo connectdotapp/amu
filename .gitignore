@@ -32,3 +32,9 @@ firestore-debug.log*
 ui-debug.log*
 service-account*.json
 *-firebase-adminsdk-*.json
+
+# Puppeteer screenshots (output artifacts)
+screenshots/
+
+# Local patches
+*.patch
