@@ -175,7 +175,7 @@ onBeforeUnmount(() => {
          .webp (desktop 1600w) 와 -m.webp (mobile 800w) 를 함께 갱신해야 함. -->
     <section class="pt-4 md:pt-6">
       <div
-        class="relative aspect-[13/5] overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
+        class="relative aspect-[35/9] overflow-hidden rounded-[20px] bg-neutral-100 md:rounded-3xl"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
       >
@@ -350,7 +350,16 @@ onBeforeUnmount(() => {
             </NuxtLink>
           </div>
 
-          <div v-if="t.products.length" class="grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+          <!-- 모바일: 4열 앱스토어형 타일 -->
+          <div v-if="t.products.length" class="-mx-1 grid grid-cols-4 gap-x-2 gap-y-3 md:hidden">
+            <ProductAppTile
+              v-for="p in t.products"
+              :key="`m-${p.id}`"
+              :product="p"
+            />
+          </div>
+          <!-- 데스크톱: 기존 ProductCard 그리드 -->
+          <div v-if="t.products.length" class="hidden gap-2 sm:grid-cols-3 md:grid lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
             <ProductCard
               v-for="p in t.products"
               :key="p.id"
