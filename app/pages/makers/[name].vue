@@ -40,7 +40,7 @@ defineOgImageComponent('Maker', {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px] px-6 pb-24 pt-2">
+  <div class="mx-auto max-w-[900px] px-5 pb-24 pt-2 md:px-6">
     <NuxtLink to="/" class="mb-6 inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-neutral-950 dark:hover:text-neutral-50">
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       둘러보기

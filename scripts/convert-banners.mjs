@@ -5,10 +5,12 @@ import sharp from 'sharp'
 const PUB = resolve(process.cwd(), 'public')
 const banners = ['hero-banner.png', 'hero-banner-2.png', 'hero-banner-3.png', 'hero-banner-4.png', 'hero-banner-5.png']
 
+// 데스크톱 35:9, 모바일 2:1 (서로 다른 비율 — 원본은 데스크톱 기준이므로
+// 모바일 리사이즈는 center crop 됨. 모바일 전용 원본을 쓰려면 별도 파이프라인 필요.)
 const DESKTOP_W = 1600
-const DESKTOP_H = Math.round(1600 * 9 / 35) // 35:9 aspect
-const MOBILE_W = 800
-const MOBILE_H = Math.round(800 * 9 / 35)
+const DESKTOP_H = Math.round(1600 * 9 / 35)
+const MOBILE_W = 1200
+const MOBILE_H = Math.round(1200 / 2) // 2:1
 
 console.log(`Target: desktop ${DESKTOP_W}x${DESKTOP_H}, mobile ${MOBILE_W}x${MOBILE_H}`)
 

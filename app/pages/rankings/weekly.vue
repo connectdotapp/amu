@@ -24,29 +24,29 @@ const pricingLabel: Record<string, string> = {
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl px-6 pb-24 pt-2">
+  <div class="mx-auto max-w-3xl px-5 pb-24 pt-2 md:px-6">
     <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-neutral-950 dark:hover:text-neutral-50">
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       둘러보기
     </NuxtLink>
 
-    <header class="mt-6 pb-6">
-      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+    <header class="mt-4 pb-4 md:mt-6 md:pb-6">
+      <h1 class="text-2xl font-bold tracking-tight md:text-4xl">
         인기 순위
       </h1>
-      <p class="mt-3 text-sm text-neutral-500">
+      <p class="mt-2 text-xs text-neutral-500 md:mt-3 md:text-sm">
         누적 업보트 기준으로 집계해요
       </p>
     </header>
 
-    <ol v-if="ranked.length" class="mt-4 flex flex-col gap-2">
+    <ol v-if="ranked.length" class="mt-2 flex flex-col gap-1.5 md:mt-4 md:gap-2">
       <li v-for="(p, i) in ranked" :key="p.id">
         <NuxtLink
           :to="`/products/${p.slug || p.id}`"
-          class="flex items-center gap-5 rounded-3xl bg-neutral-100 p-5 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+          class="flex items-center gap-3 rounded-2xl bg-neutral-100 p-3 transition hover:bg-neutral-150 md:gap-5 md:rounded-3xl md:p-5 dark:bg-neutral-800 dark:hover:bg-neutral-700"
         >
           <div
-            class="w-8 shrink-0 text-left text-2xl font-bold leading-none tracking-tight tabular-nums sm:text-3xl"
+            class="w-5 shrink-0 text-left text-lg font-bold leading-none tracking-tight tabular-nums md:w-8 md:text-3xl"
             :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
           >
             {{ i + 1 }}
@@ -55,33 +55,33 @@ const pricingLabel: Record<string, string> = {
           <img
             :src="p.thumbnailUrl"
             :alt="p.name"
-            class="size-16 shrink-0 rounded-2xl bg-neutral-50 object-cover sm:size-20"
+            class="size-11 shrink-0 rounded-xl bg-neutral-50 object-cover md:size-20 md:rounded-2xl"
             loading="lazy"
           >
 
           <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2">
-              <h2 class="truncate text-base font-bold tracking-tight sm:text-lg">
+            <div class="flex items-center gap-1.5 md:gap-2">
+              <h2 class="truncate text-sm font-bold tracking-tight md:text-lg">
                 {{ p.name }}
               </h2>
               <span
                 v-if="p.source === 'curated'"
-                class="shrink-0 rounded-full bg-[#0A0A0A] px-2 py-0.5 text-[10px] font-semibold text-white"
+                class="shrink-0 rounded-full bg-[#0A0A0A] px-1.5 py-0.5 text-[9px] font-semibold text-white md:px-2 md:text-[10px]"
               >
                 Pick
               </span>
             </div>
-            <p class="mt-1 line-clamp-1 text-sm text-neutral-500 sm:line-clamp-2">
+            <p class="mt-0.5 line-clamp-1 text-xs text-neutral-500 md:mt-1 md:text-sm md:line-clamp-2">
               {{ p.tagline }}
             </p>
-            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-400">
+            <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-neutral-400 md:mt-2 md:gap-x-3 md:text-xs">
               <span v-if="p.category">{{ p.category }}</span>
               <span v-if="p.pricing" class="text-neutral-300">·</span>
               <span v-if="p.pricing">{{ pricingLabel[p.pricing] || p.pricing }}</span>
             </div>
           </div>
 
-          <div class="hidden shrink-0 flex-col items-end gap-1 text-xs tabular-nums text-neutral-500 sm:flex">
+          <div class="hidden shrink-0 flex-col items-end gap-1 text-xs tabular-nums text-neutral-500 md:flex">
             <span class="inline-flex items-center gap-1 text-sm font-bold text-neutral-950 dark:text-neutral-50">
               <UIcon name="i-lucide-arrow-up" class="size-4" />
               {{ p.upvoteCount ?? 0 }}
@@ -92,7 +92,7 @@ const pricingLabel: Record<string, string> = {
             </span>
           </div>
 
-          <div class="shrink-0 text-right text-sm font-bold tabular-nums text-neutral-950 sm:hidden dark:text-neutral-50">
+          <div class="shrink-0 text-right text-xs font-bold tabular-nums text-neutral-950 md:hidden dark:text-neutral-50">
             ↑ {{ p.upvoteCount ?? 0 }}
           </div>
         </NuxtLink>

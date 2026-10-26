@@ -62,7 +62,7 @@ const remainingSlots = computed(() => MAX_COMPARE - selectedIds.value.length)
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1280px] px-6 py-10">
+  <div class="mx-auto max-w-[1280px] px-5 py-6 md:px-6 md:py-10">
     <header class="mx-auto max-w-3xl text-center">
       <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">비교</h1>
     </header>

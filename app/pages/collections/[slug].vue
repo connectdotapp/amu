@@ -61,7 +61,7 @@ useSchemaOrg([
 </script>
 
 <template>
-  <div class="mx-auto max-w-4xl px-6 py-10">
+  <div class="mx-auto max-w-4xl px-5 py-6 md:px-6 md:py-10">
     <NuxtLink to="/collections" class="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
       <UIcon name="i-lucide-arrow-left" class="size-4" />
       컬렉션

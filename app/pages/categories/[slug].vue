@@ -73,7 +73,7 @@ function scrollBest(dir: -1 | 1) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1280px] px-6 py-10">
+  <div class="mx-auto max-w-[1280px] px-5 py-6 md:px-6 md:py-10">
     <!-- 헤더 -->
     <header>
       <p class="text-xs font-bold uppercase tracking-[0.14em] text-neutral-500">Category</p>

@@ -172,10 +172,11 @@ onBeforeUnmount(() => {
 
     <!-- Hero banner carousel — 5개 자동 전환.
          public/hero-banner-N.png 원본 교체 시 scripts/convert-banners.mjs 재실행해
-         .webp (desktop 1600w) 와 -m.webp (mobile 800w) 를 함께 갱신해야 함. -->
+         .webp (desktop 1600w) 와 -m.webp (mobile 1200w) 를 함께 갱신해야 함.
+         모바일 2:1 (예: 1200x600), 데스크톱 35:9 (예: 1600x411). -->
     <section class="pt-4 md:pt-6">
       <div
-        class="relative aspect-[35/9] overflow-hidden rounded-[20px] bg-neutral-100 md:rounded-3xl"
+        class="relative aspect-[2/1] overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
       >
@@ -197,7 +198,7 @@ onBeforeUnmount(() => {
           <img
             :src="src"
             alt=""
-            class="size-full object-cover object-right md:object-center"
+            class="size-full object-cover object-center"
             :fetchpriority="i === 0 ? 'high' : 'auto'"
             :loading="i === 0 ? 'eager' : 'lazy'"
             decoding="async"
@@ -223,11 +224,11 @@ onBeforeUnmount(() => {
 
     <!-- 모바일: 실시간 순위를 히어로 바로 아래로 (데스크톱은 사이드바 유지) -->
     <section class="pt-6 md:hidden">
-      <div class="flex items-end justify-between">
+      <div class="mb-3 flex items-end justify-between gap-4">
         <h2 class="text-xl font-bold tracking-tight">
           실시간 순위
         </h2>
-        <NuxtLink to="/rankings/weekly" class="flex min-h-11 items-center text-xs text-neutral-500">
+        <NuxtLink to="/rankings/weekly" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
           더 보기 →
         </NuxtLink>
       </div>
@@ -255,13 +256,13 @@ onBeforeUnmount(() => {
     <div class="flex flex-col gap-10 lg:grid lg:grid-cols-[1fr_320px]">
       <!-- MAIN CONTENT -->
       <div class="min-w-0 w-full">
-        <!-- Hero -->
-        <section class="pt-10 pb-14 sm:pt-14">
-          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+        <!-- Hero — 모바일은 h1 축소 + 상/하 간격 압축, 검색창은 데스크톱 전용 (모바일은 상단 돋보기 아이콘 → overlay) -->
+        <section class="pt-6 pb-8 md:pt-14 md:pb-14">
+          <h1 class="text-2xl font-bold tracking-tight md:text-4xl lg:text-5xl">
             새로운 발견
           </h1>
 
-          <form class="mt-8 max-w-xl" @submit.prevent="submitHeroSearch">
+          <form class="mt-6 hidden max-w-xl md:block md:mt-8" @submit.prevent="submitHeroSearch">
             <div class="flex items-center gap-3 rounded-full bg-neutral-100 px-5 py-3.5 dark:bg-neutral-800">
               <svg
                 viewBox="0 0 24 24"
@@ -292,14 +293,14 @@ onBeforeUnmount(() => {
             <div>
               <h2 class="text-xl font-bold tracking-tight sm:text-2xl">이 주의 컬렉션</h2>
             </div>
-            <NuxtLink to="/collections" class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
+            <NuxtLink to="/collections" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
               전체 보기 →
             </NuxtLink>
           </div>
 
           <NuxtLink
             :to="`/collections/${weeklyCollection.slug}`"
-            class="group relative block overflow-hidden rounded-3xl bg-neutral-950 p-8 text-white transition"
+            class="group relative block overflow-hidden rounded-2xl bg-neutral-950 p-5 text-white transition md:rounded-3xl md:p-8"
           >
             <!-- 알록달록 작은 포인트들 -->
             <span class="absolute right-10 top-7 size-3 rounded-full bg-[#FFD60A] transition-transform duration-700 group-hover:translate-y-1" />
@@ -344,7 +345,7 @@ onBeforeUnmount(() => {
             </div>
             <NuxtLink
               :to="`/?q=${encodeURIComponent(t.keywords[0]!)}`"
-              class="shrink-0 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50"
+              class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50"
             >
               전체 보기 →
             </NuxtLink>
@@ -384,7 +385,7 @@ onBeforeUnmount(() => {
               v-for="p in makerStories"
               :key="p.id"
               :to="`/products/${p.slug || p.id}?tab=maker`"
-              class="group flex flex-col gap-4 rounded-3xl bg-neutral-100 p-6 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+              class="group flex flex-col gap-3 rounded-2xl bg-neutral-100 p-4 transition hover:bg-neutral-150 md:gap-4 md:rounded-3xl md:p-6 dark:bg-neutral-800 dark:hover:bg-neutral-700"
             >
               <div class="flex items-center gap-3">
                 <img
