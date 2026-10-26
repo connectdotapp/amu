@@ -174,7 +174,7 @@ onBeforeUnmount(() => {
          public/hero-banner-N.png 원본 교체 시 scripts/convert-banners.mjs 재실행해
          .webp (desktop 1600w) 와 -m.webp (mobile 1200w) 를 함께 갱신해야 함.
          모바일 2:1 (예: 1200x600), 데스크톱 35:9 (예: 1600x411). -->
-    <section class="pt-4 md:pt-6">
+    <section class="pt-6 md:pt-8">
       <div
         class="relative aspect-[2/1] overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
         @mouseenter="heroPaused = true"
@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- 모바일: 실시간 순위를 히어로 바로 아래로 (데스크톱은 사이드바 유지) -->
-    <section class="pt-6 md:hidden">
+    <section class="pt-8 md:hidden">
       <div class="mb-3 flex items-end justify-between gap-4">
         <h2 class="text-xl font-bold tracking-tight">
           실시간 순위
@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
       <!-- MAIN CONTENT -->
       <div class="min-w-0 w-full">
         <!-- Hero — 모바일은 h1 축소 + 상/하 간격 압축, 검색창은 데스크톱 전용 (모바일은 상단 돋보기 아이콘 → overlay) -->
-        <section class="pt-6 pb-8 md:pt-14 md:pb-14">
+        <section class="pt-8 pb-10 md:pt-14 md:pb-14">
           <h1 class="text-2xl font-bold tracking-tight md:text-4xl lg:text-5xl">
             새로운 발견
           </h1>
@@ -288,7 +288,7 @@ onBeforeUnmount(() => {
         </section>
 
         <!-- 이 주의 컬렉션 -->
-        <section v-if="weeklyCollection" class="pb-14">
+        <section v-if="weeklyCollection" class="pb-16 md:pb-14">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold tracking-tight sm:text-2xl">이 주의 컬렉션</h2>
@@ -337,7 +337,7 @@ onBeforeUnmount(() => {
         <section
           v-for="t in themedSections"
           :key="t.key"
-          class="pb-14"
+          class="pb-16 md:pb-14"
         >
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
@@ -373,7 +373,7 @@ onBeforeUnmount(() => {
         </section>
 
         <!-- 메이커 이야기 -->
-        <section v-if="makerStories.length" class="pb-14">
+        <section v-if="makerStories.length" class="pb-16 md:pb-14">
           <div class="mb-5 flex items-end justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
