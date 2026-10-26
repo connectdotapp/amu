@@ -43,6 +43,18 @@ function clearAll() {
   router.push({ query: {} })
 }
 
+// "신상 앱 소개" 섹션의 필터 칩 — pricing + category 혼합.
+// 각 칩의 type 에 따라 setFilter 가 올바른 쿼리 키에 매핑됨.
+const quickFilters = [
+  { label: '유료', type: 'pricing' as const, value: 'paid' },
+  { label: '무료', type: 'pricing' as const, value: 'free' },
+  { label: '라이프', type: 'category' as const, value: 'lifestyle' },
+  { label: '게임', type: 'category' as const, value: 'game' },
+  { label: '카메라', type: 'category' as const, value: 'photo-video' },
+  { label: 'SNS', type: 'category' as const, value: 'social' },
+  { label: '엔터테인먼트', type: 'category' as const, value: 'entertainment' }
+]
+
 const pricingOptions = [
   { label: '무료', value: 'free' },
   { label: '프리미엄', value: 'freemium' },
@@ -443,6 +455,16 @@ onBeforeUnmount(() => {
             <UIcon name="i-lucide-x" class="size-3" />
           </button>
           <button
+            v-if="filters.category"
+            class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+            @click="setFilter('category', filters.category)"
+          >
+            {{ quickFilters.find(f => f.type === 'category' && f.value === filters.category)?.label
+              || categories?.find(c => c.slug === filters.category)?.name
+              || filters.category }}
+            <UIcon name="i-lucide-x" class="size-3" />
+          </button>
+          <button
             class="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-950 dark:hover:text-neutral-50"
             @click="clearAll"
           >
@@ -473,22 +495,21 @@ onBeforeUnmount(() => {
             </button>
           </nav>
 
-          <!-- Pricing chips row + count -->
+          <!-- Quick filter chips (pricing + category 혼합) + count -->
           <div class="no-scrollbar mt-4 flex items-center gap-x-2 gap-y-1.5 overflow-x-auto md:flex-wrap md:overflow-visible">
-            <span class="mr-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500">Pricing</span>
             <button
-              v-for="p in pricingOptions"
-              :key="p.value"
+              v-for="f in quickFilters"
+              :key="`${f.type}-${f.value}`"
               type="button"
               class="h-[29px] shrink-0 rounded-full px-3 text-[12.5px] font-semibold transition md:h-auto md:py-1 md:text-xs"
-              :class="filters.pricing === p.value
+              :class="(f.type === 'pricing' ? filters.pricing : filters.category) === f.value
                 ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950'
                 : 'bg-neutral-100 text-neutral-500 hover:text-neutral-950 dark:bg-neutral-800 dark:hover:text-neutral-50'"
-              @click="setFilter('pricing', p.value)"
+              @click="setFilter(f.type, f.value)"
             >
-              {{ p.label }}
+              {{ f.label }}
             </button>
-            <span class="ml-auto text-xs tabular-nums text-neutral-400">{{ products.length }}개</span>
+            <span class="ml-auto shrink-0 pl-2 text-xs tabular-nums text-neutral-400">{{ products.length }}개</span>
           </div>
 
           <!-- Cards grid -->
