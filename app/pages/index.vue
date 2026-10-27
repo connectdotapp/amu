@@ -154,6 +154,28 @@ function nextHero() {
   heroIndex.value = (heroIndex.value + 1) % heroBanners.length
 }
 
+function prevHero() {
+  heroIndex.value = (heroIndex.value - 1 + heroBanners.length) % heroBanners.length
+}
+
+// 모바일 스와이프 — 50px 넘기면 좌/우 전환. passive touchstart 로 스크롤 성능 유지.
+const touchStartX = ref<number | null>(null)
+function onHeroTouchStart(e: TouchEvent) {
+  touchStartX.value = e.touches[0]?.clientX ?? null
+  heroPaused.value = true
+}
+function onHeroTouchEnd(e: TouchEvent) {
+  const start = touchStartX.value
+  touchStartX.value = null
+  heroPaused.value = false
+  if (start === null) return
+  const endX = e.changedTouches[0]?.clientX ?? start
+  const delta = endX - start
+  if (Math.abs(delta) < 50) return
+  if (delta < 0) nextHero()
+  else prevHero()
+}
+
 onMounted(() => {
   heroTimer = setInterval(() => {
     if (!heroPaused.value) nextHero()
@@ -188,9 +210,11 @@ onBeforeUnmount(() => {
          모바일 2:1 (예: 1200x600), 데스크톱 35:9 (예: 1600x411). -->
     <section class="pt-6 md:pt-8">
       <div
-        class="relative aspect-[2/1] overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
+        class="relative aspect-[2/1] touch-pan-y overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
         @mouseenter="heroPaused = true"
         @mouseleave="heroPaused = false"
+        @touchstart.passive="onHeroTouchStart"
+        @touchend="onHeroTouchEnd"
       >
         <picture
           v-for="(src, i) in heroBanners"
