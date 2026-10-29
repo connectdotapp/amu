@@ -99,8 +99,9 @@ export function useProductsByMaker(maker: string) {
         const items = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Product)
         return sortByPublishedDesc(items)
       } catch (e) {
+        // 빈 배열로 삼키면 페이지가 "없는 메이커" 로 오인해 404 를 낸다.
         console.warn('[useProductsByMaker] fetch failed:', e)
-        return []
+        throw e
       }
     },
     { default: () => [] }
@@ -115,9 +116,12 @@ export function useProductById(id: string) {
         const db = useFirestore()
         const snap = await getDoc(doc(db, 'products', id))
         return snap.exists() ? ({ id: snap.id, ...snap.data() } as Product) : null
-      } catch (e) {
+      } catch (e: any) {
+        // 비공개/미존재 문서는 보안 룰상 permission-denied → "없음" 으로 취급.
+        // 그 외(네트워크 등)는 error 로 올려 페이지가 404 대신 500 을 내도록 한다.
+        if (e?.code === 'permission-denied') return null
         console.warn('[useProductById] fetch failed:', e)
-        return null
+        throw e
       }
     },
     { default: () => null }

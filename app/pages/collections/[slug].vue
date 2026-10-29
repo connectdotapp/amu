@@ -6,7 +6,9 @@ const route = useRoute()
 const slug = String(route.params.slug)
 const site = useSiteConfig()
 
-const { data: collectionDoc } = useCollectionBySlug(slug)
+const { data: collectionDoc, error } = await useCollectionBySlug(slug)
+if (error.value) throw createError({ statusCode: 503, statusMessage: '잠시 후 다시 시도해 주세요', fatal: true })
+if (!collectionDoc.value) throw createError({ statusCode: 404, statusMessage: '컬렉션을 찾을 수 없어요', fatal: true })
 
 // Fetch products in this collection
 const { data: products } = await useAsyncData<Product[]>(

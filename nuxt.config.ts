@@ -42,6 +42,20 @@ export default defineNuxtConfig({
     enabled: false
   },
 
+  // Firestore 문서 ID 는 대소문자를 구분하므로 canonical 소문자 변환을 끈다.
+  // (기본값 true 면 /products/AbC → canonical /products/abc 로 나가 빈 페이지를 대표 URL 로 지정하게 됨)
+  seo: {
+    canonicalLowercase: false
+  },
+
+  // 동적 URL(프로덕트·컬렉션·카테고리·메이커)은 server/api/__sitemap__/urls.ts 에서 Firestore 로 생성.
+  // robots 모듈이 꺼져 있어 페이지별 noindex 를 읽지 못하므로 비공개 경로는 여기서 직접 제외.
+  sitemap: {
+    sources: ['/api/__sitemap__/urls'],
+    exclude: ['/login', '/settings', '/submit', '/compare', '/me/**', '/auth/**', '/admin/**'],
+    cacheMaxAgeSeconds: 3600
+  },
+
   // OG 이미지 동적 생성은 일시 비활성화. satori + @resvg/resvg-js 설치 시 Windows 바이너리가
   // lockfile 에 고정돼 Firebase 리눅스 빌드에서 EBADPLATFORM 발생. 추후 pnpm 전환 또는 Nitro
   // externals 설정으로 재도입 예정.
@@ -102,9 +116,15 @@ export default defineNuxtConfig({
     fallback: 'light'
   },
 
+  // Firebase Hosting CDN 은 s-maxage 가 있는 public 응답만 캐시한다. isr 옵션만으로는
+  // Cache-Control: private 가 나가 매 요청이 Cloud Functions 로 향하므로 헤더를 명시.
   routeRules: {
-    '/': { prerender: false, isr: 60 },
-    '/products/**': { isr: 300 },
+    '/': { headers: { 'cache-control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300' } },
+    '/products/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
+    '/collections/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
+    '/categories/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
+    '/makers/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
+    '/rankings/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
     '/admin/**': { ssr: true, robots: false }
   },
 

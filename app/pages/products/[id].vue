@@ -5,7 +5,10 @@ import type { Platform } from '~/types/product'
 const route = useRoute()
 const id = String(route.params.id)
 
-const { data: product } = useProductById(id)
+const { data: product, error } = await useProductById(id)
+// 조회 실패는 503(크롤러 재시도·CDN 미캐시), 문서가 없거나 비공개면 404.
+if (error.value) throw createError({ statusCode: 503, statusMessage: '잠시 후 다시 시도해 주세요', fatal: true })
+if (!product.value) throw createError({ statusCode: 404, statusMessage: '프로덕트를 찾을 수 없어요', fatal: true })
 
 const site = useSiteConfig()
 

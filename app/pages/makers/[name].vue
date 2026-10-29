@@ -2,7 +2,9 @@
 const route = useRoute()
 const makerName = decodeURIComponent(String(route.params.name))
 
-const { data: products } = useProductsByMaker(makerName)
+const { data: products, error } = await useProductsByMaker(makerName)
+if (error.value) throw createError({ statusCode: 503, statusMessage: '잠시 후 다시 시도해 주세요', fatal: true })
+if (!products.value?.length) throw createError({ statusCode: 404, statusMessage: '메이커를 찾을 수 없어요', fatal: true })
 
 const totalUpvotes = computed(() =>
   (products.value || []).reduce((sum, p) => sum + (p.upvoteCount || 0), 0)

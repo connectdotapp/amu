@@ -4,8 +4,12 @@ import type { Product } from '~/types/product'
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
-const { data: categories } = useCategories()
+const { data: categories } = await useCategories()
 const category = computed(() => (categories.value || []).find(c => c.slug === slug.value))
+// useCategories 는 실패 시 빈 배열을 돌려주므로, 목록을 받았는데 slug 가 없을 때만 404.
+if (categories.value?.length && !category.value) {
+  throw createError({ statusCode: 404, statusMessage: '카테고리를 찾을 수 없어요', fatal: true })
+}
 
 useSeoMeta({
   title: () => category.value ? `${category.value.name} 추천 앱` : '카테고리',

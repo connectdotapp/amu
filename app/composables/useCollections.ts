@@ -77,9 +77,10 @@ export function useCollectionBySlug(slug: string) {
         if (!snap.exists()) return null
         const data = { id: snap.id, ...snap.data() } as Collection
         return data.status === 'published' ? data : null
-      } catch (e) {
+      } catch (e: any) {
+        if (e?.code === 'permission-denied') return null
         console.warn('[useCollectionBySlug] fetch failed:', e)
-        return null
+        throw e
       }
     },
     { default: () => null }
