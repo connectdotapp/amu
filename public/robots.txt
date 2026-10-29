@@ -1,0 +1,18 @@
+# amuhunter.com — robots.txt
+# 전체 공개 크롤 허용. 관리자/인증 영역만 차단.
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/
+
+# 사이트맵 위치 (자동 생성)
+Sitemap: https://amuhunter.com/sitemap.xml
+
+# 네이버 검색 봇 명시 (한국 검색 커버리지)
+User-agent: Yeti
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/
