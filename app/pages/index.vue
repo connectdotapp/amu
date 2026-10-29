@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ProductFilters } from '~/composables/useProducts'
-
 useSeoMeta({
   title: '오늘의 아무',
   description: '오늘의 앱·웹·프로그램. 아무거나 소개하지 않아요.'
@@ -16,107 +14,32 @@ const route = useRoute()
 const router = useRouter()
 
 const { data: allProducts } = useAllPublishedProducts(200)
-const { data: collections } = usePublishedCollections(6)
 const { data: categories } = useCategories()
 
-const filters = computed<ProductFilters>(() => ({
-  q: (route.query.q as string) || '',
-  category: (route.query.category as string) || '',
-  pricing: (route.query.pricing as string) || '',
-  collection: (route.query.collection as string) || '',
-  sort: ((route.query.sort as string) || 'latest') as ProductFilters['sort']
-}))
-
-const products = computed(() => filterAndSortProducts(allProducts.value || [], filters.value))
-
-const hasActiveFilter = computed(() =>
-  !!(filters.value.q || filters.value.category || filters.value.pricing || filters.value.collection)
-)
-
-function setFilter(key: keyof ProductFilters, value: string | undefined) {
-  const current = filters.value[key]
-  const next = current === value ? undefined : value
-  router.push({ query: { ...route.query, [key]: next || undefined } })
-}
-
-function clearAll() {
-  router.push({ query: {} })
-}
-
-// "신상 앱 소개" 섹션의 필터 칩 — pricing + category 혼합.
-// 각 칩의 type 에 따라 setFilter 가 올바른 쿼리 키에 매핑됨.
-const quickFilters = [
-  { label: '유료', type: 'pricing' as const, value: 'paid' },
-  { label: '무료', type: 'pricing' as const, value: 'free' },
-  { label: '라이프', type: 'category' as const, value: 'lifestyle' },
-  { label: '게임', type: 'category' as const, value: 'game' },
-  { label: '카메라', type: 'category' as const, value: 'photo-video' },
-  { label: 'SNS', type: 'category' as const, value: 'social' },
-  { label: '엔터테인먼트', type: 'category' as const, value: 'entertainment' }
-]
-
-const pricingOptions = [
-  { label: '무료', value: 'free' },
-  { label: '프리미엄', value: 'freemium' },
-  { label: '유료', value: 'paid' },
-  { label: '구독', value: 'subscription' }
-]
-
-const sortTabs = [
-  { value: 'latest', label: '최신' },
-  { value: 'popular', label: '인기' },
-  { value: 'pick', label: 'AMU Pick' }
-] as const
-
-const pricingLabelKR: Record<string, string> = {
-  free: '무료', freemium: '프리미엄', paid: '유료', subscription: '구독'
-}
-
-// 이 주의 컬렉션 — 가장 최근 발행된 컬렉션 하나.
-const weeklyCollection = computed(() => (collections.value || [])[0] || null)
-
-// Weekly ranking — top 7 by upvoteCount
+// 순위용 — 상위 N개
 const rankedProducts = computed(() =>
   [...(allProducts.value || [])]
     .sort((a, b) => (b.upvoteCount || 0) - (a.upvoteCount || 0))
-    .slice(0, 7)
 )
 
-// 주제별 홈 섹션. category/tags/name/tagline 을 느슨하게 매칭 — 초기 데이터
-// 적을 때도 섹션이 살아 보이게. 첫 키워드가 "전체 보기" 링크의 ?q 로 쓰임.
-type HomeTheme = { key: string, eyebrow: string, title: string, keywords: string[] }
-
-const homeThemes: HomeTheme[] = [
-  { key: 'lifestyle', eyebrow: 'Lifestyle', title: '라이프스타일', keywords: ['라이프', 'life', 'lifestyle', '일상', '일기', '다이어리', '서비스', 'service', '예약', '매칭', '배달', '취미', 'hobby', '사진'] },
-  { key: 'productivity', eyebrow: 'Productivity', title: '생산성', keywords: ['생산성', 'productivity', '노션', 'notion', 'linear', '효율', '업무', '관리', '할일', 'todo', '시간', '포커스'] },
-  { key: 'entertainment', eyebrow: 'Entertainment', title: '엔터테인먼트', keywords: ['엔터테인먼트', 'entertainment', '영화', '드라마', '음악', 'music', '만화', '웹툰', '팬', 'ott', '릴스'] }
-]
-
-function matchesTheme(p: { name?: string, tagline?: string, category?: string, tags?: string[] }, keywords: string[]) {
-  const haystack = `${p.name ?? ''} ${p.tagline ?? ''} ${p.category ?? ''} ${(p.tags || []).join(' ')}`.toLowerCase()
-  return keywords.some(k => haystack.includes(k.toLowerCase()))
-}
-
-const themedSections = computed(() => {
-  const all = allProducts.value || []
-  return homeThemes.map(t => ({
-    ...t,
-    products: all.filter(p => matchesTheme(p, t.keywords)).slice(0, 5)
-  }))
+// 이번 주의 아무 3 — AMU Pick 우선, 모자라면 업보트 순으로 보충
+const weeklyTop3 = computed(() => {
+  const picks = (allProducts.value || []).filter(p => p.source === 'curated')
+  const sortedPicks = [...picks].sort((a, b) => (b.upvoteCount || 0) - (a.upvoteCount || 0))
+  const fill = rankedProducts.value.filter(p => !sortedPicks.find(x => x.id === p.id))
+  return [...sortedPicks, ...fill].slice(0, 3)
 })
 
-// 메이커 이야기 — makerStory 가 채워진 프로덕트만. 최신 publishedAt 순.
-const makerStories = computed(() => {
-  const all = allProducts.value || []
-  return all
-    .filter(p => {
-      const m = p.makerStory
-      return !!m && !!(m.videoUrl || m.oneLiner || m.qa?.some(x => x.a?.trim()))
-    })
-    .slice(0, 4)
+// 큐레이터의 숨은 Pick — Top 3 다음 2개
+const hiddenPicks = computed(() => {
+  const top3Ids = new Set(weeklyTop3.value.map(p => p.id))
+  return rankedProducts.value.filter(p => !top3Ids.has(p.id)).slice(0, 2)
 })
 
-// Hero search — auto-focus when arriving via ?focus=search
+// 인기 순위 전체 (상위 10)
+const topRanking = computed(() => rankedProducts.value.slice(0, 10))
+
+// Hero search
 const heroSearchInput = ref((route.query.q as string) || '')
 watch(() => route.query.q, (v) => { heroSearchInput.value = (v as string) || '' })
 
@@ -138,7 +61,7 @@ onMounted(() => {
   }
 })
 
-// 히어로 배너 캐러셀. public/hero-banner-N.png 파일을 교체하면 즉시 반영.
+// 히어로 배너 캐러셀 — 유지
 const heroBanners = [
   '/hero-banner.png',
   '/hero-banner-2.png',
@@ -150,15 +73,18 @@ const heroIndex = ref(0)
 const heroPaused = ref(false)
 let heroTimer: ReturnType<typeof setInterval> | null = null
 
-function nextHero() {
-  heroIndex.value = (heroIndex.value + 1) % heroBanners.length
-}
+function nextHero() { heroIndex.value = (heroIndex.value + 1) % heroBanners.length }
+function prevHero() { heroIndex.value = (heroIndex.value - 1 + heroBanners.length) % heroBanners.length }
 
-function prevHero() {
-  heroIndex.value = (heroIndex.value - 1 + heroBanners.length) % heroBanners.length
-}
+onMounted(() => {
+  heroTimer = setInterval(() => {
+    if (!heroPaused.value) nextHero()
+  }, 5000)
+})
 
-// 모바일 스와이프 — 50px 넘기면 좌/우 전환. passive touchstart 로 스크롤 성능 유지.
+onBeforeUnmount(() => { if (heroTimer) clearInterval(heroTimer) })
+
+// 모바일 스와이프
 const touchStartX = ref<number | null>(null)
 function onHeroTouchStart(e: TouchEvent) {
   touchStartX.value = e.touches[0]?.clientX ?? null
@@ -176,20 +102,47 @@ function onHeroTouchEnd(e: TouchEvent) {
   else prevHero()
 }
 
-onMounted(() => {
-  heroTimer = setInterval(() => {
-    if (!heroPaused.value) nextHero()
-  }, 5000)
-})
+// 큐레이터 노트 — 정적 콘텐츠. 운영 시 CMS/컬렉션으로 이관 예정.
+const curatorNote = {
+  week: 23,
+  title: '이번 주, 저는 32개 중 3개를 고르기 위해\n42시간을 썼습니다.',
+  body: '대형 서비스 광고가 밀려오는 세상에서, 숨은 작품을 발굴하는 일은 여전히 손으로 하는 일이에요. 매주 월요일 오전 10시의 \'아무 3\' 뒤엔 긴 밤과 수십 번의 시연이 있어요. 이번 주 이야기를 전해드려요.',
+  meta: [
+    { icon: '⏱', label: '큐레이션', value: '42시간' },
+    { icon: '📱', label: '시연', value: '32개' },
+    { icon: '✂', label: '선정', value: '3개' }
+  ]
+}
 
-onBeforeUnmount(() => {
-  if (heroTimer) clearInterval(heroTimer)
-})
+// 아무 매거진 — 정적 플레이스홀더. 운영 시 /magazine 또는 Firestore 'posts' 로 전환.
+const magazine = [
+  {
+    cat: '큐레이션 비교',
+    title: '디스콰이엇, 아무, 프로덕트헌트 — 당신이 올려야 할 곳',
+    sub: '인디메이커의 플랫폼 선택 가이드',
+    gradient: 'from-pink-100 to-pink-200',
+    to: '#'
+  },
+  {
+    cat: '메이커 인터뷰',
+    title: '"안와요"는 어떻게 2주 만에 1,000명을 모았나',
+    sub: '쇼핑 금고 앱 메이커 인터뷰',
+    gradient: 'from-blue-100 to-blue-300',
+    to: '#'
+  },
+  {
+    cat: '가이드',
+    title: '앱 아이콘 36px에서 살아남는 법',
+    sub: 'iOS 홈 화면 디자인 치트시트',
+    gradient: 'from-emerald-100 to-emerald-300',
+    to: '#'
+  }
+]
 </script>
 
 <template>
   <div class="mx-auto max-w-[1280px] px-5 md:px-6">
-    <!-- 모바일 카테고리 텍스트 탭 (데스크톱 헤더 nav 스타일: 굵은 텍스트, 회색 → 활성 검정) -->
+    <!-- 유지: 모바일 카테고리 탭 -->
     <nav class="no-scrollbar -mx-5 flex gap-[22px] overflow-x-auto whitespace-nowrap border-b border-neutral-100 px-5 text-[15px] font-bold text-neutral-400 md:hidden dark:border-neutral-800">
       <NuxtLink to="/" class="flex min-h-11 shrink-0 items-center text-neutral-950 shadow-[inset_0_-2px_0_#0A0A0A] dark:text-neutral-50">
         전체
@@ -204,10 +157,7 @@ onBeforeUnmount(() => {
       </NuxtLink>
     </nav>
 
-    <!-- Hero banner carousel — 5개 자동 전환.
-         public/hero-banner-N.png 원본 교체 시 scripts/convert-banners.mjs 재실행해
-         .webp (desktop 1600w) 와 -m.webp (mobile 1200w) 를 함께 갱신해야 함.
-         모바일 2:1 (예: 1200x600), 데스크톱 35:9 (예: 1600x411). -->
+    <!-- 유지: 히어로 배너 캐러셀 -->
     <section class="pt-6 md:pt-8">
       <div
         class="relative aspect-[2/1] touch-pan-y overflow-hidden rounded-[20px] bg-neutral-100 md:aspect-[35/9] md:rounded-3xl"
@@ -241,7 +191,6 @@ onBeforeUnmount(() => {
           >
         </picture>
 
-        <!-- 점선 인디케이터 -->
         <div class="absolute bottom-3 left-4 flex items-center gap-1.5 md:bottom-5 md:left-1/2 md:-translate-x-1/2 md:gap-2">
           <button
             v-for="(_, i) in heroBanners"
@@ -258,397 +207,227 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- 모바일: 실시간 순위를 히어로 바로 아래로 (데스크톱은 사이드바 유지) -->
-    <section class="pt-8 md:hidden">
-      <div class="mb-3 flex items-end justify-between gap-4">
-        <h2 class="text-xl font-bold tracking-tight">
-          실시간 순위
-        </h2>
-        <NuxtLink to="/rankings/weekly" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
-          더 보기 →
+    <!-- 유지: 새로운 발견 h1 + 검색창 -->
+    <section class="pt-8 pb-10 md:pt-14 md:pb-14">
+      <h1 class="text-2xl font-bold tracking-tight md:text-4xl lg:text-5xl">
+        새로운 발견
+      </h1>
+
+      <form class="mt-6 hidden max-w-xl md:block md:mt-8" @submit.prevent="submitHeroSearch">
+        <div class="flex items-center gap-3 rounded-full bg-neutral-100 px-5 py-3.5 dark:bg-neutral-800">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="size-5 shrink-0 text-neutral-950 dark:text-neutral-50"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7.5" />
+            <path d="m20.5 20.5-4.3-4.3" />
+          </svg>
+          <input
+            ref="heroSearchRef"
+            v-model="heroSearchInput"
+            type="text"
+            class="min-w-0 flex-1 bg-transparent text-base outline-none md:text-[15px]"
+          >
+        </div>
+      </form>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- NEW: 이번 주의 아무 3                                         -->
+    <!-- ============================================================ -->
+    <section class="pb-16 md:pb-14">
+      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">이번 주의 아무 3</h2>
+          <p class="mt-1 text-xs text-neutral-500 md:text-sm">큐레이터가 월요일 오전 10시에 발표한 이번 주 세 작품</p>
+        </div>
+        <NuxtLink to="/collections" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
+          지난 주 아무 →
         </NuxtLink>
       </div>
-      <ol v-if="rankedProducts.length">
-        <li v-for="(p, i) in rankedProducts.slice(0, 5)" :key="p.id">
-          <NuxtLink :to="`/products/${p.slug || p.id}`" class="flex h-14 items-center gap-3 active:opacity-70">
-            <span
-              class="w-[18px] shrink-0 text-[17px] font-bold"
-              :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
-            >{{ i + 1 }}</span>
-            <img :src="p.thumbnailUrl" :alt="p.name" class="size-10 shrink-0 rounded-xl bg-neutral-100 object-cover">
-            <div class="min-w-0 flex-1">
-              <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
-              <div class="mt-0.5 truncate text-xs text-neutral-400">{{ p.tagline }}</div>
-            </div>
-            <span class="shrink-0 text-xs font-bold tabular-nums text-neutral-400">↑ {{ p.upvoteCount ?? 0 }}</span>
-          </NuxtLink>
-        </li>
-      </ol>
-      <p v-else class="py-4 text-center text-sm text-neutral-400">
-        아직 순위가 없어요
+
+      <div v-if="weeklyTop3.length" class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
+        <NuxtLink
+          v-for="(p, i) in weeklyTop3"
+          :key="p.id"
+          :to="`/products/${p.slug || p.id}`"
+          class="group relative block overflow-hidden rounded-[20px] bg-neutral-50 p-5 transition hover:-translate-y-0.5 md:rounded-3xl md:p-7 dark:bg-neutral-900"
+        >
+          <span
+            class="absolute right-5 top-4 text-[44px] font-black leading-none tracking-tight md:right-6 md:top-5 md:text-[56px]"
+            :class="i === 0 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-200 dark:text-neutral-800'"
+          >{{ i + 1 }}</span>
+
+          <img
+            :src="p.thumbnailUrl"
+            :alt="p.name"
+            class="size-[60px] rounded-[14px] bg-neutral-100 object-cover md:size-[72px] md:rounded-[18px]"
+          >
+
+          <div class="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
+            <span class="size-1.5 rounded-full bg-[var(--color-amu-pink)]" />
+            AMU PICK #{{ i + 1 }}
+          </div>
+
+          <h3 class="mt-2 text-[17px] font-bold tracking-tight md:text-xl">{{ p.name }}</h3>
+          <p class="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-neutral-500 md:text-sm md:min-h-[44px]">
+            {{ p.tagline }}
+          </p>
+
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-neutral-400">
+            <span>{{ p.category }}<span v-if="p.pricing"> · {{ p.pricing === 'free' ? '무료' : p.pricing === 'paid' ? '유료' : p.pricing === 'freemium' ? '프리미엄' : '구독' }}</span></span>
+            <span class="text-neutral-950 dark:text-neutral-50">↑ {{ p.upvoteCount ?? 0 }}</span>
+          </div>
+        </NuxtLink>
+      </div>
+      <p v-else class="py-10 text-center text-sm text-neutral-400">
+        이번 주 큐레이션 준비 중이에요
       </p>
     </section>
 
-    <div class="flex flex-col gap-10 lg:grid lg:grid-cols-[1fr_320px]">
-      <!-- MAIN CONTENT -->
-      <div class="min-w-0 w-full">
-        <!-- Hero — 모바일은 h1 축소 + 상/하 간격 압축, 검색창은 데스크톱 전용 (모바일은 상단 돋보기 아이콘 → overlay) -->
-        <section class="pt-8 pb-10 md:pt-14 md:pb-14">
-          <h1 class="text-2xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-            새로운 발견
-          </h1>
-
-          <form class="mt-6 hidden max-w-xl md:block md:mt-8" @submit.prevent="submitHeroSearch">
-            <div class="flex items-center gap-3 rounded-full bg-neutral-100 px-5 py-3.5 dark:bg-neutral-800">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.75"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="size-5 shrink-0 text-neutral-950 dark:text-neutral-50"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="7.5" />
-                <path d="m20.5 20.5-4.3-4.3" />
-              </svg>
-              <input
-                ref="heroSearchRef"
-                v-model="heroSearchInput"
-                type="text"
-                class="min-w-0 flex-1 bg-transparent text-base outline-none md:text-[15px]"
-              >
-            </div>
-          </form>
-        </section>
-
-        <!-- 이 주의 컬렉션 -->
-        <section v-if="weeklyCollection" class="pb-16 md:pb-14">
-          <div class="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">이 주의 컬렉션</h2>
-            </div>
-            <NuxtLink to="/collections" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50">
-              전체 보기 →
-            </NuxtLink>
-          </div>
-
-          <NuxtLink
-            :to="`/collections/${weeklyCollection.slug}`"
-            class="group relative block overflow-hidden rounded-2xl bg-neutral-950 p-5 text-white transition md:rounded-3xl md:p-8"
-          >
-            <!-- 알록달록 작은 포인트들 -->
-            <span class="absolute right-10 top-7 size-3 rounded-full bg-[#FFD60A] transition-transform duration-700 group-hover:translate-y-1" />
-            <span class="absolute right-20 top-12 size-2.5 rounded-full bg-[#4A90E2]" />
-            <span class="absolute right-6 top-16 size-2 rounded-full bg-[#22C55E]" />
-            <span class="absolute right-16 bottom-10 size-3 rounded-full bg-[#FF6B9D]" />
-            <span class="absolute right-28 bottom-6 size-2.5 rounded-sm bg-[#FF8C42] transition-transform duration-700 group-hover:-rotate-12" style="transform: rotate(18deg)" />
-            <span class="absolute right-5 bottom-20 size-2 rounded-full bg-[#5EEAD4]" />
-
-            <!-- 본문 -->
-            <div class="relative z-10">
-              <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-400">
-                Collection No. {{ weeklyCollection.order || '001' }}
-              </div>
-              <h3 class="mt-3 text-2xl font-bold tracking-tight sm:text-[26px]">
-                {{ weeklyCollection.title }}
-              </h3>
-              <p v-if="weeklyCollection.description" class="mt-2 max-w-xl text-[15px] leading-relaxed text-neutral-300">
-                {{ weeklyCollection.description }}
-              </p>
-
-              <div class="mt-4 flex items-center gap-4 text-sm font-bold">
-                <span class="text-neutral-400">작품 {{ weeklyCollection.productCount || 0 }}개</span>
-                <span class="text-neutral-700">·</span>
-                <span class="inline-flex items-center gap-1 text-white transition-transform duration-300 group-hover:translate-x-1">
-                  보러가기 →
-                </span>
-              </div>
-            </div>
-          </NuxtLink>
-        </section>
-
-        <!-- Themed collections -->
-        <section
-          v-for="t in themedSections"
-          :key="t.key"
-          class="pb-16 md:pb-14"
-        >
-          <div class="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">{{ t.title }}</h2>
-            </div>
-            <NuxtLink
-              :to="`/?q=${encodeURIComponent(t.keywords[0]!)}`"
-              class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500 hover:text-neutral-950 dark:hover:text-neutral-50"
-            >
-              전체 보기 →
-            </NuxtLink>
-          </div>
-
-          <!-- 모바일: 4열 앱스토어형 타일 -->
-          <div v-if="t.products.length" class="-mx-1 grid grid-cols-4 gap-x-2 gap-y-3 md:hidden">
-            <ProductAppTile
-              v-for="p in t.products"
-              :key="`m-${p.id}`"
-              :product="p"
-            />
-          </div>
-          <!-- 데스크톱: 기존 ProductCard 그리드 -->
-          <div v-if="t.products.length" class="hidden gap-2 sm:grid-cols-3 md:grid lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
-            <ProductCard
-              v-for="p in t.products"
-              :key="p.id"
-              :product="p"
-            />
-          </div>
-          <p v-else class="pb-2 text-sm text-neutral-400">
-            곧 큐레이션돼요
-          </p>
-        </section>
-
-        <!-- 메이커 이야기 -->
-        <section v-if="makerStories.length" class="pb-16 md:pb-14">
-          <div class="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <h2 class="text-xl font-bold tracking-tight sm:text-2xl">메이커 이야기</h2>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <NuxtLink
-              v-for="p in makerStories"
-              :key="p.id"
-              :to="`/products/${p.slug || p.id}?tab=maker`"
-              class="group flex flex-col gap-3 rounded-2xl bg-neutral-100 p-4 transition hover:bg-neutral-150 md:gap-4 md:rounded-3xl md:p-6 dark:bg-neutral-800 dark:hover:bg-neutral-700"
-            >
-              <div class="flex items-center gap-3">
-                <img
-                  :src="p.thumbnailUrl"
-                  :alt="p.name"
-                  class="size-12 shrink-0 rounded-xl bg-neutral-50 object-cover"
-                >
-                <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
-                  <button
-                    v-if="p.maker"
-                    type="button"
-                    class="mt-0.5 block truncate text-xs text-neutral-500 hover:underline"
-                    @click.stop.prevent="navigateTo(`/makers/${encodeURIComponent(p.maker)}`)"
-                  >
-                    by {{ p.maker }}
-                  </button>
-                </div>
-                <UIcon name="i-lucide-mic" class="size-4 shrink-0 text-neutral-400" />
-              </div>
-
-              <blockquote
-                v-if="p.makerStory?.oneLiner"
-                class="border-l-[3px] border-[#0A0A0A] pl-3 text-[15px] font-semibold leading-snug tracking-tight line-clamp-3"
-              >
-                "{{ p.makerStory.oneLiner }}"
-              </blockquote>
-              <p
-                v-else-if="p.makerStory?.qa?.[0]?.a"
-                class="line-clamp-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300"
-              >
-                {{ p.makerStory.qa[0].a }}
-              </p>
-            </NuxtLink>
-          </div>
-        </section>
-
-        <!-- Active filter chips -->
-        <div v-if="hasActiveFilter" class="mb-4 flex flex-wrap items-center gap-2">
-          <span class="text-xs text-neutral-500">필터</span>
-          <button
-            v-if="filters.q"
-            class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-            @click="router.push({ query: { ...route.query, q: undefined } })"
-          >
-            "{{ filters.q }}"
-            <UIcon name="i-lucide-x" class="size-3" />
-          </button>
-          <button
-            v-if="filters.pricing"
-            class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-            @click="setFilter('pricing', filters.pricing)"
-          >
-            {{ pricingOptions.find(p => p.value === filters.pricing)?.label || filters.pricing }}
-            <UIcon name="i-lucide-x" class="size-3" />
-          </button>
-          <button
-            v-if="filters.category"
-            class="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-            @click="setFilter('category', filters.category)"
-          >
-            {{ quickFilters.find(f => f.type === 'category' && f.value === filters.category)?.label
-              || categories?.find(c => c.slug === filters.category)?.name
-              || filters.category }}
-            <UIcon name="i-lucide-x" class="size-3" />
-          </button>
-          <button
-            class="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-950 dark:hover:text-neutral-50"
-            @click="clearAll"
-          >
-            모두 지우기
-          </button>
+    <!-- ============================================================ -->
+    <!-- NEW: 큐레이터의 숨은 Pick                                     -->
+    <!-- ============================================================ -->
+    <section v-if="hiddenPicks.length" class="pb-16 md:pb-14">
+      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">큐레이터의 숨은 Pick</h2>
+          <p class="mt-1 text-xs text-neutral-500 md:text-sm">TOP 3엔 못 들었지만 꼭 소개하고 싶었던 두 작품</p>
         </div>
-
-        <!-- Latest section -->
-        <section class="pb-24">
-          <div class="mb-5">
-            <h2 class="text-xl font-bold tracking-tight sm:text-2xl">신상 앱 소개</h2>
-          </div>
-
-          <!-- Sort tabs -->
-          <nav class="flex items-center gap-5 pb-3 text-sm font-bold">
-            <button
-              v-for="tab in sortTabs"
-              :key="tab.value"
-              class="relative pb-2 transition"
-              :class="filters.sort === tab.value ? 'text-neutral-950 dark:text-neutral-50' : 'text-neutral-400 hover:text-neutral-600'"
-              @click="router.push({ query: { ...route.query, sort: tab.value === 'latest' ? undefined : tab.value } })"
-            >
-              {{ tab.label }}
-              <span
-                v-if="filters.sort === tab.value"
-                class="absolute inset-x-0 -bottom-[9px] h-0.5 bg-neutral-950 dark:bg-neutral-50"
-              />
-            </button>
-          </nav>
-
-          <!-- Quick filter chips (pricing + category 혼합) + count -->
-          <div class="no-scrollbar mt-4 flex items-center gap-x-2 gap-y-1.5 overflow-x-auto md:flex-wrap md:overflow-visible">
-            <button
-              v-for="f in quickFilters"
-              :key="`${f.type}-${f.value}`"
-              type="button"
-              class="h-[29px] shrink-0 rounded-full px-3 text-[12.5px] font-semibold transition md:h-auto md:py-1 md:text-xs"
-              :class="(f.type === 'pricing' ? filters.pricing : filters.category) === f.value
-                ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950'
-                : 'bg-neutral-100 text-neutral-500 hover:text-neutral-950 dark:bg-neutral-800 dark:hover:text-neutral-50'"
-              @click="setFilter(f.type, f.value)"
-            >
-              {{ f.label }}
-            </button>
-            <span class="ml-auto shrink-0 pl-2 text-xs tabular-nums text-neutral-400">{{ products.length }}개</span>
-          </div>
-
-          <!-- Cards grid -->
-          <!-- 모바일: 4열 앱스토어형 타일 -->
-          <section v-if="products.length" class="-mx-1 mt-5 grid grid-cols-4 gap-x-2 gap-y-3 md:hidden">
-            <ProductAppTile
-              v-for="p in products"
-              :key="p.id"
-              :product="p"
-            />
-          </section>
-          <section v-if="products.length" class="mt-6 hidden gap-3 grid-cols-2 sm:grid-cols-3 md:grid lg:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
-            <ProductCard
-              v-for="p in products"
-              :key="p.id"
-              :product="p"
-            />
-          </section>
-
-          <div v-else-if="hasActiveFilter" class="mt-6 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
-            <UIcon name="i-lucide-search-x" class="mx-auto size-8 text-neutral-400" />
-            <p class="mt-4 text-neutral-500">일치하는 프로덕트가 없어요</p>
-            <button class="mt-6 text-sm text-neutral-950 underline underline-offset-4 dark:text-neutral-50" @click="clearAll">
-              필터 지우기
-            </button>
-          </div>
-
-          <div v-else class="mt-6 rounded-3xl bg-neutral-100 p-16 text-center dark:bg-neutral-800">
-            <UIcon name="i-lucide-search" class="mx-auto size-8 text-neutral-400" />
-            <p class="mt-4 text-neutral-500">아직 등록된 프로덕트가 없어요</p>
-          </div>
-        </section>
       </div>
 
-      <!-- SIDEBAR: Weekly ranking + Collections -->
-      <aside class="min-w-0 w-full max-md:hidden lg:pt-[86px]">
-        <div class="sticky top-24 space-y-4">
-          <!-- Ranking card -->
-          <div class="rounded-3xl bg-white p-6 transition hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-900">
-            <h3 class="text-lg font-bold tracking-tight">인기 순위</h3>
-            <div class="mt-1 text-xs text-neutral-400">누적 업보트 기준</div>
-
-            <div v-if="rankedProducts.length" class="mt-4 flex flex-col gap-1">
-              <NuxtLink
-                v-for="(p, i) in rankedProducts"
-                :key="p.id"
-                :to="`/products/${p.slug || p.id}`"
-                class="flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-neutral-150 dark:hover:bg-neutral-800"
-              >
-                <div
-                  class="w-5 shrink-0 text-left text-[17px] font-bold leading-none tracking-tight"
-                  :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-950 dark:text-neutral-50'"
-                >
-                  {{ i + 1 }}
-                </div>
-                <img
-                  :src="p.thumbnailUrl"
-                  :alt="p.name"
-                  class="size-10 shrink-0 rounded-xl bg-neutral-50 object-cover"
-                >
-                <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-bold tracking-tight">{{ p.name }}</div>
-                  <div class="mt-0.5 truncate text-xs text-neutral-400">{{ p.tagline }}</div>
-                </div>
-                <div class="shrink-0 text-right text-xs font-bold tabular-nums text-neutral-400">
-                  ↑ {{ p.upvoteCount ?? 0 }}
-                </div>
-              </NuxtLink>
-            </div>
-
-            <div v-else class="mt-4 py-4 text-center text-sm text-neutral-400">
-              아직 순위가 없어요
-            </div>
-
-            <NuxtLink
-              to="/rankings/weekly"
-              class="mt-3 flex items-center justify-center gap-1 py-2 text-xs font-semibold text-neutral-400 transition hover:text-neutral-600 dark:hover:text-neutral-200"
-            >
-              더 보기
-              <UIcon name="i-lucide-chevron-right" class="size-3.5" />
-            </NuxtLink>
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+        <NuxtLink
+          v-for="p in hiddenPicks"
+          :key="p.id"
+          :to="`/products/${p.slug || p.id}`"
+          class="group flex items-start gap-4 rounded-2xl border border-neutral-100 bg-white p-5 transition hover:border-neutral-300 md:gap-5 dark:border-neutral-800 dark:bg-neutral-950"
+        >
+          <img
+            :src="p.thumbnailUrl"
+            :alt="p.name"
+            class="size-14 shrink-0 rounded-[12px] bg-neutral-100 object-cover md:size-[60px] md:rounded-[14px]"
+          >
+          <div class="min-w-0 flex-1">
+            <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-neutral-500">큐레이터 코멘트</span>
+            <h4 class="mt-1 text-[15px] font-bold tracking-tight md:text-base">{{ p.name }}</h4>
+            <p class="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-neutral-500">
+              "{{ p.tagline }}"
+            </p>
           </div>
+        </NuxtLink>
+      </div>
+    </section>
 
-          <!-- Collections quick list -->
-          <div v-if="collections?.length" class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
-            <div class="flex items-center justify-between">
-              <h3 class="text-base font-bold tracking-tight">컬렉션</h3>
-              <NuxtLink to="/collections" class="text-xs text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-50">
-                전체
-              </NuxtLink>
-            </div>
-            <ul class="mt-4 space-y-3">
-              <li
-                v-for="c in collections.slice(0, 4)"
-                :key="c.id"
-                class="text-[15px] font-bold tracking-tight"
-              >
-                <NuxtLink :to="`/collections/${c.slug}`" class="line-clamp-1 transition hover:text-neutral-500">
-                  {{ c.title }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Quick links -->
-          <div class="rounded-3xl bg-neutral-100 p-6 dark:bg-neutral-900">
-            <h3 class="text-base font-bold tracking-tight">바로가기</h3>
-            <ul class="mt-4 space-y-2.5 text-[15px] font-bold tracking-tight">
-              <li><NuxtLink to="/submit" class="hover:text-neutral-500">프로덕트 등록</NuxtLink></li>
-              <li><NuxtLink to="/compare" class="hover:text-neutral-500">비교하기</NuxtLink></li>
-              <li><NuxtLink to="/me/bookmarks" class="hover:text-neutral-500">내 북마크</NuxtLink></li>
-            </ul>
-          </div>
+    <!-- ============================================================ -->
+    <!-- NEW: 인기 순위 (풀와이드)                                     -->
+    <!-- ============================================================ -->
+    <section v-if="topRanking.length" class="pb-16 md:pb-14">
+      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">인기 순위</h2>
+          <p class="mt-1 text-xs text-neutral-500 md:text-sm">누적 업보트 기준으로 집계해요</p>
         </div>
-      </aside>
-    </div>
+        <NuxtLink to="/rankings/weekly" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
+          전체 보기 →
+        </NuxtLink>
+      </div>
+
+      <div class="rounded-2xl bg-neutral-50 p-2 md:rounded-3xl md:p-3 dark:bg-neutral-900">
+        <template v-for="(p, i) in topRanking" :key="p.id">
+          <NuxtLink
+            :to="`/products/${p.slug || p.id}`"
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white md:gap-4 md:px-4 md:py-3 dark:hover:bg-neutral-800"
+          >
+            <span
+              class="w-5 shrink-0 text-left text-[15px] font-bold tabular-nums md:w-6"
+              :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-400'"
+            >{{ i + 1 }}</span>
+            <img
+              :src="p.thumbnailUrl"
+              :alt="p.name"
+              class="size-10 shrink-0 rounded-[10px] bg-neutral-100 object-cover md:size-11 md:rounded-xl"
+            >
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-sm font-bold tracking-tight md:text-[15px]">{{ p.name }}</div>
+              <div class="truncate text-xs text-neutral-500 md:text-[13px]">{{ p.tagline }}</div>
+            </div>
+            <span class="shrink-0 text-xs font-bold tabular-nums text-neutral-950 md:text-[13px] dark:text-neutral-50">↑ {{ p.upvoteCount ?? 0 }}</span>
+          </NuxtLink>
+        </template>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- NEW: 큐레이터 노트                                            -->
+    <!-- ============================================================ -->
+    <section class="pb-16 md:pb-14">
+      <div class="grid grid-cols-1 gap-6 overflow-hidden rounded-[24px] bg-neutral-950 p-8 text-white md:grid-cols-[5fr_7fr] md:gap-9 md:rounded-[28px] md:p-12">
+        <div class="flex aspect-[16/10] items-center justify-center rounded-2xl bg-gradient-to-br from-neutral-900 to-black text-[80px] md:aspect-[4/5] md:text-[120px]">
+          🐦
+        </div>
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/8 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
+            큐레이터 노트 · WEEK {{ curatorNote.week }}
+          </span>
+          <h3 class="mt-5 whitespace-pre-line text-[22px] font-bold tracking-tight md:text-[28px]">
+            {{ curatorNote.title }}
+          </h3>
+          <p class="mt-4 text-[15px] leading-relaxed text-neutral-400">
+            {{ curatorNote.body }}
+          </p>
+          <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-400">
+            <span v-for="m in curatorNote.meta" :key="m.label" class="inline-flex items-center gap-1.5">
+              {{ m.icon }} <strong class="text-white">{{ m.value }}</strong> {{ m.label }}
+            </span>
+          </div>
+          <a href="#" class="mt-7 inline-flex items-center gap-1 border-b-2 border-white pb-1 text-[15px] font-bold text-white">
+            이번 주 일기 전문 읽기 →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- NEW: 아무 매거진                                              -->
+    <!-- ============================================================ -->
+    <section class="pb-24 md:pb-20">
+      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">아무 매거진</h2>
+          <p class="mt-1 text-xs text-neutral-500 md:text-sm">작은 메이커의 큰 이야기, 디자인·창업 가이드</p>
+        </div>
+        <NuxtLink to="/community" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
+          매거진 홈 →
+        </NuxtLink>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+        <NuxtLink
+          v-for="m in magazine"
+          :key="m.title"
+          :to="m.to"
+          class="group flex flex-col"
+        >
+          <div
+            class="mb-4 aspect-[16/10] rounded-2xl bg-gradient-to-br"
+            :class="m.gradient"
+          />
+          <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
+            {{ m.cat }}
+          </span>
+          <h4 class="mt-2 text-[16px] font-bold leading-snug tracking-tight md:text-[17px]">
+            {{ m.title }}
+          </h4>
+          <p class="mt-1 text-xs text-neutral-500 md:text-[13px]">{{ m.sub }}</p>
+        </NuxtLink>
+      </div>
+    </section>
   </div>
 </template>
