@@ -36,6 +36,17 @@ export default defineNuxtConfig({
     defaultLocale: 'ko'
   },
 
+  // @nuxtjs/seo 번들의 nuxt-robots 설정. /robots.txt 가 명시적으로 생성됨.
+  // Yeti (네이버 봇) 그룹을 별도 명시해 한국 검색 커버리지 확보.
+  robots: {
+    sitemap: '/sitemap.xml',
+    disallow: ['/admin', '/auth', '/api'],
+    groups: [
+      { userAgent: ['*'], allow: ['/'], disallow: ['/admin', '/auth', '/api'] },
+      { userAgent: ['Yeti'], allow: ['/'], disallow: ['/admin', '/auth', '/api'] }
+    ]
+  },
+
   // OG 이미지 동적 생성은 일시 비활성화. satori + @resvg/resvg-js 설치 시 Windows 바이너리가
   // lockfile 에 고정돼 Firebase 리눅스 빌드에서 EBADPLATFORM 발생. 추후 pnpm 전환 또는 Nitro
   // externals 설정으로 재도입 예정.

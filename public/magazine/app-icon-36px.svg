@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="앱 아이콘 36px에서 살아남는 법 — 표지 일러스트">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D1FAE5"/>
+      <stop offset="100%" stop-color="#6EE7B7"/>
+    </linearGradient>
+    <linearGradient id="phoneGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="100%" stop-color="#1F1F1F"/>
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E0F7EE"/>
+      <stop offset="100%" stop-color="#F5FFF9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="750" fill="url(#bg)"/>
+
+  <!-- Decorative sparkles -->
+  <g fill="#0A0A0A" opacity="0.08">
+    <circle cx="140" cy="120" r="4"/>
+    <circle cx="1050" cy="90" r="6"/>
+    <circle cx="1100" cy="620" r="5"/>
+    <circle cx="90" cy="580" r="4"/>
+    <circle cx="200" cy="680" r="3"/>
+    <circle cx="1080" cy="380" r="3"/>
+  </g>
+
+  <!-- Phone Device -->
+  <g transform="translate(380, 90)" filter="url(#shadow)">
+    <!-- Phone frame -->
+    <rect x="0" y="0" width="320" height="620" rx="46" ry="46" fill="url(#phoneGrad)"/>
+    <rect x="10" y="10" width="300" height="600" rx="38" ry="38" fill="url(#screenGrad)"/>
+    <!-- Notch / Dynamic Island -->
+    <rect x="130" y="22" width="60" height="18" rx="9" fill="#0A0A0A"/>
+
+    <!-- App Icon Grid (4x6) — tiny realistic icons at ~36px feel -->
+    <g transform="translate(28, 68)">
+      <!-- row 1 -->
+      <g>
+        <rect x="0"   y="0" width="48" height="48" rx="11" fill="#FF3C7D"/>
+        <rect x="68"  y="0" width="48" height="48" rx="11" fill="#4A90E2"/>
+        <rect x="136" y="0" width="48" height="48" rx="11" fill="#FFD60A"/>
+        <rect x="204" y="0" width="48" height="48" rx="11" fill="#22C55E"/>
+      </g>
+      <!-- row 2 -->
+      <g transform="translate(0,76)">
+        <rect x="0"   y="0" width="48" height="48" rx="11" fill="#5EEAD4"/>
+        <rect x="68"  y="0" width="48" height="48" rx="11" fill="#A855F7"/>
+        <rect x="136" y="0" width="48" height="48" rx="11" fill="#FB923C"/>
+        <rect x="204" y="0" width="48" height="48" rx="11" fill="#0A0A0A"/>
+      </g>
+      <!-- row 3 -->
+      <g transform="translate(0,152)">
+        <rect x="0"   y="0" width="48" height="48" rx="11" fill="#F43F5E"/>
+        <rect x="68"  y="0" width="48" height="48" rx="11" fill="#0EA5E9"/>
+        <rect x="136" y="0" width="48" height="48" rx="11" fill="#84CC16"/>
+        <rect x="204" y="0" width="48" height="48" rx="11" fill="#EAB308"/>
+      </g>
+      <!-- row 4 -->
+      <g transform="translate(0,228)">
+        <rect x="0"   y="0" width="48" height="48" rx="11" fill="#64748B"/>
+        <rect x="68"  y="0" width="48" height="48" rx="11" fill="#EC4899"/>
+        <rect x="136" y="0" width="48" height="48" rx="11" fill="#14B8A6"/>
+        <rect x="204" y="0" width="48" height="48" rx="11" fill="#F97316"/>
+      </g>
+      <!-- row 5 — all muted/busy icons that struggle at 36px -->
+      <g transform="translate(0,304)" opacity="0.5">
+        <rect x="0"   y="0" width="48" height="48" rx="11" fill="#A3A3A3"/>
+        <rect x="68"  y="0" width="48" height="48" rx="11" fill="#D4D4D4"/>
+        <rect x="136" y="0" width="48" height="48" rx="11" fill="#A3A3A3"/>
+        <rect x="204" y="0" width="48" height="48" rx="11" fill="#D4D4D4"/>
+      </g>
+    </g>
+
+    <!-- Dock -->
+    <g transform="translate(28, 500)">
+      <rect x="0" y="0" width="264" height="76" rx="24" fill="#FFFFFF" opacity="0.8"/>
+      <rect x="18"  y="14" width="48" height="48" rx="11" fill="#FF3C7D"/>
+      <rect x="86"  y="14" width="48" height="48" rx="11" fill="#4A90E2"/>
+      <rect x="154" y="14" width="48" height="48" rx="11" fill="#FFD60A"/>
+      <rect x="222" y="14" width="48" height="48" rx="11" fill="#22C55E"/>
+    </g>
+  </g>
+
+  <!-- Zoom callout — pointing to one tiny icon -->
+  <g transform="translate(760, 230)">
+    <!-- Pink spotlight circle on grid -->
+    <circle cx="-310" cy="46" r="36" fill="none" stroke="#FF3C7D" stroke-width="3"/>
+    <!-- Connector line to blown-up icon -->
+    <line x1="-278" y1="46" x2="0" y2="60" stroke="#FF3C7D" stroke-width="2" stroke-dasharray="4 4"/>
+
+    <!-- Blown-up version -->
+    <g transform="translate(10, 0)">
+      <!-- Big icon representation (same first icon from row 1 — pink) -->
+      <rect x="0" y="0" width="140" height="140" rx="32" fill="#FF3C7D"/>
+      <!-- Letter mark inside -->
+      <text x="70" y="98" font-family="Pretendard, -apple-system, sans-serif" font-size="80" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.04em">아</text>
+
+      <!-- Size annotation -->
+      <g transform="translate(170, 20)">
+        <text font-family="'SF Mono', 'Courier New', monospace" font-size="13" fill="#0A0A0A" opacity="0.6" letter-spacing="0.08em">EXPORTED</text>
+        <text y="22" font-family="Pretendard, -apple-system, sans-serif" font-size="30" font-weight="900" fill="#0A0A0A" letter-spacing="-0.03em">1024 × 1024</text>
+        <text y="60" font-family="'SF Mono', 'Courier New', monospace" font-size="13" fill="#0A0A0A" opacity="0.6" letter-spacing="0.08em">DISPLAYED AT</text>
+        <text y="82" font-family="Pretendard, -apple-system, sans-serif" font-size="30" font-weight="900" fill="#FF3C7D" letter-spacing="-0.03em">36 × 36</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom caption -->
+  <g transform="translate(60, 672)">
+    <text font-family="Pretendard, -apple-system, sans-serif" font-size="13" font-weight="800" fill="#0A0A0A" opacity="0.5" letter-spacing="0.14em">AMU MAGAZINE · DESIGN GUIDE</text>
+  </g>
+  <g transform="translate(1140, 672)" text-anchor="end">
+    <text font-family="'SF Mono', 'Courier New', monospace" font-size="11" fill="#0A0A0A" opacity="0.4" letter-spacing="0.1em">#001 · 2026</text>
+  </g>
+</svg>
