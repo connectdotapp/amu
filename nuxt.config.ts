@@ -36,15 +36,10 @@ export default defineNuxtConfig({
     defaultLocale: 'ko'
   },
 
-  // @nuxtjs/seo 번들의 nuxt-robots 설정. /robots.txt 가 명시적으로 생성됨.
-  // Yeti (네이버 봇) 그룹을 별도 명시해 한국 검색 커버리지 확보.
+  // nuxt-robots 모듈은 Firebase Frameworks 모드에서 /robots.txt 를 404 로 가로채버림.
+  // 비활성화 후 server/middleware/robots.ts 에서 직접 응답.
   robots: {
-    sitemap: '/sitemap.xml',
-    disallow: ['/admin', '/auth', '/api'],
-    groups: [
-      { userAgent: ['*'], allow: ['/'], disallow: ['/admin', '/auth', '/api'] },
-      { userAgent: ['Yeti'], allow: ['/'], disallow: ['/admin', '/auth', '/api'] }
-    ]
+    enabled: false
   },
 
   // OG 이미지 동적 생성은 일시 비활성화. satori + @resvg/resvg-js 설치 시 Windows 바이너리가
