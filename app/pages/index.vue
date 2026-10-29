@@ -135,6 +135,7 @@ const magazine = [
     title: '앱 아이콘 36px에서 살아남는 법',
     sub: 'iOS 홈 화면 디자인 치트시트',
     gradient: 'from-emerald-100 to-emerald-300',
+    cover: '/magazine/app-icon-36px.webp',
     to: '#'
   }
 ]
@@ -415,7 +416,15 @@ const magazine = [
           :to="m.to"
           class="group flex flex-col"
         >
+          <img
+            v-if="m.cover"
+            :src="m.cover"
+            :alt="m.title"
+            class="mb-4 aspect-[16/10] w-full rounded-2xl bg-neutral-100 object-cover"
+            loading="lazy"
+          >
           <div
+            v-else
             class="mb-4 aspect-[16/10] rounded-2xl bg-gradient-to-br"
             :class="m.gradient"
           />
