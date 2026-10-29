@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/
+
+User-agent: Yeti
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/
+
+Sitemap: https://amuhunter.com/sitemap.xml
