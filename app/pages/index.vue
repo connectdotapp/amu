@@ -114,31 +114,31 @@ const curatorNote = {
   ]
 }
 
-// 아무 매거진 — 정적 플레이스홀더. 운영 시 /magazine 또는 Firestore 'posts' 로 전환.
-const magazine = [
-  {
-    cat: '큐레이션 비교',
-    title: '디스콰이엇, 아무, 프로덕트헌트 — 당신이 올려야 할 곳',
-    sub: '인디메이커의 플랫폼 선택 가이드',
-    gradient: 'from-pink-100 to-pink-200',
-    to: '#'
-  },
-  {
-    cat: '메이커 인터뷰',
-    title: '"안와요"는 어떻게 2주 만에 1,000명을 모았나',
-    sub: '쇼핑 금고 앱 메이커 인터뷰',
-    gradient: 'from-blue-100 to-blue-300',
-    to: '#'
-  },
-  {
-    cat: '가이드',
-    title: '앱 아이콘 36px에서 살아남는 법',
-    sub: 'iOS 홈 화면 디자인 치트시트',
-    gradient: 'from-emerald-100 to-emerald-300',
-    cover: '/magazine/app-icon-36px.webp',
-    to: '#'
-  }
+// 아무 매거진 — 최신 발행 글 3개. 3개가 안 되면 예고 카드로 채움 (링크 없음).
+const { data: latestPosts } = usePublishedPosts(3)
+
+const upcomingTeasers = [
+  { cat: '큐레이션 비교', title: '디스콰이엇, 아무, 프로덕트헌트 — 당신이 올려야 할 곳', sub: '인디메이커의 플랫폼 선택 가이드' },
+  { cat: '메이커 인터뷰', title: '"안와요"는 어떻게 2주 만에 1,000명을 모았나', sub: '쇼핑 금고 앱 메이커 인터뷰' }
 ]
+const NuxtLinkComp = resolveComponent('NuxtLink')
+const magazineGradients = ['from-pink-100 to-pink-200', 'from-blue-100 to-blue-300', 'from-emerald-100 to-emerald-300']
+
+const magazineCards = computed(() => {
+  const real = (latestPosts.value || []).map(p => ({
+    key: p.id,
+    to: `/magazine/${p.slug}`,
+    cat: p.category,
+    title: p.title,
+    sub: p.subtitle,
+    cover: p.coverImageUrl || null
+  }))
+  const fill = upcomingTeasers
+    .filter(t => !real.some(r => r.title === t.title))
+    .slice(0, Math.max(0, 3 - real.length))
+    .map(t => ({ key: t.title, to: null as string | null, cover: null as string | null, ...t }))
+  return [...real, ...fill].slice(0, 3)
+})
 </script>
 
 <template>
@@ -404,16 +404,17 @@ const magazine = [
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">아무 매거진</h2>
           <p class="mt-1 text-xs text-neutral-500 md:text-sm">작은 메이커의 큰 이야기, 디자인·창업 가이드</p>
         </div>
-        <NuxtLink to="/community" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
+        <NuxtLink to="/magazine" class="-mr-2 shrink-0 px-2 pb-1 text-xs text-neutral-500">
           매거진 홈 →
         </NuxtLink>
       </div>
 
       <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-        <NuxtLink
-          v-for="m in magazine"
-          :key="m.title"
-          :to="m.to"
+        <component
+          :is="m.to ? NuxtLinkComp : 'div'"
+          v-for="(m, i) in magazineCards"
+          :key="m.key"
+          :to="m.to || undefined"
           class="group flex flex-col"
         >
           <img
@@ -426,16 +427,16 @@ const magazine = [
           <div
             v-else
             class="mb-4 aspect-[16/10] rounded-2xl bg-gradient-to-br"
-            :class="m.gradient"
+            :class="magazineGradients[i % magazineGradients.length]"
           />
           <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
-            {{ m.cat }}
+            {{ m.cat }}<span v-if="!m.to" class="ml-1.5 text-neutral-400">· 곧 공개</span>
           </span>
           <h4 class="mt-2 text-[16px] font-bold leading-snug tracking-tight md:text-[17px]">
             {{ m.title }}
           </h4>
-          <p class="mt-1 text-xs text-neutral-500 md:text-[13px]">{{ m.sub }}</p>
-        </NuxtLink>
+          <p class="mt-1 line-clamp-2 text-xs text-neutral-500 md:text-[13px]">{{ m.sub }}</p>
+        </component>
       </div>
     </section>
   </div>

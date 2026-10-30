@@ -12,10 +12,11 @@ function toIso(...values: Array<Timestamp | null | undefined>) {
 
 export default defineSitemapEventHandler(async () => {
   const db = useAdminFirestore()
-  const [products, collections, categories] = await Promise.all([
+  const [products, collections, categories, magazine] = await Promise.all([
     db.collection('products').where('status', '==', 'published').get(),
     db.collection('collections').where('status', '==', 'published').get(),
-    db.collection('categories').get()
+    db.collection('categories').get(),
+    db.collection('magazine').where('status', '==', 'published').get()
   ])
 
   const urls: Array<{ loc: string, lastmod?: string, images?: Array<{ loc: string }> }> = []
@@ -41,6 +42,16 @@ export default defineSitemapEventHandler(async () => {
 
   for (const d of categories.docs) {
     urls.push({ loc: `/categories/${d.data().slug || d.id}` })
+  }
+
+  for (const d of magazine.docs) {
+    const m = d.data()
+    const cover = typeof m.coverImageUrl === 'string' && m.coverImageUrl.startsWith('http') ? m.coverImageUrl : undefined
+    urls.push({
+      loc: `/magazine/${m.slug || d.id}`,
+      lastmod: toIso(m.updatedAt, m.publishedAt),
+      images: cover ? [{ loc: cover }] : undefined
+    })
   }
 
   for (const m of makers) {

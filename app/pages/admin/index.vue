@@ -20,6 +20,12 @@ const actions = [
     description: '주제별 프로덕트 묶음 편집'
   },
   {
+    to: '/admin/magazine',
+    icon: 'i-lucide-newspaper',
+    title: '매거진',
+    description: '글 쓰기·수정·발행'
+  },
+  {
     to: '/admin/queue',
     icon: 'i-lucide-inbox',
     title: '승인 대기',

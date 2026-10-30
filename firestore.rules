@@ -73,6 +73,12 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // 매거진: 발행 글은 공개, 초안은 어드민만. 작성·수정·삭제는 어드민만.
+    match /magazine/{postId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
     // 신고 접수. 로그인한 유저만 생성 가능. 조회는 어드민만.
     match /reports/{reportId} {
       allow read: if isAdmin();

@@ -125,6 +125,9 @@ export default defineNuxtConfig({
     '/categories/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
     '/makers/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
     '/rankings/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=600' } },
+    // 매거진은 편집 직후 반영이 중요해 짧게.
+    '/magazine': { headers: { 'cache-control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=120' } },
+    '/magazine/**': { headers: { 'cache-control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=120' } },
     '/admin/**': { ssr: true, robots: false }
   },
 
