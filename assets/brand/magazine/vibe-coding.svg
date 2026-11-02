@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+  <defs>
+    <radialGradient id="bg" cx="0.3" cy="0.35" r="1"><stop offset="0" stop-color="#2A2D33"/><stop offset="1" stop-color="#0B0C0E"/></radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.04"/></linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <ellipse cx="800" cy="520" rx="760" ry="330" fill="none" stroke="url(#ring)" stroke-width="3"/>
+
+  <!-- chat bubble (prompt) -->
+  <rect x="140" y="250" width="560" height="190" rx="40" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="190" y="325" font-size="30" fill="#E5E5E5">"할 일 앱 만들어줘.</text>
+  <text x="190" y="378" font-size="30" fill="#E5E5E5"> 깔끔하게, 다크 모드로."</text>
+  <path d="M220 440 L260 440 L230 480 Z" fill="#FFFFFF" fill-opacity="0.12"/>
+
+  <!-- arrow -->
+  <g stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M730 345 L850 345"/><path d="M830 325 L852 345 L830 365"/>
+  </g>
+
+  <!-- many app tiles -->
+  <g>
+    <rect x="890" y="200" width="120" height="120" rx="28" fill="#FFFFFF" fill-opacity="0.92"/>
+    <rect x="1030" y="200" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1170" y="200" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1310" y="200" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="890" y="340" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1030" y="340" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1170" y="340" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1310" y="340" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="890" y="480" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1030" y="480" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1170" y="480" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <rect x="1310" y="480" width="120" height="120" rx="28" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.2"/>
+  </g>
+  <path d="M922 262 L942 282 L980 240" stroke="#0B0C0E" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- headline -->
+  <text x="140" y="700" font-size="76" font-weight="700" fill="#FFFFFF">만들기는 쉬워졌고,</text>
+  <text x="140" y="800" font-size="76" font-weight="700" fill="#FFFFFF" fill-opacity="0.45">고르기는 어려워졌다</text>
+
+  <text x="140" y="935" font-size="22" font-weight="700" fill="#FFFFFF" opacity="0.5" letter-spacing="3">AMU MAGAZINE · 인사이트</text>
+  <text x="1460" y="935" font-size="20" fill="#FFFFFF" opacity="0.4" text-anchor="end" letter-spacing="2">VIBE CODING · 2026</text>
+</svg>

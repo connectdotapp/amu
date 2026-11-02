@@ -22,20 +22,20 @@ const posts = [
     file: 'magazine-app-icon-36px.md'
   },
   {
-    slug: 'where-to-launch',
-    title: '디스콰이엇, 프로덕트헌트, 아무 — 내 서비스는 어디에 올려야 할까',
-    subtitle: '출시 후 첫 질문 "어디에 올리지?" 세 곳의 차이와 상황별 추천.',
-    category: '큐레이션 비교',
-    coverImageUrl: '/magazine/where-to-launch.webp',
-    file: 'magazine-where-to-launch.md'
-  },
-  {
     slug: 'app-store-screenshots',
     title: '앱스토어 스크린샷, 처음 3장이 설치를 좌우해요',
     subtitle: '검색 결과에 보이는 건 1~3장뿐. 공식 규격과 첫 3장 구성법.',
     category: '가이드',
     coverImageUrl: '/magazine/app-store-screenshots-v2.webp',
     file: 'magazine-app-store-screenshots.md'
+  },
+  {
+    slug: 'vibe-coding',
+    title: '바이브 코딩 1년, 만들기는 쉬워졌고 고르기는 어려워졌다',
+    subtitle: '사전에 오르고, 스타트업 코드의 95%를 AI가 쓰는 시대. 숫자로 본 바이브 코딩의 1년과 메이커가 챙길 것.',
+    category: '인사이트',
+    coverImageUrl: '/magazine/vibe-coding.webp',
+    file: 'magazine-vibe-coding.md'
   }
 ]
 
