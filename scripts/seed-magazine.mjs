@@ -31,10 +31,10 @@ const posts = [
   },
   {
     slug: 'vibe-coding',
-    title: '바이브 코딩 1년, 만들기는 쉬워졌고 고르기는 어려워졌다',
+    title: '바이브 코딩 1년, 만들기는 쉬워졌지만 고르는 게 문제?',
     subtitle: '사전에 오르고, 스타트업 코드의 95%를 AI가 쓰는 시대. 숫자로 본 바이브 코딩의 1년과 메이커가 챙길 것.',
     category: '인사이트',
-    coverImageUrl: '/magazine/vibe-coding.webp',
+    coverImageUrl: '/magazine/vibe-coding-v2.webp',
     file: 'magazine-vibe-coding.md'
   }
 ]
