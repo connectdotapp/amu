@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EEF2F7"/><stop offset="1" stop-color="#DCE4EE"/></linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="20" stdDeviation="26" flood-color="#5B6B80" flood-opacity="0.2"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1420" cy="160" r="230" fill="#FFFFFF" opacity="0.35"/>
+
+  <!-- phone -->
+  <g filter="url(#sh)">
+    <rect x="170" y="90" width="460" height="830" rx="70" fill="#0A0A0A"/>
+    <rect x="186" y="106" width="428" height="798" rx="56" fill="#FFFFFF"/>
+  </g>
+  <rect x="345" y="126" width="110" height="30" rx="15" fill="#0A0A0A"/>
+  <!-- search bar -->
+  <rect x="216" y="190" width="368" height="48" rx="14" fill="#F2F2F4"/>
+  <circle cx="246" cy="214" r="10" fill="none" stroke="#A3A3A3" stroke-width="3"/>
+  <rect x="266" y="207" width="140" height="14" rx="7" fill="#C7C7CC"/>
+  <!-- app row -->
+  <rect x="216" y="270" width="84" height="84" rx="20" fill="#0A0A0A"/>
+  <rect x="316" y="284" width="150" height="18" rx="9" fill="#0A0A0A"/>
+  <rect x="316" y="314" width="110" height="14" rx="7" fill="#C7C7CC"/>
+  <rect x="500" y="294" width="84" height="36" rx="18" fill="#E9EEF5"/>
+  <text x="542" y="318" font-size="18" font-weight="700" fill="#0A0A0A" text-anchor="middle">받기</text>
+  <!-- 3 screenshots -->
+  <g>
+    <rect x="216" y="378" width="114" height="246" rx="16" fill="#0A0A0A"/>
+    <rect x="343" y="378" width="114" height="246" rx="16" fill="#404040"/>
+    <rect x="470" y="378" width="114" height="246" rx="16" fill="#737373"/>
+  </g>
+  <g fill="#FFFFFF">
+    <rect x="232" y="398" width="82" height="10" rx="5"/><rect x="232" y="416" width="60" height="10" rx="5" opacity="0.7"/>
+    <rect x="359" y="398" width="82" height="10" rx="5"/><rect x="359" y="416" width="60" height="10" rx="5" opacity="0.7"/>
+    <rect x="486" y="398" width="82" height="10" rx="5"/><rect x="486" y="416" width="60" height="10" rx="5" opacity="0.7"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.18">
+    <rect x="232" y="444" width="82" height="160" rx="10"/>
+    <rect x="359" y="444" width="82" height="160" rx="10"/>
+    <rect x="486" y="444" width="82" height="160" rx="10"/>
+  </g>
+  <rect x="206" y="368" width="388" height="266" rx="22" fill="none" stroke="#0A0A0A" stroke-width="4" stroke-dasharray="10 8"/>
+  <!-- next result faded -->
+  <g opacity="0.25">
+    <rect x="216" y="664" width="84" height="84" rx="20" fill="#737373"/>
+    <rect x="316" y="678" width="150" height="18" rx="9" fill="#737373"/>
+    <rect x="316" y="708" width="110" height="14" rx="7" fill="#A3A3A3"/>
+    <rect x="216" y="772" width="114" height="110" rx="16" fill="#A3A3A3"/>
+    <rect x="343" y="772" width="114" height="110" rx="16" fill="#A3A3A3"/>
+    <rect x="470" y="772" width="114" height="110" rx="16" fill="#A3A3A3"/>
+  </g>
+
+  <!-- right: 10 slots -->
+  <text x="760" y="300" font-size="30" font-weight="700" fill="#404040">스크린샷 최대 10장 중</text>
+  <text x="760" y="420" font-size="110" font-weight="700" fill="#0A0A0A">1 – 3장</text>
+  <text x="760" y="480" font-size="30" fill="#404040">검색 결과에서 보이는 건 여기까지</text>
+  <g>
+    <rect x="760" y="560" width="58" height="120" rx="10" fill="#0A0A0A"/>
+    <rect x="830" y="560" width="58" height="120" rx="10" fill="#0A0A0A"/>
+    <rect x="900" y="560" width="58" height="120" rx="10" fill="#0A0A0A"/>
+  </g>
+  <g fill="#0A0A0A" opacity="0.15">
+    <rect x="970" y="560" width="58" height="120" rx="10"/><rect x="1040" y="560" width="58" height="120" rx="10"/>
+    <rect x="1110" y="560" width="58" height="120" rx="10"/><rect x="1180" y="560" width="58" height="120" rx="10"/>
+    <rect x="1250" y="560" width="58" height="120" rx="10"/><rect x="1320" y="560" width="58" height="120" rx="10"/>
+    <rect x="1390" y="560" width="58" height="120" rx="10"/>
+  </g>
+
+  <text x="60" y="960" font-size="22" font-weight="700" fill="#0A0A0A" opacity="0.5" letter-spacing="3">AMU MAGAZINE · 가이드</text>
+  <text x="1540" y="960" font-size="20" fill="#0A0A0A" opacity="0.4" text-anchor="end" letter-spacing="2">#003 · 2026</text>
+</svg>

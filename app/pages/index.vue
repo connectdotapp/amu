@@ -118,8 +118,8 @@ const curatorNote = {
 const { data: latestPosts } = usePublishedPosts(3)
 
 const upcomingTeasers = [
-  { cat: '큐레이션 비교', title: '디스콰이엇, 아무, 프로덕트헌트 — 당신이 올려야 할 곳', sub: '인디메이커의 플랫폼 선택 가이드' },
-  { cat: '메이커 인터뷰', title: '"안와요"는 어떻게 2주 만에 1,000명을 모았나', sub: '쇼핑 금고 앱 메이커 인터뷰' }
+  { cat: '메이커 인터뷰', title: '작은 서비스를 만든 메이커들의 이야기', sub: '직접 만나 들은 출시 뒷이야기' },
+  { cat: '큐레이터 노트', title: '이번 주, 아무가 고른 이유', sub: '큐레이션 기준과 선정 과정' }
 ]
 const NuxtLinkComp = resolveComponent('NuxtLink')
 const magazineGradients = ['from-pink-100 to-pink-200', 'from-blue-100 to-blue-300', 'from-emerald-100 to-emerald-300']
