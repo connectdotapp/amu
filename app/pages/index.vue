@@ -123,17 +123,6 @@ function onHeroTouchEnd(e: TouchEvent) {
   else prevHero()
 }
 
-// 큐레이터 노트 — 정적 콘텐츠. 운영 시 CMS/컬렉션으로 이관 예정.
-const curatorNote = {
-  week: 23,
-  title: '이번 주, 저는 32개 중 3개를 고르기 위해\n42시간을 썼습니다.',
-  body: '대형 서비스 광고가 밀려오는 세상에서, 숨은 작품을 발굴하는 일은 여전히 손으로 하는 일이에요. 매주 월요일 오전 10시의 \'아무 3\' 뒤엔 긴 밤과 수십 번의 시연이 있어요. 이번 주 이야기를 전해드려요.',
-  meta: [
-    { icon: '⏱', label: '큐레이션', value: '42시간' },
-    { icon: '📱', label: '시연', value: '32개' },
-    { icon: '✂', label: '선정', value: '3개' }
-  ]
-}
 
 // 아무 매거진 — 최신 발행 글 3개. 3개가 안 되면 예고 카드로 채움 (링크 없음).
 const { data: latestPosts } = usePublishedPosts(3)
@@ -435,43 +424,6 @@ const magazineCards = computed(() => {
             </p>
           </div>
         </NuxtLink>
-      </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- NEW: 큐레이터 노트                                            -->
-    <!-- ============================================================ -->
-    <section class="pb-16 md:pb-14">
-      <div class="grid grid-cols-1 gap-6 overflow-hidden rounded-[24px] bg-neutral-950 p-8 text-white md:grid-cols-[5fr_7fr] md:gap-9 md:rounded-[28px] md:p-12">
-        <div class="flex aspect-[16/10] items-center justify-center rounded-2xl bg-gradient-to-br from-neutral-900 to-black text-[80px] md:aspect-[4/5] md:text-[120px]">
-          🐦
-        </div>
-        <div>
-          <span class="inline-flex items-center gap-2 rounded-full bg-white/8 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
-            큐레이터 노트 · WEEK {{ curatorNote.week }}
-          </span>
-          <h3 class="mt-5 whitespace-pre-line text-[22px] font-bold tracking-tight md:text-[28px]">
-            {{ curatorNote.title }}
-          </h3>
-          <p class="mt-4 text-[15px] leading-relaxed text-neutral-400">
-            {{ curatorNote.body }}
-          </p>
-          <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-400">
-            <span
-              v-for="m in curatorNote.meta"
-              :key="m.label"
-              class="inline-flex items-center gap-1.5"
-            >
-              {{ m.icon }} <strong class="text-white">{{ m.value }}</strong> {{ m.label }}
-            </span>
-          </div>
-          <a
-            href="#"
-            class="mt-7 inline-flex items-center gap-1 border-b-2 border-white pb-1 text-[15px] font-bold text-white"
-          >
-            이번 주 일기 전문 읽기 →
-          </a>
-        </div>
       </div>
     </section>
 
