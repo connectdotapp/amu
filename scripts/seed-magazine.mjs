@@ -26,7 +26,7 @@ const posts = [
     title: '앱스토어 스크린샷, 처음 3장이 설치를 좌우해요',
     subtitle: '검색 결과에 보이는 건 1~3장뿐. 공식 규격과 첫 3장 구성법.',
     category: '가이드',
-    coverImageUrl: '/magazine/app-store-screenshots-v2.webp',
+    coverImageUrl: '/magazine/app-store-screenshots-v3.webp',
     file: 'magazine-app-store-screenshots.md'
   },
   {
