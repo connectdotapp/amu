@@ -66,7 +66,7 @@ const posts = [
     title: '빈 화면이 첫인상을 만들어요',
     subtitle: '"데이터가 없습니다" 대신, 상태를 알리고 다음 행동으로 이어주는 빈 화면 설계.',
     category: '프로덕트 디자인',
-    coverImageUrl: '/magazine/empty-state-design.webp',
+    coverImageUrl: '/magazine/empty-state-design-v2.webp',
     file: 'magazine-empty-state.md'
   }
 ]
