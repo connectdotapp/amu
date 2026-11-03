@@ -82,8 +82,8 @@ function isActive(to: string) {
 }
 
 const nav = [
+  { label: '매거진', to: '/magazine' },
   { label: '컬렉션', to: '/collections' },
-  { label: '둘러보기', to: '/' },
   { label: 'About', to: '/about' }
 ]
 
