@@ -58,7 +58,7 @@ const posts = [
     title: '하루에 한 문제, 워들은 어떻게 넉 달 만에 팔렸을까',
     subtitle: '90명에서 수백만 명까지, 광고 없이 퍼진 작은 게임의 세 가지 설계.',
     category: '케이스 스터디',
-    coverImageUrl: '/magazine/wordle-case-study.webp',
+    coverImageUrl: '/magazine/wordle-case-study-v2.webp',
     file: 'magazine-wordle.md'
   },
   {
