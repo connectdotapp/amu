@@ -34,9 +34,6 @@ onMounted(updateEdges)
         <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
           {{ title }}
         </h2>
-        <p class="mt-1 text-xs text-neutral-500 md:text-sm">
-          업보트 많이 받은 순
-        </p>
       </div>
       <div class="flex shrink-0 items-center gap-2">
         <NuxtLink

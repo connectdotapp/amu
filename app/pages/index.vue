@@ -268,9 +268,6 @@ const magazineCards = computed(() => {
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             이번 주의 아무 3
           </h2>
-          <p class="mt-1 text-xs text-neutral-500 md:text-sm">
-            큐레이터가 월요일 오전 10시에 발표한 이번 주 세 작품
-          </p>
         </div>
         <NuxtLink
           to="/collections"
@@ -337,9 +334,6 @@ const magazineCards = computed(() => {
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             인기 순위
           </h2>
-          <p class="mt-1 text-xs text-neutral-500 md:text-sm">
-            누적 업보트 기준으로 집계해요
-          </p>
         </div>
         <NuxtLink
           to="/rankings/weekly"
@@ -398,9 +392,6 @@ const magazineCards = computed(() => {
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             큐레이터의 숨은 Pick
           </h2>
-          <p class="mt-1 text-xs text-neutral-500 md:text-sm">
-            TOP 3엔 못 들었지만 꼭 소개하고 싶었던 두 작품
-          </p>
         </div>
       </div>
 
@@ -436,9 +427,6 @@ const magazineCards = computed(() => {
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             아무 매거진
           </h2>
-          <p class="mt-1 text-xs text-neutral-500 md:text-sm">
-            작은 메이커의 큰 이야기, 디자인·창업 가이드
-          </p>
         </div>
         <NuxtLink
           to="/magazine"
