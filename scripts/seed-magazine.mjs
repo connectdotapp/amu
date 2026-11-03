@@ -50,7 +50,7 @@ const posts = [
     title: '앱 이름과 부제, 30자 안에 담는 법',
     subtitle: '앱스토어·구글 플레이 글자 수 규정과, 검색에도 걸리고 한눈에 이해되는 이름 짓기.',
     category: '크래프트',
-    coverImageUrl: '/magazine/app-name-30.webp',
+    coverImageUrl: '/magazine/app-name-30-v2.webp',
     file: 'magazine-app-name-30.md'
   },
   {
