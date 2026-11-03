@@ -263,7 +263,7 @@ const magazineCards = computed(() => {
     <!-- NEW: 이번 주의 아무 3                                         -->
     <!-- ============================================================ -->
     <section class="pb-16 md:pb-14">
-      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+      <div class="mb-4 flex items-end justify-between gap-4 md:mb-5">
         <div>
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             이번 주의 아무 3
@@ -329,7 +329,7 @@ const magazineCards = computed(() => {
       v-if="topRanking.length"
       class="pb-16 md:pb-14"
     >
-      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+      <div class="mb-4 flex items-end justify-between gap-4 md:mb-5">
         <div>
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             인기 순위
@@ -387,7 +387,7 @@ const magazineCards = computed(() => {
       v-if="hiddenPicks.length"
       class="pb-16 md:pb-14"
     >
-      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+      <div class="mb-4 flex items-end justify-between gap-4 md:mb-5">
         <div>
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             큐레이터의 숨은 Pick
@@ -422,7 +422,7 @@ const magazineCards = computed(() => {
     <!-- NEW: 아무 매거진                                              -->
     <!-- ============================================================ -->
     <section class="pb-24 md:pb-20">
-      <div class="mb-6 flex items-end justify-between gap-4 md:mb-8">
+      <div class="mb-4 flex items-end justify-between gap-4 md:mb-5">
         <div>
           <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
             아무 매거진

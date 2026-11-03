@@ -29,7 +29,7 @@ onMounted(updateEdges)
 
 <template>
   <section class="pb-16 md:pb-14">
-    <div class="mb-5 flex items-end justify-between gap-4 md:mb-6">
+    <div class="mb-3.5 flex items-end justify-between gap-4 md:mb-4">
       <div>
         <h2 class="text-xl font-bold tracking-tight sm:text-2xl md:text-[28px]">
           {{ title }}
