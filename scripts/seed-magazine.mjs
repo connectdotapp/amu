@@ -42,7 +42,7 @@ const posts = [
     title: '앱스토어 심사, 4건 중 1건은 반려돼요',
     subtitle: '애플 2024 투명성 보고서로 본 반려 사유와, 제출 전에 꼭 확인할 체크리스트.',
     category: '가이드',
-    coverImageUrl: '/magazine/app-review-rejections.webp',
+    coverImageUrl: '/magazine/app-review-rejections-v2.webp',
     file: 'magazine-app-review-rejections.md'
   },
   {
