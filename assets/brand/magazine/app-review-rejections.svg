@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif"><defs>
+ <radialGradient id="bg" cx="0.3" cy="0.3" r="1"><stop offset="0" stop-color="#2A2D33"/><stop offset="1" stop-color="#0B0C0E"/></radialGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.18"/><stop offset="1" stop-color="#fff" stop-opacity="0.04"/></linearGradient>
+ <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <clipPath id="mc"><rect x="0" y="0" width="1" height="1" rx="0.24"/></clipPath>
+</defs>
+<rect width="1600" height="1000" fill="url(#bg)"/>
+<ellipse cx="800" cy="520" rx="760" ry="330" fill="none" stroke="url(#ring)" stroke-width="3"/>
+
+   <rect x="880" y="200" width="140" height="200" rx="28" fill="url(#glass)" stroke="#fff" stroke-opacity="0.22" stroke-width="2"/><rect x="1050" y="200" width="140" height="200" rx="28" fill="url(#glass)" stroke="#fff" stroke-opacity="0.22" stroke-width="2"/><rect x="1220" y="200" width="140" height="200" rx="28" fill="url(#glass)" stroke="#fff" stroke-opacity="0.22" stroke-width="2"/><rect x="1390" y="200" width="140" height="200" rx="28" fill="#F5F5F5" stroke="#fff" stroke-opacity="0.22" stroke-width="2"/>
+   <g stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <path d="M920 300 l25 25 l45 -50"/><path d="M1090 300 l25 25 l45 -50"/><path d="M1260 300 l25 25 l45 -50"/></g>
+   <g stroke="#0B0C0E" stroke-width="12" stroke-linecap="round"><path d="M1430 270 l60 60"/><path d="M1490 270 l-60 60"/></g>
+   <text x="880" y="470" font-size="26" fill="#A3A3A3">2024 앱스토어 심사 제출 7,771,599건</text>
+   <text x="140" y="300" font-size="30" fill="#A3A3A3">앱스토어 심사</text>
+   <text x="140" y="430" font-size="120" font-weight="700" fill="#fff">4건 중 1건</text>
+   <text x="140" y="560" font-size="76" font-weight="700" fill="#fff" fill-opacity="0.45">반려돼요</text>
+   <text x="140" y="690" font-size="30" fill="#D4D4D4">가장 많은 이유는 "성능" — 대부분 준비 부족</text>
+<text x="140" y="935" font-size="22" font-weight="700" fill="#fff" opacity="0.5" letter-spacing="3">AMU MAGAZINE · 가이드</text>
+<text x="1460" y="935" font-size="20" fill="#fff" opacity="0.4" text-anchor="end" letter-spacing="2">APP REVIEW · 2026</text></svg>

@@ -36,6 +36,38 @@ const posts = [
     category: '인사이트',
     coverImageUrl: '/magazine/vibe-coding-v2.webp',
     file: 'magazine-vibe-coding.md'
+  },
+  {
+    slug: 'app-review-rejections',
+    title: '앱스토어 심사, 4건 중 1건은 반려돼요',
+    subtitle: '애플 2024 투명성 보고서로 본 반려 사유와, 제출 전에 꼭 확인할 체크리스트.',
+    category: '가이드',
+    coverImageUrl: '/magazine/app-review-rejections.webp',
+    file: 'magazine-app-review-rejections.md'
+  },
+  {
+    slug: 'app-name-30',
+    title: '앱 이름과 부제, 30자 안에 담는 법',
+    subtitle: '앱스토어·구글 플레이 글자 수 규정과, 검색에도 걸리고 한눈에 이해되는 이름 짓기.',
+    category: '크래프트',
+    coverImageUrl: '/magazine/app-name-30.webp',
+    file: 'magazine-app-name-30.md'
+  },
+  {
+    slug: 'wordle-case-study',
+    title: '하루에 한 문제, 워들은 어떻게 넉 달 만에 팔렸을까',
+    subtitle: '90명에서 수백만 명까지, 광고 없이 퍼진 작은 게임의 세 가지 설계.',
+    category: '케이스 스터디',
+    coverImageUrl: '/magazine/wordle-case-study.webp',
+    file: 'magazine-wordle.md'
+  },
+  {
+    slug: 'empty-state-design',
+    title: '빈 화면이 첫인상을 만들어요',
+    subtitle: '"데이터가 없습니다" 대신, 상태를 알리고 다음 행동으로 이어주는 빈 화면 설계.',
+    category: '프로덕트 디자인',
+    coverImageUrl: '/magazine/empty-state-design.webp',
+    file: 'magazine-empty-state.md'
   }
 ]
 
