@@ -1,7 +1,9 @@
 <script setup lang="ts">
+// 홈은 사이트명 접미사(· AMU) 없이 제목을 그대로 노출.
 useSeoMeta({
-  title: '오늘의 아무',
-  description: '오늘의 앱·웹·프로그램. 아무거나 소개하지 않아요.'
+  titleTemplate: '%s',
+  title: '오늘의 아무 AMU',
+  description: '오늘 아무가 추천하는 새로운 어플'
 })
 
 defineOgImageComponent('Default', {
