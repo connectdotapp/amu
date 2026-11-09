@@ -97,6 +97,22 @@ const platformLabel: Record<Platform, string> = {
   linux: 'Linux'
 }
 
+const { data: categories } = useCategories()
+
+// 카테고리·가격·플랫폼·태그를 해시태그로. 한글 카테고리명을 쓰고, 띄어쓰기는 붙이고, 중복은 한 번만.
+const hashtags = computed(() => {
+  const p = product.value
+  if (!p) return []
+  const categoryName = categories.value?.find(c => c.id === p.category)?.name || p.category
+  const raw = [
+    categoryName,
+    p.pricing ? (pricingLabel[p.pricing] || p.pricing) : '',
+    ...(p.platforms || []).map(pf => platformLabel[pf] || pf),
+    ...(p.tags || []).slice(0, 6)
+  ]
+  return [...new Set(raw.map(s => (s || '').replace(/\s+/g, '')).filter(Boolean))]
+})
+
 const hasShowroom = computed(() => {
   const s = product.value?.showroom
   if (!s) return false
@@ -194,38 +210,13 @@ watchEffect(() => {
           </div>
         </div>
 
-        <!-- Chip meta -->
-        <div class="mt-6 flex flex-wrap gap-1.5">
-          <span
-            v-if="product.category"
-            class="rounded-full bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
-          >
-            {{ product.category }}
-          </span>
-          <span
-            v-if="product.pricing"
-            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
-          >
-            {{ pricingLabel[product.pricing] || product.pricing }}
-          </span>
-          <span
-            v-for="pf in product.platforms || []"
-            :key="pf"
-            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
-          >
-            {{ platformLabel[pf] || pf }}
-          </span>
-          <span
-            v-for="t in (product.tags || []).slice(0, 6)"
-            :key="t"
-            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100"
-          >
-            {{ t }}
-          </span>
+        <!-- Hashtag meta -->
+        <div class="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-sm text-neutral-700 dark:text-neutral-300">
+          <span v-for="h in hashtags" :key="h">#{{ h }}</span>
           <NuxtLink
             v-if="product.maker"
             :to="`/makers/${encodeURIComponent(product.maker)}`"
-            class="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-800 transition hover:bg-neutral-150 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700"
+            class="transition hover:text-neutral-950 dark:hover:text-white"
           >
             by {{ product.maker }}
           </NuxtLink>
