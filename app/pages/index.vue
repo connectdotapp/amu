@@ -3,7 +3,10 @@
 useSeoMeta({
   titleTemplate: '%s',
   title: '오늘의 아무 AMU',
-  description: '오늘 아무가 추천하는 새로운 어플'
+  description: '오늘 아무가 추천하는 새로운 어플',
+  // 링크 미리보기(카톡·문자 등)에만 쓰는 제목. 검색 결과 제목은 위 title.
+  ogTitle: '대한민국 APP 큐레이션 전문 AMU',
+  twitterTitle: '대한민국 APP 큐레이션 전문 AMU'
 })
 
 defineOgImageComponent('Default', {

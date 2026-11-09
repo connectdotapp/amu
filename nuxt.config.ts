@@ -96,10 +96,10 @@ export default defineNuxtConfig({
       // 서치콘솔 verification 메타는 환경변수로 주입 — .env 에 값만 넣으면 자동 포함.
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { property: 'og:image', content: '/og-default.png' },
+        { property: 'og:image', content: '/og-default-v2.png' },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
-        { name: 'twitter:image', content: '/og-default.png' },
+        { name: 'twitter:image', content: '/og-default-v2.png' },
         { name: 'twitter:card', content: 'summary_large_image' },
         ...(process.env.GOOGLE_SITE_VERIFICATION
           ? [{ name: 'google-site-verification', content: process.env.GOOGLE_SITE_VERIFICATION }]
