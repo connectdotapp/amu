@@ -303,12 +303,7 @@ const magazineCards = computed(() => {
             class="size-[60px] rounded-[14px] bg-neutral-100 object-cover md:size-[72px] md:rounded-[18px]"
           >
 
-          <div class="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-amu-pink)]">
-            <span class="size-1.5 rounded-full bg-[var(--color-amu-pink)]" />
-            AMU PICK #{{ i + 1 }}
-          </div>
-
-          <h3 class="mt-2 text-[17px] font-bold tracking-tight md:text-xl">{{ p.name }}</h3>
+          <h3 class="mt-4 text-[17px] font-bold tracking-tight md:text-xl">{{ p.name }}</h3>
           <p class="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-neutral-500 md:text-sm md:min-h-[44px]">
             {{ p.tagline }}
           </p>
@@ -355,22 +350,22 @@ const magazineCards = computed(() => {
         >
           <NuxtLink
             :to="`/products/${p.slug || p.id}`"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white md:gap-4 md:px-4 md:py-3 dark:hover:bg-neutral-800"
+            class="flex items-center gap-[13px] rounded-xl px-[13px] py-[11px] transition hover:bg-white md:gap-[18px] md:px-[18px] md:py-[13px] dark:hover:bg-neutral-800"
           >
             <span
-              class="w-5 shrink-0 text-left text-[15px] font-bold tabular-nums md:w-6"
+              class="w-[22px] shrink-0 text-left text-[16.5px] font-bold tabular-nums md:w-[26px]"
               :class="i < 3 ? 'text-[var(--color-amu-pink)]' : 'text-neutral-400'"
             >{{ i + 1 }}</span>
             <img
               :src="p.thumbnailUrl"
               :alt="p.name"
-              class="size-10 shrink-0 rounded-[10px] bg-neutral-100 object-cover md:size-11 md:rounded-xl"
+              class="size-11 shrink-0 rounded-[11px] bg-neutral-100 object-cover md:size-12 md:rounded-[13px]"
             >
             <div class="min-w-0 flex-1">
-              <div class="truncate text-sm font-bold tracking-tight md:text-[15px]">{{ p.name }}</div>
-              <div class="truncate text-xs text-neutral-500 md:text-[13px]">{{ p.tagline }}</div>
+              <div class="truncate text-[15.5px] font-bold tracking-tight md:text-[16.5px]">{{ p.name }}</div>
+              <div class="truncate text-[13px] text-neutral-500 md:text-[14.5px]">{{ p.tagline }}</div>
             </div>
-            <span class="shrink-0 text-xs font-bold tabular-nums text-neutral-950 md:text-[13px] dark:text-neutral-50">↑ {{ p.upvoteCount ?? 0 }}</span>
+            <span class="shrink-0 text-[13px] font-bold tabular-nums text-neutral-950 md:text-[14.5px] dark:text-neutral-50">↑ {{ p.upvoteCount ?? 0 }}</span>
           </NuxtLink>
         </template>
       </div>
