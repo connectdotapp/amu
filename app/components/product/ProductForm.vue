@@ -92,8 +92,8 @@ const thumbnailPreview = ref<string | null>(props.product?.thumbnailUrl ?? null)
 const isSubmitting = ref(false)
 const errorMessage = ref<string | null>(null)
 
-// 스토어 자동 채우기 (App Store / Play Store)
-type StorePlatform = 'appstore' | 'playstore'
+// 링크 자동 채우기 (App Store / Play Store / 웹사이트)
+type StorePlatform = 'appstore' | 'playstore' | 'web'
 const storePlatform = ref<StorePlatform>('appstore')
 const storeInput = ref('')
 const storeFetching = ref(false)
@@ -143,8 +143,23 @@ const storeConfig: Record<StorePlatform, {
     helpText: 'Android 앱 또는 패키지명(com.example.app). 채워진 내용은 아래에서 수정하세요.',
     imageHostRegex: /googleusercontent\.com/,
     filenamePrefix: 'play'
+  },
+  web: {
+    label: '웹사이트',
+    endpoint: '/api/web',
+    imageProxy: '/api/web-image',
+    linkLabel: '웹사이트',
+    placeholder: 'https://example.com',
+    helpText: '웹 서비스 주소. 페이지의 이름·설명·아이콘을 가져와요. 채워진 내용은 아래에서 수정하세요.',
+    imageHostRegex: /.*/,
+    filenamePrefix: 'web'
   }
 }
+
+const storeTabs: StorePlatform[] = ['appstore', 'playstore', 'web']
+const platformByStore: Record<StorePlatform, string> = { appstore: 'ios', playstore: 'android', web: 'web' }
+// 자동 채우기로 가져온 출처. 신규 등록 시 platforms 에 반영.
+const filledFrom = ref<StorePlatform | null>(null)
 
 async function fillFromStore() {
   storeError.value = null
@@ -169,12 +184,14 @@ async function fillFromStore() {
       form.tags = data.tags.join(', ')
     }
     storeGenreHint.value = data.genreName
+    filledFrom.value = storePlatform.value
 
     // 썸네일: 서버 프록시로 받아 File 로 변환
     if (data.thumbnailUrl) {
       try {
         const proxied = `${cfg.imageProxy}?url=${encodeURIComponent(data.thumbnailUrl)}`
         const res = await fetch(proxied)
+        if (!res.ok) throw new Error('image proxy failed')
         const blob = await res.blob()
         const ext = (blob.type || 'image/jpeg').split('/')[1] || 'jpg'
         const file = new File([blob], `${cfg.filenamePrefix}-${data.id}.${ext}`, { type: blob.type || 'image/jpeg' })
@@ -341,7 +358,7 @@ async function submit() {
         description: form.description.trim(),
         category: form.category,
         tags,
-        platforms: [],
+        platforms: filledFrom.value ? [platformByStore[filledFrom.value]] : [],
         pricing: form.pricing,
         linkUrl: normalizedLinkUrl,
         links: linkArr,
@@ -379,26 +396,20 @@ async function submit() {
     <section v-if="!isEdit" class="rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800">
       <label class="mb-2 flex items-center gap-2 text-sm font-semibold">
         <UIcon name="i-lucide-wand-2" class="size-4 text-neutral-700 dark:text-neutral-200" />
-        스토어 링크로 자동 채우기
+        링크로 자동 채우기
       </label>
 
       <!-- 플랫폼 토글 -->
       <div class="mb-3 inline-flex rounded-full bg-white p-1 text-sm font-semibold dark:bg-neutral-900">
         <button
+          v-for="p in storeTabs"
+          :key="p"
           type="button"
-          class="rounded-full px-5 py-2 transition"
-          :class="storePlatform === 'appstore' ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
-          @click="switchPlatform('appstore')"
+          class="rounded-full px-4 py-2 transition sm:px-5"
+          :class="storePlatform === p ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
+          @click="switchPlatform(p)"
         >
-          App Store
-        </button>
-        <button
-          type="button"
-          class="rounded-full px-5 py-2 transition"
-          :class="storePlatform === 'playstore' ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950' : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'"
-          @click="switchPlatform('playstore')"
-        >
-          Play Store
+          {{ storeConfig[p].label }}
         </button>
       </div>
 
@@ -422,6 +433,9 @@ async function submit() {
       </div>
       <p v-if="storeError" class="mt-2 text-xs text-error">
         {{ storeError }}
+      </p>
+      <p v-else-if="filledFrom === 'web' && !thumbnailFile" class="mt-2 text-xs text-neutral-500">
+        아이콘을 가져오지 못했어요. 아래에서 대표 이미지를 직접 올려주세요.
       </p>
       <p v-else-if="storeGenreHint" class="mt-2 text-xs text-neutral-500">
         {{ storeConfig[storePlatform].label }} 장르: <span class="font-semibold">{{ storeGenreHint }}</span> — 아래 카테고리에서 맞춰 골라주세요.
