@@ -26,6 +26,31 @@ const db = useFirestore()
 const toast = useToast()
 const analytics = useAnalytics()
 
+// 등록한 본인이면 수정 가능 (관리자는 아래 관리자 액션에서).
+const isOwner = computed(() => !!user.value && !!product.value && user.value.uid === product.value.submittedBy)
+
+// 바로가기: 링크 종류(웹·앱스토어·플레이스토어)별 첫 링크. 둘 이상이면 골라서 가게 메뉴로 보여준다.
+const goLinks = computed(() => {
+  const seen = new Set<string>()
+  return (product.value?.links || []).filter((l) => {
+    const k = linkKind(l.url)
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+})
+const linkIcon = (url: string) => ({ appstore: 'i-simple-icons-appstore', playstore: 'i-simple-icons-googleplay', web: 'i-lucide-globe' })[linkKind(url)]
+function trackLink(url: string) {
+  analytics.externalLink({ productId: id, productName: product.value?.name ?? '', url })
+}
+const goMenuItems = computed(() => goLinks.value.map(l => ({
+  label: linkGoLabel(l),
+  icon: linkIcon(l.url),
+  to: l.url,
+  target: '_blank',
+  onSelect: () => trackLink(l.url)
+})))
+
 // 상세 뷰 이벤트. product 로드 완료되면 1회 로깅.
 watch(product, (p) => {
   if (!p) return
@@ -185,6 +210,15 @@ watchEffect(() => {
       </div>
     </div>
 
+    <!-- 등록한 본인 액션 -->
+    <div v-if="isOwner && !isAdmin && product" class="mb-6 flex items-center gap-2 rounded-2xl bg-neutral-100 p-3 dark:bg-neutral-800">
+      <UIcon name="i-lucide-user-round-pen" class="size-4 text-neutral-500" />
+      <span class="text-xs text-neutral-500">내가 등록한 프로덕트예요</span>
+      <UButton :to="`/me/products/${id}/edit`" size="xs" color="neutral" variant="outline" icon="i-lucide-pencil" class="ml-auto">
+        수정
+      </UButton>
+    </div>
+
     <article v-if="product">
       <!-- HERO — content-first, no card wrapper -->
       <section class="pb-8">
@@ -224,16 +258,21 @@ watchEffect(() => {
 
         <!-- Actions (모바일에선 하단 고정 액션바로 대체) -->
         <div class="mt-6 flex-wrap items-center gap-2 max-md:hidden md:flex">
+          <UDropdownMenu v-if="goLinks.length > 1" :items="goMenuItems" :content="{ align: 'start' }">
+            <UButton color="neutral" variant="solid" trailing-icon="i-lucide-chevron-down">
+              바로가기
+            </UButton>
+          </UDropdownMenu>
           <UButton
-            v-if="product.links?.[0]"
-            :to="product.links[0].url"
+            v-else-if="goLinks[0]"
+            :to="goLinks[0].url"
             target="_blank"
             color="neutral"
             variant="solid"
             trailing-icon="i-lucide-arrow-up-right"
-            @click="analytics.externalLink({ productId: id, productName: product.name, url: product.links[0]!.url })"
+            @click="trackLink(goLinks[0]!.url)"
           >
-            {{ product.links[0].label || '방문하기' }}
+            {{ linkGoLabel(goLinks[0]) }}
           </UButton>
           <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" />
           <ProductBookmarkButton :product-id="id" />
@@ -398,18 +437,29 @@ watchEffect(() => {
       >
         <ProductBookmarkButton :product-id="id" class="size-[52px]! rounded-2xl!" />
         <ProductUpvoteButton :product-id="id" :initial-count="product.upvoteCount ?? 0" class="h-[52px]! rounded-2xl! px-3!" />
+        <UDropdownMenu v-if="goLinks.length > 1" :items="goMenuItems" :content="{ side: 'top', align: 'end' }" class="flex-1">
+          <UButton
+            color="neutral"
+            variant="solid"
+            block
+            trailing-icon="i-lucide-chevron-up"
+            class="h-[52px] flex-1 rounded-2xl text-base font-bold"
+          >
+            바로가기
+          </UButton>
+        </UDropdownMenu>
         <UButton
-          v-if="product.links?.[0]"
-          :to="product.links[0].url"
+          v-else-if="goLinks[0]"
+          :to="goLinks[0].url"
           target="_blank"
           color="neutral"
           variant="solid"
           block
           trailing-icon="i-lucide-arrow-up-right"
           class="h-[52px] flex-1 rounded-2xl text-base font-bold"
-          @click="analytics.externalLink({ productId: id, productName: product.name, url: product.links[0]!.url })"
+          @click="trackLink(goLinks[0]!.url)"
         >
-          웹사이트 방문
+          {{ linkGoLabel(goLinks[0]) }}
         </UButton>
       </div>
     </article>

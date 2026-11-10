@@ -18,7 +18,7 @@ service cloud.firestore {
     // products: published are public. pending/rejected are admin-only.
     // Users can create with status='pending' only; admins gate transitions.
     match /products/{productId} {
-      allow read: if resource.data.status == 'published' || isAdmin();
+      allow read: if resource.data.status == 'published' || isAdmin() || isOwner(resource.data.submittedBy);
       allow create: if isAdmin()
         || (isSignedIn()
           && request.resource.data.status == 'pending'
@@ -28,6 +28,12 @@ service cloud.firestore {
         || (isOwner(resource.data.submittedBy)
             && resource.data.status == 'pending'
             && request.resource.data.status == 'pending')
+        // 등록한 본인은 공개된 뒤에도 소개 내용만 고칠 수 있다 (상태·출처·작성자·카운터는 못 바꿈).
+        || (isOwner(resource.data.submittedBy)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'name', 'tagline', 'description', 'category', 'tags', 'pricing',
+              'linkUrl', 'links', 'platforms', 'thumbnailUrl', 'maker', 'showroom', 'makerStory'
+            ]))
         // Signed-in users may adjust the interaction counters only.
         || (isSignedIn()
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvoteCount', 'commentCount', 'bookmarkCount']));

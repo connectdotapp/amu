@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { collection, doc, getDocs, limit as fbLimit, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { normalizeUrl } from '~/utils/url'
+import { linkKind, platformOfKind, type LinkKind } from '~/utils/linkKind'
 import type {
   MakerStory,
   MonthlyRevenueRange,
@@ -38,10 +39,22 @@ const form = reactive({
   category: props.product?.category ?? '',
   tags: (props.product?.tags || []).join(', '),
   pricing: (props.product?.pricing ?? 'free') as PricingModel,
-  linkLabel: props.product?.links?.[0]?.label ?? '웹사이트',
-  linkUrl: props.product?.links?.[0]?.url ?? '',
   maker: props.product?.maker ?? ''
 })
+
+// 링크: 웹사이트 / App Store / Google Play 를 각각 받는다. 앱이 양쪽 스토어에 있으면 둘 다 넣을 수 있다.
+const initialLinks = props.product?.links || []
+const initialOf = (k: LinkKind) => initialLinks.find(l => linkKind(l.url) === k)
+const links = reactive({
+  webLabel: initialOf('web')?.label ?? '웹사이트',
+  webUrl: initialOf('web')?.url ?? '',
+  appStoreUrl: initialOf('appstore')?.url ?? '',
+  playStoreUrl: initialOf('playstore')?.url ?? ''
+})
+// 세 칸에 들어가지 않는 나머지 링크(유튜브 등)는 수정할 때 그대로 유지.
+const extraLinks = initialLinks.filter(l => l !== initialOf('web') && l !== initialOf('appstore') && l !== initialOf('playstore'))
+// 대표 링크 종류: 상세 페이지 첫 버튼·중복 검사 기준. 신규는 처음 자동 채운 출처, 수정은 기존 대표 링크.
+const primaryKind = ref<LinkKind | null>(initialLinks[0] ? linkKind(initialLinks[0].url) : null)
 
 // Showroom section — every field optional
 const showroom = reactive({
@@ -157,8 +170,7 @@ const storeConfig: Record<StorePlatform, {
 }
 
 const storeTabs: StorePlatform[] = ['appstore', 'playstore', 'web']
-const platformByStore: Record<StorePlatform, string> = { appstore: 'ios', playstore: 'android', web: 'web' }
-// 자동 채우기로 가져온 출처. 신규 등록 시 platforms 에 반영.
+// 마지막으로 자동 채운 출처 (안내 문구용).
 const filledFrom = ref<StorePlatform | null>(null)
 
 async function fillFromStore() {
@@ -178,8 +190,10 @@ async function fillFromStore() {
     form.description = data.description
     form.maker = data.maker
     form.pricing = data.pricing
-    form.linkUrl = data.linkUrl
-    form.linkLabel = cfg.linkLabel
+    if (storePlatform.value === 'appstore') links.appStoreUrl = data.linkUrl
+    else if (storePlatform.value === 'playstore') links.playStoreUrl = data.linkUrl
+    else links.webUrl = data.linkUrl
+    if (!primaryKind.value) primaryKind.value = storePlatform.value
     if (data.tags.length) {
       form.tags = data.tags.join(', ')
     }
@@ -283,17 +297,40 @@ async function submit() {
     errorMessage.value = '로그인이 필요합니다.'
     return
   }
-  if (!form.name || !form.tagline || !form.category || !form.linkUrl) {
+  if (!form.name || !form.tagline || !form.category) {
     errorMessage.value = '필수 항목을 모두 채워 주세요.'
     return
   }
 
-  // URL 형식 검증 (http/https 유효 URL)
-  const normalizedLinkUrl = normalizeUrl(form.linkUrl)
-  if (!normalizedLinkUrl) {
-    errorMessage.value = '올바른 URL이 아니에요. http:// 또는 https:// 로 시작해야 해요.'
+  // 링크 검증: 하나 이상, 각 칸은 http/https 유효 URL, 스토어 칸은 해당 스토어 주소만.
+  const entries: Array<{ kind: LinkKind, label: string, raw: string }> = [
+    { kind: 'web', label: links.webLabel.trim() || '웹사이트', raw: links.webUrl },
+    { kind: 'appstore', label: 'App Store', raw: links.appStoreUrl },
+    { kind: 'playstore', label: 'Google Play', raw: links.playStoreUrl }
+  ]
+  const filled: Array<{ kind: LinkKind, label: string, url: string }> = []
+  for (const e of entries) {
+    if (!e.raw.trim()) continue
+    const url = normalizeUrl(e.raw)
+    if (!url) {
+      errorMessage.value = `${e.label} 링크가 올바르지 않아요. http:// 또는 https:// 로 시작해야 해요.`
+      return
+    }
+    if (e.kind !== 'web' && linkKind(url) !== e.kind) {
+      errorMessage.value = e.kind === 'appstore'
+        ? 'App Store 칸에는 apps.apple.com 링크를 넣어주세요.'
+        : 'Google Play 칸에는 play.google.com 링크를 넣어주세요.'
+      return
+    }
+    filled.push({ kind: e.kind, label: e.label, url })
+  }
+  if (!filled.length) {
+    errorMessage.value = '링크를 하나 이상 넣어주세요.'
     return
   }
+  // 대표 링크를 맨 앞으로.
+  filled.sort((a, b) => Number(b.kind === primaryKind.value) - Number(a.kind === primaryKind.value))
+  const normalizedLinkUrl = filled[0]!.url
 
   if (!isEdit.value && !thumbnailFile.value) {
     errorMessage.value = '대표 이미지를 선택해 주세요.'
@@ -304,12 +341,13 @@ async function submit() {
   try {
     // 중복 등록 차단 — 같은 URL 로 이미 소개된 프로덕트가 있는지 확인.
     // Edit 모드에서 URL 변경이 없거나 자기 자신인 경우는 통과.
-    const originalLinkUrl = props.product ? normalizeUrl(props.product.linkUrl || props.product.links?.[0]?.url || '') : ''
-    const urlChanged = normalizedLinkUrl !== originalLinkUrl
-    if (urlChanged) {
+    const originalUrls = new Set((props.product?.links || []).map(l => normalizeUrl(l.url)))
+    if (props.product?.linkUrl) originalUrls.add(normalizeUrl(props.product.linkUrl))
+    const newUrls = filled.map(f => f.url).filter(u => !originalUrls.has(u))
+    if (newUrls.length) {
       const dupSnap = await getDocs(query(
         collection(db, 'products'),
-        where('linkUrl', '==', normalizedLinkUrl),
+        where('linkUrl', 'in', newUrls),
         where('status', '==', 'published'),
         fbLimit(1)
       ))
@@ -321,7 +359,10 @@ async function submit() {
     }
 
     const tags = form.tags.split(',').map(t => t.trim()).filter(Boolean)
-    const linkArr = [{ label: form.linkLabel || '웹사이트', url: normalizedLinkUrl }]
+    const linkArr = [...filled.map(f => ({ label: f.label, url: f.url })), ...extraLinks]
+    // 플랫폼은 링크 종류에서 정한다. 수정 시 macOS·Windows 등 링크로 알 수 없는 값은 유지.
+    const derivedPlatforms = [...new Set(filled.map(f => platformOfKind[f.kind]))]
+    const keptPlatforms = (props.product?.platforms || []).filter(p => !['ios', 'android', 'web'].includes(p))
     const showroomPayload = buildShowroomPayload()
     const makerStoryPayload = buildMakerStoryPayload()
 
@@ -339,6 +380,7 @@ async function submit() {
         pricing: form.pricing,
         linkUrl: normalizedLinkUrl,
         links: linkArr,
+        platforms: [...keptPlatforms, ...derivedPlatforms],
         thumbnailUrl,
         maker: form.maker.trim() || null,
         showroom: showroomPayload,
@@ -358,7 +400,7 @@ async function submit() {
         description: form.description.trim(),
         category: form.category,
         tags,
-        platforms: filledFrom.value ? [platformByStore[filledFrom.value]] : [],
+        platforms: derivedPlatforms,
         pricing: form.pricing,
         linkUrl: normalizedLinkUrl,
         links: linkArr,
@@ -514,12 +556,24 @@ async function submit() {
       <UInput v-model="form.tags" placeholder="tag1, tag2, tag3" />
     </UFormField>
 
-    <div class="grid gap-4 sm:grid-cols-[1fr_2fr]">
-      <UFormField label="링크 이름">
-        <UInput v-model="form.linkLabel" placeholder="웹사이트" />
+    <div class="space-y-3">
+      <div>
+        <div class="text-sm font-medium">링크 <span class="text-error">*</span></div>
+        <p class="mt-0.5 text-xs text-neutral-500">하나 이상 넣어주세요. 앱이 두 스토어에 다 있으면 둘 다 넣으면 상세 페이지에서 골라 갈 수 있어요.</p>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-[1fr_2fr]">
+        <UFormField label="웹사이트 링크 이름">
+          <UInput v-model="links.webLabel" placeholder="웹사이트" />
+        </UFormField>
+        <UFormField label="웹사이트 URL">
+          <UInput v-model="links.webUrl" type="url" placeholder="https://" />
+        </UFormField>
+      </div>
+      <UFormField label="App Store URL">
+        <UInput v-model="links.appStoreUrl" type="url" placeholder="https://apps.apple.com/kr/app/..." />
       </UFormField>
-      <UFormField label="링크 URL" required>
-        <UInput v-model="form.linkUrl" type="url" placeholder="https://" />
+      <UFormField label="Google Play URL">
+        <UInput v-model="links.playStoreUrl" type="url" placeholder="https://play.google.com/store/apps/details?id=..." />
       </UFormField>
     </div>
 
