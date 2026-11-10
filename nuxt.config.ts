@@ -22,6 +22,8 @@ export default defineNuxtConfig({
     kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET || '',
     naverClientId: process.env.NAVER_CLIENT_ID || '',
     naverClientSecret: process.env.NAVER_CLIENT_SECRET || '',
+    // 관리자 인사이트용 GA4 속성 ID (숫자). GA4 관리 > 속성 설정에서 확인.
+    ga4PropertyId: process.env.GA4_PROPERTY_ID || '',
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       kakaoJsKey: process.env.NUXT_PUBLIC_KAKAO_JS_KEY || '',

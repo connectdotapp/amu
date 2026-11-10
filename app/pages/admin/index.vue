@@ -8,6 +8,12 @@ useSeoMeta({
 
 const actions = [
   {
+    to: '/admin/insights',
+    icon: 'i-lucide-chart-column',
+    title: '인사이트',
+    description: '방문자·유입 경로·사이트 통계'
+  },
+  {
     to: '/admin/products/new',
     icon: 'i-lucide-plus',
     title: '큐레이션 등록',
